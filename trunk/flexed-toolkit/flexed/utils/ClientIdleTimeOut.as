@@ -40,18 +40,18 @@ package flexed.utils
 			if(_keyListener == true) (Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);
 		}
 		
-		[Bindable]
 		public function set timeOutInterval(timeoutInterval:uint):void{
 			_uintTimeOutInterval = timeoutInterval*1000;
+			_timerTimeOut.delay = timeoutInterval*1000;
 		}
 		
 		public function get timeOutInterval():uint{
 			return _uintTimeOutInterval;
 		}
 
-		[Bindable]
 		public function set confirmInterval(confirmInterval:uint):void{
 			_uintConfirmInterval = confirmInterval*1000;
+			_timerConfirm.delay = confirmInterval*1000;
 		}
 		
 		public function get confirmInterval():uint{
@@ -61,11 +61,19 @@ package flexed.utils
 		public function set listenKeyStroke(registerKeys:Boolean):void{
 			_keyListener = registerKeys;
 		}
+
+		public function get listenKeyStroke():Boolean{
+			return _keyListener;
+		}
 		
 		public function set listenMouseMove(registerMouse:Boolean):void{
 			_mouseListener = registerMouse;
 		}
-		
+
+		public function get listenMouseMove():Boolean{
+			return _mouseListener;
+		}
+	
 		public function set onTimeOut(timeoutFn:Function):void{
 			_timedOutFunction = timeoutFn;
 		}
@@ -141,7 +149,6 @@ package flexed.utils
 			(Application.application as Application).enabled = true;
 			hideTimeOutPrompt();
 		}
-
 		
 		private function showTimeOutPrompt():void{
 			var cvs:VBox = new VBox();
