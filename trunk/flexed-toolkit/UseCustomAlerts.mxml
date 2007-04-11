@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" preinitialize="addCAlerts()" horizontalAlign="center" verticalAlign="middle">
+	<mx:Script>
+		<![CDATA[
+			import flexed.widgets.alerts.alert;
+			import mx.collections.ArrayCollection;
+			import flexed.widgets.buttons.CButton;
+			import mx.controls.ComboBox;
+			
+			private var cmboAlertType:ComboBox = new ComboBox();
+			
+			private function addCAlerts():void{
+				cmboAlertType.dataProvider = new ArrayCollection([{label:'Info',data:'info'},{label:'Error',data:'error'},{label:'Confirmation',data:'confirmation'}]);
+				addChild(cmboAlertType);
+				
+				//adding eventlistener to cbutton from caller
+				var cAlertBtn:CButton = new CButton(CButton.SAVE);
+				cAlertBtn.addEventListener("click",showCAlert);
+				cAlertBtn.width = 150;
+				cAlertBtn.label = "Popup Custom Alert";
+				cAlertBtn.height = 23;
+				addChild(cAlertBtn);
+			}
+			
+			private function showCAlert(event:MouseEvent):void{
+				var alertType:String = cmboAlertType.selectedLabel.toLowerCase();
+				if(alertType == "info"){
+					alert.info("This is an info message");
+				}else if(alertType == "error"){
+					alert.error("This is an error message");
+				}else if(alertType == "confirmation"){
+					alert.confirm("This is an confirmation message");
+				}
+			}
+		]]>
+	</mx:Script>
+</mx:HBox>

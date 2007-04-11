@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" backgroundGradientColors="[#000000, #8c8c8c]" xmlns:flexed="*">
+	<mx:Style source="flexed/widgets/grid/grid.css"/>
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.ComboBox;
+			import flexed.widgets.alerts.alert;
+			import mx.controls.TextArea;
+			import flexed.widgets.buttons.CButton;
+			import mx.controls.Alert;
+			
+			[Embed("imgs/btn_save.png")]
+	        private var saveIcon:Class;
+	        
+	        
+			
+			private function addButtons():void{
+
+				//adding eventlistener to cbutton from caller
+				var cBtn1:CButton = new CButton(CButton.OK);
+				cBtn1.addEventListener("click",btnClicked);
+				buttonContainer.addChild(cBtn1);
+				
+				//overriding cbutton width & label from caller
+				var cBtn2:CButton = new CButton(CButton.CANCEL);
+				cBtn2.width = 60;
+				cBtn2.label = "MY Cancel";
+				cBtn2.addEventListener("click",btnClicked);
+				buttonContainer.addChild(cBtn2);
+	
+				//overriding cbutton icon from caller
+				var cBtn3:CButton = new CButton(CButton.SAVE);
+				cBtn3.addEventListener("click",btnClicked);
+				cBtn3.setStyle("icon",saveIcon);
+				buttonContainer.addChild(cBtn3);
+	
+				//calling cbutton without icons
+				var cBtn4:CButton = new CButton();
+				cBtn4.addEventListener("click",btnClicked);
+				cBtn4.label = "Generic";
+				buttonContainer.addChild(cBtn4);	
+			}
+			
+			private function btnClicked(evnt:Event):void{
+				Alert.show(evnt.target.label.toString());
+			}
+			
+
+		]]>
+	</mx:Script>
+	<mx:Style>
+		/* Link Button */
+		LinkButton {
+			text-decoration :none;
+			text-roll-over-color : #e35d04;
+			button-height : 17;
+			font-size : 10;
+		}
+		
+		Alert{
+			color : #0f3177;
+			title-style-name : "alertTitle";
+			header-height:19;
+			border-thickness: 1;
+			drop-shadow-enabled: true;
+			drop-shadow-color :#d1ddf7;
+			background-color: #ffffff;
+			corner-radius :6;
+			border-style :solid;
+			header-colors : #90a4d1, #5970a0;
+			footer-colors : #9db6d9, #ffffff;
+			border-color : #5970a0;
+		}
+		
+		.alertTitle{
+			font-family :Verdana;
+			font-size :10;
+			font-weight :bold;
+			text-align :left;
+			color :#ffffff;
+		}		
+	</mx:Style>
+	<mx:HBox left="10" right="10" top="10" bottom="26" horizontalGap="4">
+		<!-- Using the Tab Navigator to hold my components. -->
+		<flexed:UseCustomGrid width="100%" height="100%"/>
+		
+		<mx:VBox width="350" height="100%">
+		
+			<!-- The Auto Refresher component -->
+			<mx:Label text="Auto-Refresher" color="#ffffff" fontWeight="bold" fontFamily="Verdana" fontSize="10" width="100%"/>
+			<mx:Canvas width="100%" borderColor="#000000" borderStyle="solid" cornerRadius="4" backgroundColor="#ffffff">
+				<flexed:UseAutoRefresher horizontalCenter="0" verticalCenter="0"/>
+			</mx:Canvas>
+			
+			<!-- The Custom Button component -->
+			<mx:Label text="Custom Button" color="#ffffff" fontWeight="bold" fontFamily="Verdana" fontSize="10" width="100%"/>
+			<mx:HBox id="buttonContainer" horizontalGap="4" width="100%" initialize="addButtons()" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#000000" horizontalAlign="center" verticalAlign="middle" height="50"/>
+			<mx:Label text="Note the icons used in each button." color="#ffff80" fontWeight="normal" fontFamily="Verdana" fontSize="10" width="100%"/>
+			
+			<!-- The Custom Alert component -->
+			<mx:Label text="Custom Alert" color="#ffffff" fontWeight="bold" fontFamily="Verdana" fontSize="10" width="100%"/>
+			<mx:Canvas width="100%" height="50" borderColor="#000000" borderStyle="solid" cornerRadius="4" backgroundColor="#ffffff">
+				<flexed:UseCustomAlerts  horizontalCenter="0" verticalCenter="0"/>
+			</mx:Canvas>
+
+			<!-- The Master Detail component -->
+			<mx:Label text="Master Detail" color="#ffffff" fontWeight="bold" fontFamily="Verdana" fontSize="10" width="100%"/>
+			<mx:Canvas width="100%" height="50" borderColor="#000000" borderStyle="solid" cornerRadius="4" backgroundColor="#ffffff">
+				
+			</mx:Canvas>
+
+			
+		</mx:VBox>
+	</mx:HBox>
+	<!-- Copyright text (???) :) -->
+	<mx:Label horizontalCenter="0" text="Test Drive v1.0 | http://flexed.wordpress.com | Uday M. Shankar"  bottom="0" color="#ffffff"/>
+</mx:Application>

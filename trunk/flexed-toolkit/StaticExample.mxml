@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// *Copyright (c) 2006 Uday M. Shankar
+//
+// The usual Yada-Yada!
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this code and associated documentation
+// files (the "Code"), to deal in the Code without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Code is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Code.
+//
+// THE CODE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+// Further it is worth to mention that no animals have been 
+// harmed during the development. No trees have been cut 
+// down. Womens rights have been treated with full respect.
+// Mankind's safety has been ensured at every step.
+//
+// Peace!
+//
+// @file: StaticExample
+// @author: Uday M. Shankar
+// @date: 23-12-2006
+// @description: sample implmentation of the CustomGrid.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:grid="flexed.widgets.grid.*" initialize="initGrid()" backgroundColor="#ffffff">
+<mx:Script>
+	<![CDATA[
+		import mx.events.IndexChangedEvent;
+		import mx.controls.Alert;
+		import mx.controls.CheckBox;
+		import mx.controls.dataGridClasses.DataGridColumn;
+		import mx.collections.ArrayCollection;
+
+		/**
+		* creating an array collection with 
+		* column names and mapping data
+		*/
+		public var gridColumns:ArrayCollection= new ArrayCollection([
+						{colname:"Blog Name",coldata:"blogname"},
+						{colname:"URL",coldata:"blogurl",sortable:"false"},
+						{colname:"Contents",coldata:"blogcontent", align:"right"},
+						{colname:"Author",coldata:"blogauthor", hide:true}
+						]);
+
+		/**
+		* creating an array collection 
+		* with dummy data
+		*/
+		public var gridData:ArrayCollection = new ArrayCollection([
+						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
+						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
+						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
+						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
+						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Flash player, Adobe', blogauthor:'Jeff Tapper'},
+						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia Technologies', blogauthor:'Abdul Qabiz'},
+						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java, Opensource', blogauthor:'Balakumar Muthu'},
+						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office, UI, Usability', blogauthor:'Jensen Harris'},
+						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'MS Office, UI, Usability', blogauthor:'Narciso (nj) Jaramillo'},
+						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
+						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
+						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
+						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
+						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Flash player, Adobe', blogauthor:'Jeff Tapper'},
+						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia Technologies', blogauthor:'Abdul Qabiz'},
+						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java, Opensource', blogauthor:'Balakumar Muthu'},
+						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office, UI, Usability', blogauthor:'Jensen Harris'},
+						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'MS Office, UI, Usability', blogauthor:'Narciso (nj) Jaramillo'},
+						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
+						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
+						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
+						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
+						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Flash player, Adobe', blogauthor:'Jeff Tapper'},
+						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia Technologies', blogauthor:'Abdul Qabiz'},
+						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java, Opensource', blogauthor:'Balakumar Muthu'},
+						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office, UI, Usability', blogauthor:'Jensen Harris'},
+						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'MS Office, UI, Usability', blogauthor:'Narciso (nj) Jaramillo'},
+						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
+						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
+						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
+						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
+						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Flash player, Adobe', blogauthor:'Jeff Tapper'},
+						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia Technologies', blogauthor:'Abdul Qabiz'},
+						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java, Opensource', blogauthor:'Balakumar Muthu'},
+						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office, UI, Usability', blogauthor:'Jensen Harris'},
+						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'MS Office, UI, Usability', blogauthor:'Narciso (nj) Jaramillo'},												
+						{blogname:'Emmy Huang', blogurl:'weblogs.macromedia.com/emmy', blogcontent:'Flash player, Adobe', blogauthor:'Emmy Huang'}
+						]);
+		
+		/**
+		* method called on application 
+		* initialize
+		*/
+		private function initGrid():void{
+	    	myDataGrid.drawColumns(gridColumns); // take column arraycol and draw the grid
+	    	myDataGrid.loadData(gridData); // take data arraycol and populate grid
+	    }
+	        
+			
+	]]>
+</mx:Script>
+	<grid:CGrid id="myDataGrid" printTitle="Blog List [Static Example] " searchType="highlight" />
+ </mx:VBox>
+
