@@ -1,0 +1,126 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+// *Copyright (c) 2006 Uday M. Shankar
+//
+// The usual Yada-Yada!
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this code and associated documentation
+// files (the "Code"), to deal in the Code without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Code is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Code.
+//
+// THE CODE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+// Further it is worth to mention that no animals have been 
+// harmed during the development. No trees have been cut 
+// down. Womens rights have been treated with full respect.
+// Mankind's safety has been ensured at every step.
+//
+// Peace!
+//
+// @file: grid
+// @author: Uday M. Shankar
+// @date: 23-12-2006
+// @description: CSS styles used in the CGrid
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+/* hline below extended grid search panel */
+.searchVRule{
+	stroke-color: #989898;
+	stroke-width: 1;
+}
+
+/* grid search text field */
+.searchText{
+	border-style: none;
+	backgroundColor:#ffffff;
+	focus-alpha:0;
+	text-align:left;
+	vertical-align:middle;
+	padding-top:4;
+}
+/* grid search panel */
+.searchPanel{
+	borderStyle: solid;
+	borderColor:#989898;
+	cornerRadius: 4;
+	borderThickness:1;
+	padding-left: 3;
+}
+
+/* grid print button */
+.gridButton{
+	borderStyle: none;
+	backgroundAlpha: 0;
+}
+
+/* grid general style */
+DataGrid {
+   backgroundAlpha: 1;
+   headerColors: #ffff99, #ffffcc;
+   verticalGridLineColor: #ff9933;
+   rollOverColor: #ffff99;
+   borderColor: #ffcc33;
+   selectionColor: #ffcc33;
+}
+
+/* grid print style */
+PrintDataGrid {
+   backgroundAlpha: 1;
+   headerColors: #ffffff,#e8eef5;
+   alternatingItemColors: #ffffff, #f8f8f8;
+   horizontalGridLines: true;
+   horizontalGridLineColor: #cccccc;
+   verticalGridLines: true;
+   verticalGridLineColor: #999999;
+   useRollOver: false;
+   borderThickness: 1;
+   borderColor: #333333;
+   color: #000000;
+   textIndent: 0;
+   font-family: tahoma;
+   font-size: 8;
+}
+
+/* status bar text */
+.statusMessage{
+	font-family: verdana;
+	font-size: 9;
+	color: #000000;
+}
+
+/* grid column list */
+.columnList{
+	
+	backgroundAlpha: 1;
+	borderStyle: solid;
+	borderColor:#989898;
+	cornerRadius: 3;
+	borderThickness:1;
+	padding-left: 1;
+	padding-right: 1;
+	padding-top: 0;
+	padding-bottom: 0;
+	modalTransparency: 0;
+	modalTransparencyBlur: 2;
+	modalTransparencyColor: #000000;
+	modalTransparencyDuration: 100;
+	backgroundImage: "a.gif";
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:widgets="flexed.widgets.buttons.*" layout="absolute" creationComplete="initView()" backgroundGradientColors="[#fa8d21, #ffff00]" backgroundGradientAlphas="[1.0, 1.0]" viewSourceURL="srcview/index.html">
+	<mx:Script>
+		<![CDATA[
+			import flexed.widgets.alerts.alert;
+			import mx.controls.TextArea;
+			import flexed.widgets.buttons.CButton;
+			import mx.controls.Alert;
+			
+			[Embed("imgs/btn_save.png")]
+	        private var saveIcon:Class;
+			
+			private function initView():void{
+
+				//adding eventlistener to cbutton from caller
+				var cBtn1:CButton = new CButton(CButton.OK);
+				cBtn1.addEventListener("click",btnClicked);
+				buttonContainer.addChild(cBtn1);
+				
+				//overriding cbutton width & label from caller
+				var cBtn2:CButton = new CButton(CButton.CANCEL);
+				cBtn2.width = 150;
+				cBtn2.label = "MY Cancel";
+				cBtn2.addEventListener("click",btnClicked);
+				buttonContainer.addChild(cBtn2);
+	
+				//overriding cbutton icon from caller
+				var cBtn3:CButton = new CButton(CButton.SAVE);
+				cBtn3.addEventListener("click",btnClicked);
+				cBtn3.setStyle("icon",saveIcon);
+				buttonContainer.addChild(cBtn3);
+	
+				//calling cbutton without icons
+				var cBtn4:CButton = new CButton();
+				cBtn4.addEventListener("click",btnClicked);
+				cBtn4.label = "Generic";
+				buttonContainer.addChild(cBtn4);	
+				
+        	var ta:TextArea = new TextArea();
+        	ta.width = 500;
+        	ta.height = 500;
+            buttonContainer.addChild(ta);
+            ta.addEventListener(KeyboardEvent.KEY_DOWN, keyDHandler);
+            ta.addEventListener(KeyboardEvent.KEY_UP, keyUHandler);
+	
+			}
+			
+			private function btnClicked(evnt:Event):void{
+				alert.info(evnt.target.label.toString());
+			}
+        private function keyDHandler(event:KeyboardEvent):void {
+            trace("keyDownHandler: " + event.keyCode);
+            trace("ctrlKey: " + event.ctrlKey);
+            trace("keyLocation: " + event.keyLocation);
+            trace("shiftKey: " + event.shiftKey);
+            trace("altKey: " + event.altKey);
+        }
+
+        private function keyUHandler(event:KeyboardEvent):void {
+            trace("keyUpHandler: " + event.keyCode);
+        }
+		]]>
+	</mx:Script>
+	<mx:Label y="92" text="Custom Button Usage" width="343" horizontalCenter="0" textAlign="center" id="lblHeading" fontFamily="Verdana" fontSize="14" alpha="0.0" themeColor="#ffffff" enabled="true" fontWeight="bold"/>
+	<mx:HBox id="buttonContainer" horizontalCenter="0" verticalCenter="0" verticalAlign="middle">
+		<mx:Button id="normalButton" label="Normal Button"/>
+	</mx:HBox>
+</mx:Application>

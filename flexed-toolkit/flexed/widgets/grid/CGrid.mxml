@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// *Copyright (c) 2006 Uday M. Shankar
+//
+// The usual Yada-Yada!
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this code and associated documentation
+// files (the "Code"), to deal in the Code without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Code is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Code.
+//
+// THE CODE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+// Further it is worth to mention that no animals have been 
+// harmed during the development. No trees have been cut 
+// down. Womens rights have been treated with full respect.
+// Mankind's safety has been ensured at every step.
+//
+// Peace!
+//
+// @file: CGrid
+// @author: Uday M. Shankar
+// @date: 23-12-2006
+// @description: CGrid component, A wrapper over the DataGrid.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" verticalGap="2" creationComplete="initView()" backgroundColor="#FFFFFF" paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" xmlns:grid="flexed.widgets.grid.*" creationPolicy="all">
+<mx:Script>
+	<![CDATA[
+		import mx.events.CloseEvent;
+		import mx.events.DataGridEvent;
+		import mx.controls.DataGrid;
+		import mx.containers.TitleWindow;
+		import mx.controls.Image;
+		import mx.controls.LinkButton;
+		import mx.controls.HRule;
+		import mx.managers.PopUpManager;
+		import mx.containers.Canvas;
+		import mx.collections.XMLListCollection;
+		import mx.controls.CheckBox;
+		import mx.controls.Menu;
+		import mx.events.IndexChangedEvent;
+		import mx.controls.Alert;
+		import flexed.widgets.grid.PrintGridContent;
+		import mx.controls.Button;
+		import mx.core.Application;
+		import mx.printing.FlexPrintJob;
+		import mx.binding.utils.BindingUtils;
+		import mx.controls.dataGridClasses.DataGridColumn;
+		import mx.collections.ArrayCollection;
+	
+		public var colinfo:Array = new Array();
+		public var gridColumns:ArrayCollection = new ArrayCollection();
+		public var columnToSort:String;
+		
+		private var colDataNames:Array = new Array();
+		private var Hits:Array = new Array();
+		private var gridData:ArrayCollection=new ArrayCollection();
+
+		public static var popupColumns:TitleWindow = null;
+		
+		[Bindable]
+		public var gotData:int = 0;
+		[Bindable]
+		public var shownData:int = 0;
+		[Bindable]
+		public var printTitle:String = "";
+		[Bindable]
+		public var searchType:String = "filter";
+		[Bindable]
+		public var allowColumnSelection:Boolean = true;
+		[Bindable]
+		public var allowCopyToClipboard:Boolean = true;
+		[Bindable]
+		public var allowPrint:Boolean = true;
+		
+		[Embed(source="print.gif")]
+		[Bindable]
+		public var icoPrint:Class;	
+		
+		[Embed(source="columns.gif")]
+		[Bindable]
+		public var icoColumns:Class;
+
+		[Embed(source="copy.gif")]
+		[Bindable]
+		public var icoCopy:Class;
+				
+		/**
+		* Initializes the grid component
+		*/  		
+  		private function initView():void{
+  			loadData(gridData);
+  			prepareGrid();
+		}
+
+		/**
+		* Prepares the grid
+		*/
+  		private function prepareGrid():void {
+  			BindingUtils.bindSetter(allowGridColChoice,this,"allowColumnSelection");
+  			BindingUtils.bindSetter(allowGridCopy,this,"allowCopyToClipboard");
+  			BindingUtils.bindSetter(allowGridPrint,this,"allowPrint");
+  			
+  		}
+
+		/**
+		* Shows/Hides Column Choice Button
+		* @param choice : choice of hide-show state passed from caller.
+		*/
+  		private function allowGridColChoice(choice:Boolean):void {
+  			if(choice == false){
+  				columnsButton.width = 0;
+  				columnsButton.visible = false;
+  			}
+  		}
+
+		/**
+		* Shows/Hides Copy Button
+		*
+		* @param choice : choice of hide-show state passed from caller.
+		*/
+  		private function allowGridCopy(choice:Boolean):void {
+  			if(choice == false){
+  				copyButton.width = 0;
+  				copyButton.visible = false;
+  			}
+  		}
+
+		/**
+		* Shows/Hides Print Button
+		*
+		* @param choice : choice of hide-show state passed from caller.
+		*/
+  		private function allowGridPrint(choice:Boolean):void {
+  			if(choice == false){
+  				printButton.width = 0;
+  				printButton.visible = false;
+  			}
+  		}
+  		 		
+		/**
+		* Updates the total records shown text
+		*/
+  		private function shownRecords(value:int=0):void {
+ 			shownData = gridData.length;
+  			gotData = gridData.source.length;
+  			
+  			if(shownData!=gotData) {
+  				lblDataInfo.text="| "+shownData+" of "+gotData+" rows retrieved |"  				
+  			} else {
+  				lblDataInfo.text="| "+gotData+" rows retrieved |"
+  			}
+  		}
+		
+		/**
+		* Draws the columns of the grid.
+		*
+		* @param cols : The ArrayCollection of column specifications.
+		*/		
+		public function drawColumns(cols:ArrayCollection):void{
+			var colPreferences:Array = Preferences.getInstance.getGridPreference(this.id.toLowerCase());
+			
+			for(var i:int;i<cols.length;i++){
+				var column:DataGridColumn = new DataGridColumn();
+				column.headerText = cols[i].colname;
+				column.dataField = cols[i].coldata;
+				
+	 			//aligning contents of the column
+				if (cols[i].align != "" && cols[i].align != null ) {
+					column.setStyle("textAlign",cols[i].align);
+				}
+				//disabling (or enabling) sorting on columns
+				if (cols[i].sortable != "" && cols[i].sortable != null && cols[i].sortable == "false" ) {
+					column.sortable = false;
+				}
+				//setting a function for manipulating the data in some columns
+				if (cols[i].labelfunction != "" && cols[i].labelfunction != null) {
+					column.labelFunction = cols[i].labelfunction;
+				}
+				//setting custom itemrenderer
+				if (cols[i].renderer != "" && cols[i].renderer != null ) {
+					column.itemRenderer = new ClassFactory(cols[i].renderer);
+				}
+				if(colPreferences != null){
+					for(var j:int=0;j<colPreferences.length;j++){
+						if(cols[i].coldata == colPreferences[j].dataField){
+							column.width = colPreferences[j].width;
+							column.visible = colPreferences[j].visible;
+							column.sortDescending = colPreferences[j].sortDescending;
+							break;
+						}
+					}
+				}else{
+					if(cols[i].colwidth && cols[i].colwidth!=0){
+						column.width = cols[i].colwidth;					
+					}
+					if (cols[i].hide != "" && cols[i].hide != null && cols[i].hide == true) {
+						column.visible = false;
+					}
+				}
+				column.sortCompareFunction = sortColumns;
+				column.headerWordWrap = true;
+				colDataNames.push(cols[i].coldata);
+				colinfo.push(column);
+			}
+			dataGrid.columns = colinfo;
+			dataGrid.addEventListener(DataGridEvent.COLUMN_STRETCH, setColumnChoice);
+			gridColumns = cols;
+		}
+		
+		/**
+		* Executes on headerRelease to know 
+		* the column to sort.
+		*
+		* @param obj1 Object to compare
+		* @param obj2 Object to compare obj1 with.
+		*/			
+		private function sortHeader(event:DataGridEvent):void {
+    		columnToSort = event.dataField;
+    		setColumnChoice();
+		}
+		
+		/**
+		* Sorts the text fields in an case-insensitive mode and sorts the number fields  
+		* with correct numeric sort.
+		*
+		* @param obj1 Object to compare
+		* @param obj2 Object to compare obj1 with.
+		*/			
+		private function sortColumns(obj1:Object, obj2:Object):int{
+			var i:int = 0;
+			if(obj1[columnToSort] != null && obj2[columnToSort] != null){ //checking for null
+				if((Number)(obj1[columnToSort]) && (Number)(obj2[columnToSort])){ //checking for number
+					var nval1:Number = obj1[columnToSort];
+					var nval2:Number = obj2[columnToSort];
+
+					if (nval1 < nval2) {
+						i = -1;
+					} else if (nval1 > nval2) {
+						i = 1;
+					}					
+				} else{
+					var tval1:String = obj1[columnToSort].toString().toLowerCase();
+					var tval2:String = obj2[columnToSort].toString().toLowerCase();  
+					if(tval1 > tval2){
+						i = -1;
+					}
+					else if(tval1 < tval2){
+						i = 1;
+					}
+				}
+				
+			} 
+			return i;
+		}	
+		
+		/**
+		* Loads the data into the grid. The method also binds gridData lengths 
+		* for display. And sets the filter function to dataprovider arraycollection.
+		*
+		* @param dataRows : The data to be loaded taken in as an ArrayCollection from caller.
+		*/		
+		public function loadData(dataRows:ArrayCollection):void{
+			BindingUtils.bindSetter(shownRecords,gridData,"length");
+			BindingUtils.bindSetter(shownRecords,gridData.list,"length");
+
+			gridData = dataRows;
+			dataGrid.dataProvider = gridData;
+			dataGrid.dataProvider.filterFunction = filterData;
+			shownRecords();
+		}
+
+		/**
+		* Caller can add controls to the grid near
+		* the print button using this method. Create a UI object, set
+		* properties to it, attach events etc. and then call this method & pass
+		* the UI object as arguement.
+		*
+		* @param ctrl : The newly created UI object to be passed from caller.
+		*/		
+    	public  function addControls(ctrl:DisplayObject):void{
+    		if(ctrl!=null){
+    			cvsControlSpace.addChild(ctrl);
+    		}
+    	}
+
+		/**
+		* To print the contents of the grid, we use the FlexPrintJob
+		* along with the PrintDataGrid component. This is to allow printing
+		* pagination.
+		*
+		* The PrintgridContent contains the PrintGridHeader 
+		* & the PrintGridFooter.
+		*/		
+        public function doPrint():void {
+            var printJob:FlexPrintJob = new FlexPrintJob();
+            if (printJob.start()) {
+				var thePrintView:PrintGridContent = new PrintGridContent();
+				Application.application.addChild(thePrintView);
+				thePrintView.myDataGrid.columns = colinfo;
+				
+				thePrintView.width=printJob.pageWidth;
+				thePrintView.height=printJob.pageHeight;
+				thePrintView.setReportTitle(printTitle);
+				
+				if(shownData == 0){
+					thePrintView.totRecs = gotData;
+				}else{
+					thePrintView.totRecs = shownData;
+				}
+				
+				thePrintView.myDataGrid.dataProvider = dataGrid.dataProvider;
+				thePrintView.showPage("single");
+				
+				if(!thePrintView.myDataGrid.validNextPage)
+				{
+					printJob.addObject(thePrintView);
+				}
+				else
+				{
+					thePrintView.showPage("first");
+					printJob.addObject(thePrintView);
+					thePrintView.pageNumber++;
+                    while(true)
+                    {
+                        thePrintView.myDataGrid.nextPage();
+                        thePrintView.showPage("last");    
+
+                        if(!thePrintView.myDataGrid.validNextPage) 
+                        {
+                            printJob.addObject(thePrintView);
+                            break;
+                        }
+                        else
+                        {
+                            thePrintView.showPage("middle");
+                            printJob.addObject(thePrintView);
+                            thePrintView.pageNumber++;
+                        }
+                    }
+                }
+                Application.application.removeChild(thePrintView);
+            }
+            printJob.send();
+        }
+        
+    	/**
+    	* Copy the selected items to clipboard. If no rows are selected,
+    	* the entire Grid is copied.
+    	* @author: Easwar Natarajan
+    	*/
+    	private function copyToClipBoard():void
+	    {
+			var columns:Array = dataGrid.columns;
+			var textFromItems:String = "";
+			var arr : Array = dataGrid.selectedItems
+			if(arr.length == 0){
+				arr = ArrayCollection(dataGrid.dataProvider).toArray();
+			}
+			for each (var it:Object in arr){
+				for each (var c:DataGridColumn in columns)
+				  textFromItems += it[c.dataField] + "\t";
+				textFromItems += "\n";
+			}
+			if(textFromItems != ""){
+				flash.system.System.setClipboard(textFromItems);
+				if(dataGrid.selectedItems.length > 0){
+					Alert.show("Selected Rows copied to Clipboard.", "Copy To Clipboard");
+				}else{
+					Alert.show("All Rows copied to Clipboard.", "Copy To Clipboard");
+				}
+			}
+				
+	    }        
+
+		/**
+		* Handles Filter Search and uses the filter 
+		* function specified in the initView() method. 
+		*/	
+		private function handleFilterSearch():void{
+				dataGrid.dataProvider.refresh();        	
+				shownRecords();				
+        }
+
+		/**
+		* Filters the data in the grid based on boolean 
+		* returned from the string compare search.
+		*/	
+        private function filterData(item:Object):Boolean{
+        	var colNos:int = colDataNames.length;
+        	for(var i:int=0;i<colNos;i++){
+        		if(item[colDataNames[i]] != null && item[colDataNames[i]].toString().toLowerCase().indexOf(txtSearchCriteria.text.toLowerCase()) != -1){
+        			return true;
+        		}
+        	}
+    		return false;
+    	}                  	
+
+		/**
+		* Handles the Highlight Search.
+		*
+		* Highlight Search : Highlights the results 
+		* of the search if available in the grid. Does not 
+		* remove data from the view. Only highlights them. 
+		*/	
+		private function handleHighlightSearch():void{
+			dataGrid.invalidateDisplayList();
+        }
+
+		/**
+		* Highlights the data in the grid based on boolean 
+		* returned from the string compare search. 
+		*/
+         private function highlightData(item:Object, color:uint):uint
+         {
+         	var colNos:int = colDataNames.length;
+         	if(txtSearchCriteria.text.length > 1 && searchType == "highlight"){
+	        	for(var i:int=0;i<colNos;i++){
+	        		if(item[colDataNames[i]] != null && item[colDataNames[i]].toString().toLowerCase().indexOf(txtSearchCriteria.text.toLowerCase()) != -1){
+	        			return 0xEBEF80;
+	        		}
+	        	}
+        	}
+    		return color;
+         }
+         
+		/**
+		* Calls the appropriate method based on 
+		* the type of search passed from the caller.
+		*/	         
+    	private function handleSearch():void{
+    		if(searchType == "filter"){
+    			handleFilterSearch();
+    		}else if(searchType == "highlight"){
+    			handleHighlightSearch();
+    		}
+        }
+
+		/**
+		* Creates a titlewindow and pops it up on button click
+		*/			
+		private function createColList():void{
+			var SPACING_X : int = 0;
+			var SPACING_Y : int = 0;			
+			popupColumns = new TitleWindow();
+			popupColumns.id = "cvsColumnList";
+			popupColumns.name = "cvsColumnList";
+			popupColumns.title = "Select Columns";
+			popupColumns.showCloseButton = true;
+			popupColumns.addEventListener("close",closePopup);
+			popupColumns.styleName = "columnList";
+			popupColumns.setStyle("horizontalGap",1);
+
+			var rect:Rectangle = columnsButton.getRect(columnsButton);
+			var pt:Point = columnsButton.localToGlobal(rect.bottomRight);			
+
+			if((pt.x + SPACING_X + popupColumns.minWidth) > root.width){
+				// show side
+				popupColumns.x = pt.x - SPACING_X-popupColumns.minWidth;
+				popupColumns.y = pt.y - SPACING_Y;
+			}
+			else {
+				// show below
+				popupColumns.x = pt.x + SPACING_X;
+				popupColumns.y = pt.y + SPACING_Y;	
+			}
+			PopUpManager.addPopUp(popupColumns, columnsButton, true);
+		}
+
+		/**
+		* Closes the titlewindow.
+		*/			
+		private function closePopup(event:CloseEvent):void{
+			setColumnChoice();
+			popupColumns.visible = false;
+		}
+		
+		/**
+		* Populates the popped up titlewindow with checkboxes, one
+		* each for each columns defined. The visible columns will
+		* be checked and the non-visible columns will be unchecked.	
+		*/			
+		private function columnList():void{
+			if(popupColumns == null){
+				createColList();
+			}else{
+				popupColumns.removeAllChildren();
+				popupColumns.visible = true;
+			}
+					
+			for(var i:int = 0; i<gridColumns.length;i++){
+				var chkb:CheckBox = new CheckBox(); 
+				chkb.id = i.toString();
+				if(dataGrid.columns[i].visible == false){
+					chkb.selected = false;
+				}else{
+					chkb.selected = true;
+				}
+				chkb.label = gridColumns[i].colname;
+				chkb.addEventListener(Event.CHANGE,showhideCol);
+				popupColumns.addChild(chkb);
+			}
+			PopUpManager.bringToFront(popupColumns);
+		}
+
+		/**
+		* Called on click of checkboxes. Hides or Shows columns
+		* based on checked status.
+		*/			
+		private function showhideCol(event:Event):void{
+			var dgc:DataGridColumn;
+			dgc = dataGrid.columns[event.target.id];
+			if(dataGrid.columnCount > 2){
+				dgc.visible = event.target.selected;
+			}
+		}
+
+		/**
+		* Saving column choice in SO
+		*/			
+		private function setColumnChoice(event:DataGridEvent = null):void{
+			var dCols:Array = new Array();
+			for(var i:int=0;i<dataGrid.columnCount;i++){
+					var colattr:Object =new Object();
+					colattr.dataField = dataGrid.columns[i].dataField;
+					colattr.visible = dataGrid.columns[i].visible;
+					colattr.width = dataGrid.columns[i].width;
+					colattr.sortDescending = dataGrid.columns[i].sortDescending;
+					dCols.push(colattr);
+			}
+			Preferences.getInstance.setGridPreference(new String(this.id.toLowerCase()), dCols);
+		}
+		
+	]]>
+</mx:Script>
+	<mx:HBox width="100%" id="searchPanel" horizontalGap="0">
+		<mx:HBox id="searchControl" styleName="searchPanel" height="20" width="150" horizontalGap="0">
+		<mx:Image source="@Embed('search.gif')"/>
+		<mx:VRule height="100%" styleName="searchVRule" />
+		<mx:TextInput change="handleSearch()" id="txtSearchCriteria"  width="88%" height="100%" styleName="searchText"/>
+		</mx:HBox>
+		<mx:Spacer width="1%"/>
+		<mx:HBox id="cvsControlSpace" width="99%" horizontalAlign="right" horizontalGap="0" />
+		<mx:Label  id="lblDataInfo"  textAlign="right" />
+		<mx:Image id="printButton" styleName="gridButton" click="doPrint()" width="22" source="{icoPrint}" buttonMode="true" toolTip="Print"/>
+		<mx:Image id="copyButton" styleName="gridButton" click="copyToClipBoard()" width="22" source="{icoCopy}" buttonMode="true" toolTip="Ccopy to clipboard"/>
+		<mx:Image id="columnsButton" styleName="gridButton" click="columnList()" width="22" source="{icoColumns}" buttonMode="true" toolTip="Show/Hide columns"/>
+	</mx:HBox>
+	<grid:RCDataGrid rowColorFunction="highlightData" width="100%" height="100%" horizontalCenter="0" id="dataGrid" bottom="0" allowMultipleSelection="true" headerRelease="sortHeader(event)"/>
+	<mx:Label id="statusBar" width="100%" textAlign="right" styleName="statusMessage"/>
+</mx:VBox>
