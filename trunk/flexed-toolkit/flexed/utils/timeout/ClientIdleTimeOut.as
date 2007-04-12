@@ -1,4 +1,45 @@
-package flexed.utils
+////////////////////////////////////////////////////////////////////////////////
+//
+// *Copyright (c) 2007
+//
+// The usual Yada-Yada!
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this code and associated documentation
+// files (the "Code"), to deal in the Code without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Code is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Code.
+//
+// THE CODE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+// Further it is worth to mention that no animals have been 
+// harmed during the development. No trees have been cut 
+// down. Womens rights have been treated with full respect.
+// Mankind's safety has been ensured at every step.
+//
+// Peace!
+//
+// @file: alert
+// @authors: Uday M. Shankar, Venkatesh Ramadurai
+// @date: 31-03-2007
+// @description: Extending the Alert to create more customized alerts 
+// with predefined icons etc.
+//
+////////////////////////////////////////////////////////////////////////////////
+package flexed.utils.timeout
 {
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -13,13 +54,18 @@ package flexed.utils
 	import mx.containers.VBox;
 	import mx.controls.Text;
 	import mx.containers.Canvas;
+	import mx.effects.Blur;
+	import mx.containers.HBox;
+	import mx.controls.Image;
+	import mx.controls.Spacer;
+	import mx.controls.Button;
 
 	
 	public class ClientIdleTimeOut
 	{
 		
-		private var _uintTimeOutInterval:uint = (.1 * 60 * 1000);//minutes * seconds * milliseconds;
-		private var _uintConfirmInterval:uint = (.1 * 60 * 1000);//minutes * seconds * milliseconds;
+		private var _uintTimeOutInterval:uint = (.1 * 50 * 1000);//minutes * seconds * milliseconds; Default 5 secs;
+		private var _uintConfirmInterval:uint = (.1 * 50 * 1000);//minutes * seconds * milliseconds; Default 5 secs;
 		
 		private var _timerTimeOut:Timer = new Timer(timeOutInterval);
 		private var _timerConfirm:Timer = new Timer(confirmInterval);
@@ -29,7 +75,11 @@ package flexed.utils
 		private var _keyListener:Boolean = true;
 		private var _timedOutFunction:Function = new Function();
 		
-		private var timoutPrompt:Canvas = new Canvas();
+		[Embed("ico_alert.jpg")]
+        private var alertIcon:Class;
+        private var timoutPrompt:HBox = null;
+        
+        private static var _instance:ClientIdleTimeOut = new ClientIdleTimeOut();
 		
 		public function ClientIdleTimeOut():void{
 			_timerTimeOut.addEventListener(TimerEvent.TIMER, onTimeOutTimer);
@@ -38,6 +88,18 @@ package flexed.utils
 			
 			if(_mouseListener == true) (Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
 			if(_keyListener == true) (Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);
+		}
+		
+		public static function get instance():ClientIdleTimeOut{
+			return _instance;
+		}
+		
+		public function startTimer():void{
+			_timerTimeOut.start();
+		}
+		
+		public function stopTimer():void{
+			_timerTimeOut.stop();
 		}
 		
 		public function set timeOutInterval(timeoutInterval:uint):void{
@@ -124,7 +186,7 @@ package flexed.utils
 				(Application.application as Application).enabled = false;
 				_timerConfirm.stop();
 				_timerTimeOut.stop();
-				_timedOutFunction();
+				timeoutApp();
 				
 		   }
 		}
@@ -134,7 +196,7 @@ package flexed.utils
 		}
 		
 		private function hideTimeOutPrompt():void{
-			PopUpManager.removePopUp(timoutPrompt);
+			timoutPrompt.visible = false;
 		}
 		
 		
@@ -151,30 +213,62 @@ package flexed.utils
 		}
 		
 		private function showTimeOutPrompt():void{
-			var cvs:VBox = new VBox();
-			cvs.removeAllChildren();
-			cvs.percentWidth = 90;
-			cvs.addEventListener(FlexEvent.INITIALIZE,timeOutConfirmation);
+			if(timoutPrompt == null){
+				createPopUp();
+			}else{
+				timoutPrompt.visible = true;
+				timoutPrompt.addEventListener(FlexEvent.SHOW, timeOutConfirmation);
+			}
 			
-			var promptText:Text = new Text();
-			promptText.htmlText = "Move the mouse or type within <b>" + _uintConfirmInterval/1000 + "</b> seconds <br>to stop automatic TIMEOUT.";
-			promptText.setStyle("textAlign","center");
-			cvs.addChild(promptText);
-			
-    		timoutPrompt.addEventListener(MouseEvent.MOUSE_MOVE, resetTimeOut);
-			timoutPrompt.addEventListener(KeyboardEvent.KEY_DOWN, resetTimeOut);
+		}
+		
+		public function timeoutApp():void{
+			_timedOutFunction();
+		}
+		
+		private function createPopUp():void{
+			timoutPrompt = new HBox();
 			timoutPrompt.setStyle("backgroundColor",0xffffff);
 			timoutPrompt.setStyle("cornerRadius",4);
 			timoutPrompt.setStyle("borderStyle","solid");
 			timoutPrompt.setStyle("borderColor",0xd50000);
 			timoutPrompt.setStyle("borderThickness",2);
 			timoutPrompt.setStyle("alpha",1);
-			timoutPrompt.width = 250;
-		    timoutPrompt.height = 100;
+			timoutPrompt.width = 350;
+		    timoutPrompt.height = 90;
 		    timoutPrompt.x=(Application.application.width/2) - (timoutPrompt.width/2);
 		    timoutPrompt.y=(Application.application.height/2) - (timoutPrompt.height/2);
-			timoutPrompt.addChild(cvs);
-
+		    timoutPrompt.verticalScrollPolicy = "off";
+		    timoutPrompt.horizontalScrollPolicy = "off";
+		    
+		    var imgIcon:Image = new Image();imgIcon.source = alertIcon;
+		    timoutPrompt.addChild(imgIcon);
+		    
+		    var txtCon:VBox = new VBox();
+		    txtCon.setStyle("verticalGap",1);
+			txtCon.setStyle("horizontalAlign","center");
+			txtCon.percentHeight = 100;
+			txtCon.percentWidth = 100;
+			
+			var spacer:Spacer = new Spacer();
+			spacer.height = 20;
+			spacer.percentWidth = 100;
+			txtCon.addChild(spacer);
+			
+			var promptText:Text = new Text();
+			promptText.htmlText = "Move the mouse or type within <b>" + _uintConfirmInterval/1000 + "</b> seconds <br>to stop automatic TIMEOUT.";
+			promptText.setStyle("textAlign","center");
+			txtCon.addChild(promptText);
+			
+			var btnKeepAlive:Button = new Button();
+			btnKeepAlive.name = "btnKeepAlive";
+			btnKeepAlive.label = "Stay Alive!";
+			btnKeepAlive.addEventListener("click",resetTimeOut);
+			txtCon.addChild(btnKeepAlive);
+			
+			timoutPrompt.addChild(txtCon);
+			timoutPrompt.addEventListener(FlexEvent.INITIALIZE, timeOutConfirmation);
+			
 			PopUpManager.addPopUp(timoutPrompt,Application.application as Application);
 		}
  		
