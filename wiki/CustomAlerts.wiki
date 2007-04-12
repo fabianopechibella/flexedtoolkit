@@ -2,9 +2,7 @@
 #Custom Alerts v1.0 ~ A Customized Alert that thrown alerts with icons and style! :)
 
 =Custom Alerts v1.0 - Stylized Alerts=
-We’ve been busy for the last couple of weeks. And some posts have been DRAFT for quiet some time. I guess its high time I completed those posts and getting back into active posting mode ;) .
-
-Back to Flex. This time we are looking at Alert Messages in Flex. While the flex alerts are nice looking, they are a bit too simple. So, I started looking at options for styling the alerts and found that it quiet easy to get a really sexy look and feel for the Alerts.
+This time we are looking at Alert Messages in Flex. While the flex alerts are nice looking, they are a bit too simple. So, I started looking at options for styling the alerts and found that it quiet easy to get a really sexy look and feel for the Alerts.
 
 
 = The alert class =
@@ -26,5 +24,4 @@ alert.error('This is an error message');
 }}}
 
 So, its as simple as that :) . Check out the blog post at [http://flexed.wordpress.com/2007/04/10/styling-alerts-calerts-v10/ flexed.wordpress.com]
-
 
