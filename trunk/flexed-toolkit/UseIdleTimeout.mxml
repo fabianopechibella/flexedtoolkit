@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:utils="flexed.utils.*">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:utils="flexed.utils.timeout.*" backgroundGradientColors="[#000000, #39579d]">
 	<mx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
 			private function go():void{
-				Alert.show("Haaa");
+				Alert.show("The Client has been timed out due to inactivity","Client Timeout");
 			}
 		]]>
 	</mx:Script>
+	<mx:Style>
+		Panel{
+			drop-shadow-enabled:true;
+			corner-radius :5;
+			header-colors : #90a4d1, #5970a0;
+		   	footer-colors : #9db6d9, #ffffff;
+			headerHeight: 25;
+			titleStyleName: "title";
+			color:#0f3177;
+			font-weight:normal;
+			font-size: 10;
+			vertical-gap: 0;
+			horizontal-gap: 0;
+			border-color : #5970a0;
+		   	borderAlpha: 1;
+		   	border-thickness: 1;
+		   	border-style :solid;
+		   	padding-left:0;
+		   	padding-right:0;
+		}
+		.title {
+			font-family: verdana;
+			font-size: 10;
+			font-weight:bold;
+			color:#FFFFFF;
+		}
+	</mx:Style>
 	<utils:ClientIdleTimeOut id="myTimeOut" onTimeOut="go" listenKeyStroke="true" listenMouseMove="true" timeOutInterval="3" confirmInterval="2" />
-	<mx:Canvas x="184" y="107" width="334" height="200" backgroundColor="#ffffff">
-		<mx:TextInput x="10" y="81" height="52" fontSize="36" text="kk" width="314" color="#eec520"/>
-		
-	</mx:Canvas>
+	<mx:Panel title="Idle Timeout Example" width="353" height="162" layout="absolute" backgroundColor="#ffffff" horizontalCenter="0" verticalCenter="0">
+		<mx:TextInput height="54" fontSize="36" text="kk" width="242" color="#eec520" cornerRadius="6" borderStyle="solid" borderColor="#000000" horizontalCenter="0" verticalCenter="0"/>
+	</mx:Panel>
 </mx:Application>
