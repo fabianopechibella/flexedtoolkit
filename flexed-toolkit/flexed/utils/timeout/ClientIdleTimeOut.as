@@ -177,15 +177,15 @@ package flexed.utils.timeout
 		  */   
 		 public function resetLastActivity(evnt:Event):void{
 			_iLastActivity = getTimer();
-			
-			if (_timerConfirm.running){
-				_timerConfirm.stop();
+			if((Application.application as Application).enabled == true){
+				if (_timerConfirm.running){
+					_timerConfirm.stop();
+				}
+				if(!_timerTimeOut.running){
+					_timerTimeOut.start();
+				}
+				if(timoutPrompt != null) hideTimeOutPrompt();
 			}
-			if(!_timerTimeOut.running){
-				_timerTimeOut.start();
-			}
-			
-			if(timoutPrompt != null) hideTimeOutPrompt();
 		 }
 
 
@@ -196,7 +196,7 @@ package flexed.utils.timeout
 		 private function onTimeOutTimer(event:TimerEvent = null):void{
 		 	var iCurTimer:Number = getTimer();
 			var iElapsed:Number = iCurTimer - _iLastActivity;
-			
+			trace("timeOutInterval :"+timeOutInterval);
 			if ( iElapsed >= timeOutInterval ) {
 				showTimeOutPrompt();
 				_timerTimeOut.stop();
@@ -211,10 +211,9 @@ package flexed.utils.timeout
 		private function onConfirmTimer(event:TimerEvent = null):void{
 			var iCurTimer:Number = getTimer();
 			var iElapsed:Number = iCurTimer - _iLastActivity;
-			
+			trace("confirmInterval :"+confirmInterval);
 			if ( iElapsed >= confirmInterval ) {
 				hideTimeOutPrompt();
-				(Application.application as Application).enabled = false;
 				_timerConfirm.stop();
 				_timerTimeOut.stop();
 				timeoutApp();
@@ -247,15 +246,14 @@ package flexed.utils.timeout
 				createPopUp();
 			}else{
 				timoutPrompt.visible = true;
-				timoutPrompt.addEventListener(FlexEvent.SHOW, timeOutConfirmation);
 			}
-			
 		}
 		
 		public function timeoutApp():void{
-			_timedOutFunction();
 			eventTimeOut.expiryTime = new Date().date;
 			(Application.application as Application).dispatchEvent(eventTimeOut);
+			(Application.application as Application).enabled = false;
+			_timedOutFunction();
 		}
 		
 		private function createPopUp():void{
@@ -300,8 +298,10 @@ package flexed.utils.timeout
 			
 			timoutPrompt.addChild(txtCon);
 			timoutPrompt.addEventListener(FlexEvent.INITIALIZE, timeOutConfirmation);
+			timoutPrompt.addEventListener(FlexEvent.SHOW, timeOutConfirmation);
 			
 			PopUpManager.addPopUp(timoutPrompt,Application.application as Application);
+			
 		}
  		
 	}
