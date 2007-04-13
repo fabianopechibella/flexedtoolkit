@@ -2,9 +2,14 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:utils="flexed.utils.timeout.*" backgroundGradientColors="[#000000, #39579d]">
 	<mx:Script>
 		<![CDATA[
+			import mx.events.DynamicEvent;
 			import mx.controls.Alert;
-			private function go():void{
+			
+			private function go(e:Event=null):void{
 				Alert.show("The Client has been timed out due to inactivity","Client Timeout");
+			}
+			private function init():void{
+				//this.addEventListener("appTimedOut",go);
 			}
 		]]>
 	</mx:Script>
