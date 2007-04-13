@@ -33,14 +33,14 @@
 		   	padding-left:0;
 		   	padding-right:0;
 		}
-		.title {
+		.title{
 			font-family: verdana;
 			font-size: 10;
 			font-weight:bold;
 			color:#FFFFFF;
 		}
 	</mx:Style>
-	<utils:ClientIdleTimeOut id="myTimeOut" onTimeOut="go" listenKeyStroke="true" listenMouseMove="true" timeOutInterval="3" confirmInterval="2" />
+	<utils:ClientIdleTimeOut id="myTimeOut" onTimeOut="go" listenKeyStroke="true" listenMouseMove="true" timeOutInterval="4" confirmInterval="2" />
 	<mx:Panel title="Idle Timeout Example" width="353" height="162" layout="absolute" backgroundColor="#ffffff" horizontalCenter="0" verticalCenter="0">
 		<mx:TextInput height="54" fontSize="36" text="kk" width="242" color="#eec520" cornerRadius="6" borderStyle="solid" borderColor="#000000" horizontalCenter="0" verticalCenter="0"/>
 	</mx:Panel>
