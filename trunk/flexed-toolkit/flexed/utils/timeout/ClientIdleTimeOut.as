@@ -59,17 +59,8 @@ package flexed.utils.timeout
 	import mx.controls.Image;
 	import mx.controls.Spacer;
 	import mx.controls.Button;
-
-	//--------------------------------------
-	//  Events
-	//--------------------------------------
-	
-	/**
-	 *  Dispatched when the application times out.
-	 *
-	 *  @eventType mx.events.DynamicEvent
-	 */
-	[Event(name="appTimedOut", type="mx.events.DynamicEvent")]
+	import mx.events.DynamicEvent;
+	import flash.events.EventDispatcher;
 
 	/**
 	 *  CientIdleTimeOut is a component which when added to any flex application,
@@ -99,8 +90,8 @@ package flexed.utils.timeout
 	    //
 	    //--------------------------------------------------------------------------
 	
-		private var _uintTimeOutInterval:uint = (.1 * 50 * 1000);//minutes * seconds * milliseconds; Default 5 secs;
-		private var _uintConfirmInterval:uint = (.1 * 50 * 1000);//minutes * seconds * milliseconds; Default 5 secs;
+		private var _uintTimeOutInterval:uint = 0;
+		private var _uintConfirmInterval:uint = 0;
 		
 		private var _timerTimeOut:Timer = new Timer(timeOutInterval);
 		private var _timerConfirm:Timer = new Timer(confirmInterval);
@@ -108,13 +99,12 @@ package flexed.utils.timeout
 		
 		private var _mouseListener:Boolean = false;
 		private var _keyListener:Boolean = true;
-		private var _timedOutFunction:Function = new Function();
 		
 		[Embed("ico_alert.jpg")]
         private var alertIcon:Class;
         private var timoutPrompt:HBox = null;
-        
-        private static var _instance:ClientIdleTimeOut = new ClientIdleTimeOut();
+        private var eventTimeOut:DynamicEvent = new DynamicEvent("appTimedOut");
+        private var _timedOutFunction:Function = new Function();
 		
 		//--------------------------------------------------------------------------
 		//
@@ -131,14 +121,10 @@ package flexed.utils.timeout
 			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 			
 			if(_mouseListener == true) (Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
-			if(_keyListener == true) (Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);
+			if(_keyListener == true) (Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);			
+			eventTimeOut.startTime = new Date().date;
 		}
-
-		
-		public static function get instance():ClientIdleTimeOut{
-			return _instance;
-		}
-		
+	
 		public function startTimer():void{
 			_timerTimeOut.start();
 		}
@@ -180,11 +166,11 @@ package flexed.utils.timeout
 		public function get listenMouseMove():Boolean{
 			return _mouseListener;
 		}
-	
+		
 		public function set onTimeOut(timeoutFn:Function):void{
 			_timedOutFunction = timeoutFn;
 		}
-		
+	
 		/**
 		  * called by mousmove resets timout
 		  * clears warning
@@ -232,7 +218,6 @@ package flexed.utils.timeout
 				_timerConfirm.stop();
 				_timerTimeOut.stop();
 				timeoutApp();
-				
 		   }
 		}
 		
@@ -269,6 +254,8 @@ package flexed.utils.timeout
 		
 		public function timeoutApp():void{
 			_timedOutFunction();
+			eventTimeOut.expiryTime = new Date().date;
+			(Application.application as Application).dispatchEvent(eventTimeOut);
 		}
 		
 		private function createPopUp():void{
