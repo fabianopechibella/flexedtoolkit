@@ -32,11 +32,11 @@
 //
 // Peace!
 //
-// @file: alert
+// @file: ClientIdleTimeOut
 // @authors: Uday M. Shankar, Venkatesh Ramadurai
 // @date: 31-03-2007
-// @description: Extending the Alert to create more customized alerts 
-// with predefined icons etc.
+// @description: ClientIdleTimeOut component to track user 
+// inactivity and act there on.
 //
 ////////////////////////////////////////////////////////////////////////////////
 package flexed.utils.timeout
@@ -60,10 +60,45 @@ package flexed.utils.timeout
 	import mx.controls.Spacer;
 	import mx.controls.Button;
 
+	//--------------------------------------
+	//  Events
+	//--------------------------------------
 	
+	/**
+	 *  Dispatched when the application times out.
+	 *
+	 *  @eventType mx.events.DynamicEvent
+	 */
+	[Event(name="appTimedOut", type="mx.events.DynamicEvent")]
+
+	/**
+	 *  CientIdleTimeOut is a component which when added to any flex application,
+	 *  timesout the application if the user is inactive for a set period of time.
+	 *
+	 *  <p>This functionality is very useful in business applications which require user
+	 *  authentication and login. In such applications, if the user is inactive for 
+	 *  a certain period of time, the UI is timedout and disabled.
+	 *
+	 *  @mxml
+	 *
+	 *  <p>Using this component in the application is very simple. Use the following 
+	 *  syntax for basic usage:</p>
+	 *
+	 *  <p>
+	 *  &lt;flexed:ClientIdleTimeOut id="" /&gt;
+	 *  </p>
+	 *  
+	 *  @includeExample UseIdleTimeout.mxml
+	 */	
 	public class ClientIdleTimeOut
 	{
 		
+		//--------------------------------------------------------------------------
+	    //
+	    //  Class variables
+	    //
+	    //--------------------------------------------------------------------------
+	
 		private var _uintTimeOutInterval:uint = (.1 * 50 * 1000);//minutes * seconds * milliseconds; Default 5 secs;
 		private var _uintConfirmInterval:uint = (.1 * 50 * 1000);//minutes * seconds * milliseconds; Default 5 secs;
 		
@@ -81,6 +116,15 @@ package flexed.utils.timeout
         
         private static var _instance:ClientIdleTimeOut = new ClientIdleTimeOut();
 		
+		//--------------------------------------------------------------------------
+		//
+		//  Constructor
+		//
+		//--------------------------------------------------------------------------
+
+		/**
+		 *  Constructor.
+		 */
 		public function ClientIdleTimeOut():void{
 			_timerTimeOut.addEventListener(TimerEvent.TIMER, onTimeOutTimer);
 			_timerTimeOut.start();
@@ -89,6 +133,7 @@ package flexed.utils.timeout
 			if(_mouseListener == true) (Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
 			if(_keyListener == true) (Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);
 		}
+
 		
 		public static function get instance():ClientIdleTimeOut{
 			return _instance;
