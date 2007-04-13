@@ -120,8 +120,8 @@ package flexed.utils.timeout
 			_timerTimeOut.start();
 			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 			
-			if(_mouseListener == true) (Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
-			if(_keyListener == true) (Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);			
+			(Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
+			(Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);			
 			eventTimeOut.startTime = new Date().date;
 		}
 	
@@ -197,7 +197,7 @@ package flexed.utils.timeout
 		 	var iCurTimer:Number = getTimer();
 			var iElapsed:Number = iCurTimer - _iLastActivity;
 			
-			if ( iElapsed >= _uintTimeOutInterval ) {
+			if ( iElapsed >= timeOutInterval ) {
 				showTimeOutPrompt();
 				_timerTimeOut.stop();
 		   }
@@ -212,7 +212,7 @@ package flexed.utils.timeout
 			var iCurTimer:Number = getTimer();
 			var iElapsed:Number = iCurTimer - _iLastActivity;
 			
-			if ( iElapsed >= _uintTimeOutInterval ) {
+			if ( iElapsed >= confirmInterval ) {
 				hideTimeOutPrompt();
 				(Application.application as Application).enabled = false;
 				_timerConfirm.stop();
@@ -231,8 +231,8 @@ package flexed.utils.timeout
 		
 		
 		private function timeOutConfirmation(event:Event):void{
-			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 			_timerConfirm.start();
+			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 		}
 		
 		private function resetTimeOut(event:Event):void{
@@ -288,7 +288,7 @@ package flexed.utils.timeout
 			txtCon.addChild(spacer);
 			
 			var promptText:Text = new Text();
-			promptText.htmlText = "Move the mouse or type within <b>" + _uintConfirmInterval/1000 + "</b> seconds <br>to stop automatic TIMEOUT.";
+			promptText.htmlText = "Move the mouse or type within <b>" + confirmInterval/1000 + "</b> seconds <br>to stop automatic TIMEOUT.";
 			promptText.setStyle("textAlign","center");
 			txtCon.addChild(promptText);
 			
