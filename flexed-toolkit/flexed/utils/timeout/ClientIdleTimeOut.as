@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// *Copyright (c) 2007
+// *Copyright (c) 2007 Uday M. Shankar
 //
 // The usual Yada-Yada!
 //
@@ -64,9 +64,8 @@ package flexed.utils.timeout
 
 	/**
 	 *  CientIdleTimeOut is a component which when added to any flex application,
-	 *  timesout the application if the user is inactive for a set period of time.
-	 *
-	 *  <p>This functionality is very useful in business applications which require user
+	 *  timesout the application if the user is inactive for a set period of time. This 
+	 *  functionality is very useful in business applications which require user
 	 *  authentication and login. In such applications, if the user is inactive for 
 	 *  a certain period of time, the UI is timedout and disabled.
 	 *
@@ -74,12 +73,8 @@ package flexed.utils.timeout
 	 *
 	 *  <p>Using this component in the application is very simple. Use the following 
 	 *  syntax for basic usage:</p>
-	 *
-	 *  <p>
-	 *  &lt;flexed:ClientIdleTimeOut id="" /&gt;
-	 *  </p>
-	 *  
-	 *  @includeExample UseIdleTimeout.mxml
+	 * 
+	 *  &lt;flexed:ClientIdleTimeOut id="TimerId" onTimeOut="FunctionPassedFromCaller" listenKeyStroke="true|false" listenMouseMove="true|false" timeOutInterval="1" confirmInterval="1" /&gt;
 	 */	
 	public class ClientIdleTimeOut
 	{
@@ -105,6 +100,8 @@ package flexed.utils.timeout
         private var timoutPrompt:HBox = null;
         private var eventTimeOut:DynamicEvent = new DynamicEvent("appTimedOut");
         private var _timedOutFunction:Function = new Function();
+        
+        private const TIME_VALUE:uint = 60000; //as given value is to be treated as minutes
 		
 		//--------------------------------------------------------------------------
 		//
@@ -117,40 +114,75 @@ package flexed.utils.timeout
 		 */
 		public function ClientIdleTimeOut():void{
 			_timerTimeOut.addEventListener(TimerEvent.TIMER, onTimeOutTimer);
-			_timerTimeOut.start();
 			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 			
 			(Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
 			(Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);			
-			eventTimeOut.startTime = new Date().date;
-		}
-	
+			eventTimeOut.startTime = new Date().getHours().toString() +"-"+ new Date().getMinutes().toString() +"-"+ new Date().getSeconds().toString();
+		}		
+		
+		/**
+	     *  To start the idle timer from the caller where the <code>ClientIdleTimer</code>
+	     *  has been used. The timer will start with the timeout intervals
+	     *  already passed in.
+	     */
 		public function startTimer():void{
 			_timerTimeOut.start();
 		}
 		
+		/**
+	     *  To stop the idle timer from the caller where the <code>ClientIdleTimer</code>
+	     *  has been used. The timer will forcefuly stop whether the timeout 
+	     *  intervals have reached or not.
+	     */		
 		public function stopTimer():void{
 			_timerTimeOut.stop();
 		}
-		
+
+		/**
+	     *  Getter & Setter for the time interval of inactivity after which the UI 
+	     *  has to timeout. The interval passed in is converted using the
+	     *  <code>TIME_VALUE</code>
+	     *
+	     *  @param timeoutInterval The time interval to be passed in 
+	     *  <b>minutes</b> from the caller.
+	     */		
 		public function set timeOutInterval(timeoutInterval:uint):void{
-			_uintTimeOutInterval = timeoutInterval*1000;
-			_timerTimeOut.delay = timeoutInterval*1000;
+			_uintTimeOutInterval = timeoutInterval * TIME_VALUE;
+			_timerTimeOut.delay = timeoutInterval * TIME_VALUE;
+			_timerTimeOut.start();
 		}
-		
+
 		public function get timeOutInterval():uint{
 			return _uintTimeOutInterval;
 		}
 
+		/**
+	     *  Getter & Setter for the time interval of inactivity after which 
+	     *  the timeout confirmation prompt expires and the application 
+	     *  is disabled. The interval passed in is converted using the
+	     *  <code>TIME_VALUE</code>
+	     *
+	     *  @param confirmInterval The time interval to be passed in 
+	     *  <b>minutes</b> from the caller.
+	     */		
 		public function set confirmInterval(confirmInterval:uint):void{
-			_uintConfirmInterval = confirmInterval*1000;
-			_timerConfirm.delay = confirmInterval*1000;
+			_uintConfirmInterval = confirmInterval * TIME_VALUE;
+			_timerConfirm.delay = confirmInterval * TIME_VALUE;
 		}
 		
 		public function get confirmInterval():uint{
 			return _uintConfirmInterval;
 		}
-		
+
+		/**
+	     *  Getter & Setter for Keyboard listener. If this is set to false,
+	     *  the client time out will be only based on mouse movement. Even if 
+	     *  there are keystrokes for time interval specified, the UI will timeout
+	     *  as long as there are no mouse movements.
+	     *
+	     *  @param registerKeys The default value is false.
+	     */		
 		public function set listenKeyStroke(registerKeys:Boolean):void{
 			_keyListener = registerKeys;
 		}
@@ -158,7 +190,15 @@ package flexed.utils.timeout
 		public function get listenKeyStroke():Boolean{
 			return _keyListener;
 		}
-		
+
+		/**
+	     *  Getter & Setter for Keyboard listener. If this is set to false,
+	     *  the client time out will be only based on key strokes. Even if 
+	     *  there are mouse movements for time interval specified, the 
+	     *  UI will timeout as long as there are no key strokes.
+	     *
+	     *  @param registerMouse The default value is false.
+	     */		
 		public function set listenMouseMove(registerMouse:Boolean):void{
 			_mouseListener = registerMouse;
 		}
@@ -167,15 +207,22 @@ package flexed.utils.timeout
 			return _mouseListener;
 		}
 		
+		/**
+	     *  Setter for onTimeOut function. A function from the caller can 
+	     *  be set here and will be executed when the idle timeout occurs.
+	     *
+	     *  @param timeoutFn Function of type void.
+	     */		
 		public function set onTimeOut(timeoutFn:Function):void{
 			_timedOutFunction = timeoutFn;
 		}
-	
+
 		/**
-		  * called by mousmove resets timout
-		  * clears warning
-		  */   
-		 public function resetLastActivity(evnt:Event):void{
+	     *  @private
+	     *  Resets the timer whenever a mousemove or 
+	     *  keystroke occurs.
+	     */		
+		private function resetLastActivity(event:Event):void{
 			_iLastActivity = getTimer();
 			if((Application.application as Application).enabled == true){
 				if (_timerConfirm.running){
@@ -188,15 +235,15 @@ package flexed.utils.timeout
 			}
 		 }
 
-
-		 /**
-		   * Run by time event, if timeout interval has elapsed,
-		   * shows warning, starts confirm timer
-		  */  
-		 private function onTimeOutTimer(event:TimerEvent = null):void{
+		/**
+	     *  @private
+	     *  When time out occurs, a confirmation prompt comes
+	     *  up which stays on for a specified time interval.
+	     */		
+		private function onTimeOutTimer(event:TimerEvent = null):void{
 		 	var iCurTimer:Number = getTimer();
 			var iElapsed:Number = iCurTimer - _iLastActivity;
-			trace("timeOutInterval :"+timeOutInterval);
+			
 			if ( iElapsed >= timeOutInterval ) {
 				showTimeOutPrompt();
 				_timerTimeOut.stop();
@@ -204,14 +251,15 @@ package flexed.utils.timeout
 		 }
 		 
 		/**
-		  * If the interval passes without user activity,
-		  * do the timeout functionality, 
-		  * in this case, display a message and disable the app.
-		  */
+	     *  @private
+	     *  Fired on the Timer event. When the confirmation 
+	     *  timeout occurs, the time out prompt is hidden and 
+	     *  the application is disabled forcefully.
+	     */		
 		private function onConfirmTimer(event:TimerEvent = null):void{
 			var iCurTimer:Number = getTimer();
 			var iElapsed:Number = iCurTimer - _iLastActivity;
-			trace("confirmInterval :"+confirmInterval);
+			
 			if ( iElapsed >= confirmInterval ) {
 				hideTimeOutPrompt();
 				_timerConfirm.stop();
@@ -220,43 +268,67 @@ package flexed.utils.timeout
 		   }
 		}
 		
-		private function resetConfirmation(event:Event):void{
-			hideTimeOutPrompt();
-		}
-		
-		private function hideTimeOutPrompt():void{
-			timoutPrompt.visible = false;
-		}
-		
-		
+		/**
+	     *  @private
+	     *  When the confirmation prompt comes up, it starts 
+	     *  a timer to track the grace period.
+	     */		
 		private function timeOutConfirmation(event:Event):void{
 			_timerConfirm.start();
 			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 		}
+
+		/**
+		 *  @private
+	     *  Times out the application and then calls the 
+	     *  onTimeOut function specified in the caller.
+	     */		
+		public function timeoutApp():void{
+			eventTimeOut.expiryTime = new Date().getHours().toString() +"-"+ new Date().getMinutes().toString() +"-"+ new Date().getSeconds().toString();
+			(Application.application as Application).dispatchEvent(eventTimeOut);
+			(Application.application as Application).enabled = false;
+			_timedOutFunction();
+		}
 		
+		/**
+	     *  @private 
+	     *  Executed on click of button on confirmation
+	     *  prompt. Hides the prompt and restarts the 
+	     *  idle timer.
+	     */		
 		private function resetTimeOut(event:Event):void{
 			_timerConfirm.stop();
 			_timerTimeOut.start();
 			(Application.application as Application).enabled = true;
 			hideTimeOutPrompt();
 		}
-		
+
+		/**
+	     *  @private 
+	     *  Pops up either a new confirm prompt using <code>PopUpManager</code>
+	     *  or if its already existing, makes it visible.
+	     */		
 		private function showTimeOutPrompt():void{
 			if(timoutPrompt == null){
-				createPopUp();
+				PopUpManager.addPopUp(createPopUp(), Application.application as Application, true);
 			}else{
 				timoutPrompt.visible = true;
 			}
 		}
-		
-		public function timeoutApp():void{
-			eventTimeOut.expiryTime = new Date().date;
-			(Application.application as Application).dispatchEvent(eventTimeOut);
-			(Application.application as Application).enabled = false;
-			_timedOutFunction();
+
+		/**
+	     * @private 
+	     * Hides the confirm prompt.
+	     */		
+		private function hideTimeOutPrompt():void{
+			timoutPrompt.visible = false;
 		}
-		
-		private function createPopUp():void{
+
+		/**
+	     * @private 
+	     * Creates the confirmation prompt.
+	     */		
+		private function createPopUp():HBox{
 			timoutPrompt = new HBox();
 			timoutPrompt.setStyle("backgroundColor",0xffffff);
 			timoutPrompt.setStyle("cornerRadius",4);
@@ -286,7 +358,7 @@ package flexed.utils.timeout
 			txtCon.addChild(spacer);
 			
 			var promptText:Text = new Text();
-			promptText.htmlText = "Move the mouse or type within <b>" + confirmInterval/1000 + "</b> seconds <br>to stop automatic TIMEOUT.";
+			promptText.htmlText = "Move the mouse or type within <b>" + confirmInterval / TIME_VALUE + "</b> seconds <br>to stop automatic TIMEOUT.";
 			promptText.setStyle("textAlign","center");
 			txtCon.addChild(promptText);
 			
@@ -295,13 +367,13 @@ package flexed.utils.timeout
 			btnKeepAlive.label = "Stay Alive!";
 			btnKeepAlive.addEventListener("click",resetTimeOut);
 			txtCon.addChild(btnKeepAlive);
+			txtCon.defaultButton = btnKeepAlive;
 			
 			timoutPrompt.addChild(txtCon);
 			timoutPrompt.addEventListener(FlexEvent.INITIALIZE, timeOutConfirmation);
 			timoutPrompt.addEventListener(FlexEvent.SHOW, timeOutConfirmation);
 			
-			PopUpManager.addPopUp(timoutPrompt,Application.application as Application);
-			
+			return timoutPrompt;
 		}
  		
 	}
