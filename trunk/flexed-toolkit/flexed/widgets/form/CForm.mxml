@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initCForm()" xmlns="*" width="100%" height="100%">
+	<mx:Metadata>
+		/**
+		 * 	CFormLoadComplete is dispatched after all the controls are created 
+		 *	and the properties array is created.
+		 *  @eventType mx.events.DynamicEvent
+		 */
+		[Event(name="CFormLoadComplete",type="mx.events.DynamicEvent")]
+	</mx:Metadata>
+    <mx:Script>
+	<![CDATA[
+		import flexed.widgets.form.custom.SectionTitle;
+		import flexed.widgets.form.meta.MetaHelper;
+		import mx.controls.ComboBox;
+		import mx.accessibility.ComboBoxAccImpl;
+		import mx.containers.Grid;
+		import mx.containers.GridItem;
+		import mx.containers.GridRow;
+		import mx.validators.ValidationResult;
+		import mx.collections.ArrayCollection;
+		import mx.events.ValidationResultEvent;
+		import mx.validators.StringValidator;
+		import mx.formatters.DateFormatter;
+		import mx.controls.Button;
+		import mx.controls.List;
+		import mx.controls.VRule;
+		import mx.containers.Form;
+		import mx.controls.HRule;
+		import mx.containers.FormHeading;
+		import mx.validators.Validator;
+		import mx.validators.NumberValidator;
+		import mx.controls.CheckBox;
+		import mx.controls.TextInput;
+		import mx.controls.FormItemLabel;
+		import mx.controls.Label;
+		import mx.controls.DataGrid;
+		import mx.containers.FormItem;
+		import mx.core.UIComponent;
+		import mx.controls.Alert;
+		import mx.rpc.AsyncToken;
+		import mx.rpc.AbstractOperation;
+		import mx.rpc.soap.WebService;
+		import mx.rpc.events.*;
+		import mx.events.DynamicEvent;
+		
+		public var properties:Object;
+		public var propertiesFile:String;
+		
+		public var propertiesXML:XML;
+		public var commandList:Array = new Array;
+		public var commandAlias:Array = new Array;
+		public var originalData:Array = new Array;
+		public var gridColumns:Array = new Array;
+		public var fieldType:Array = new Array;
+		public var columns:int;
+		public var activeCommand:String;
+				
+		private var _customizeCForm:Function;
+		private var _updateCForm:Function;
+		private var _customValidatorFunction:Function;
+		private var _indicatorGap:int = 14;
+		
+		public function initCForm():void {
+			if(propertiesFile != null) createCForm(propertiesFile);
+		}		
+		
+		public function set cFormCustomizer(customizer:Function):void {
+			this._customizeCForm = customizer;
+		}
+		public function get cFormCustomizer():Function {
+			return _customizeCForm;
+		}
+
+		public function set cFormUpdater(updater:Function):void {
+			this._updateCForm = updater;
+		}
+		public function get cFormUpdater():Function {
+			return _updateCForm;
+		}
+
+		public function set cFormValidation(validatorFunction:Function):void {
+			_customValidatorFunction = validatorFunction;
+		}
+		public function fetchCFormValues():Array {
+			return originalData;
+		}
+
+	
+		public function createCForm(propertiesFile:String): void {
+			var loader:URLLoader = new URLLoader();
+			loader.addEventListener(Event.COMPLETE, loadFromXML);
+			
+			var request:URLRequest = new URLRequest(propertiesFile);
+			loader.load(request);
+		}
+
+		private function loadFromXML(event:Event): void {
+			var loader:URLLoader = URLLoader(event.target);
+			propertiesXML = new XML(loader.data);
+			layoutCForm(propertiesXML);
+		}
+		
+		/**
+		* Function Name : layoutCForm
+		* Parameters : XML component created based on user specified field xml file.
+		*		It will have the list of fields grouped together to display with the columns.
+		* Description : Renders all UI components in specified group and column.		* 
+		* Modified :
+		* @event <i>CFormLoadComplete eventObjectClassName [description]</i> 
+		*/
+		private function layoutCForm(propertiesXML:XML): void {		
+			var label:String  = propertiesXML.descendants("label");
+			var cols :String = propertiesXML.descendants("columns").toString();
+			var verticalgap:String =propertiesXML.descendants("verticalgap").toString();
+			var indigap:String =propertiesXML.descendants("indicatorgap").toString();
+			this.label = label.toString();
+			if (cols != "") {
+				this.columns = int(cols);
+			}
+			else {
+				this.columns = 1;
+			}
+			var vgap:int=5;
+			if (verticalgap!=null && verticalgap!="")
+			{
+				vgap=int(verticalgap);
+			}
+			if (indigap!=null && indigap!="")
+			{
+				_indicatorGap=int(indigap);
+			}
+			
+			
+			var colCount:int;
+			for (colCount = 0; colCount < this.columns; colCount++) {
+				var grid:Grid = new Grid();
+				grid.id = grid + colCount.toString();
+				grid.setStyle("verticalGap", vgap);
+				grid.percentHeight = 100;
+				grid.percentWidth = 100;
+				cont.addChild(grid);
+				gridColumns[colCount] = grid;
+			}
+
+			var groups:XMLList = propertiesXML.descendants("group");
+			var group:XML;
+			properties = new Object();
+			
+			for each(group in groups) {
+				var whichColumn:String = group.attribute("column").toString();
+				var currentColumn:int;
+				if (whichColumn != "") {
+					currentColumn = int(whichColumn);
+				}
+				else {
+					currentColumn = 0;
+				}
+				layoutCFormGroup(group, currentColumn);
+			}
+						
+			var event:DynamicEvent=new DynamicEvent("CFormLoadComplete");
+			dispatchEvent(event);
+
+		}
+
+
+		/**
+		* @Function Name: layoutCFormGroup
+		* @Parameters: fields XML and column location.
+		* @Description: Renders UI components of a group in the specified column.
+		* @Author: Shahabudeen Yahiya
+		*/
+		private function layoutCFormGroup(groupXML:XML, currentColumn:int):void {
+			var rows:XMLList=groupXML.descendants("row");
+			var row:XML;
+
+			var eachProperty:Array = new Array();
+			var name:String = groupXML.attribute("name").toString();
+
+			var grid:Grid = gridColumns[currentColumn];
+			var gTitleItem:GridItem=null;
+			var gHruleItem:GridItem=null;
+			
+			if (name != '') {
+				var title:Label = new Label();
+				title.text = name;
+				title.styleName = "viewTitle";
+				
+				var hRule:HRule = new HRule();
+				hRule.percentWidth = 100;
+				hRule.styleName = "viewTitleHRule";
+				
+				var gTitlerow:GridRow=new GridRow();				
+				gTitleItem=new GridItem();
+				gTitleItem.addChild(title);
+				gTitleItem.colSpan=2;
+				gTitleItem.percentWidth=98;
+				gTitlerow.addChild(gTitleItem);
+				
+				var gHrulerow:GridRow=new GridRow();
+				gHruleItem=new GridItem();
+				gHruleItem.addChild(hRule);
+				gHruleItem.colSpan=2;
+				gHruleItem.percentWidth=98;
+				gHrulerow.addChild(gHruleItem);
+				
+				grid.addChild(gTitlerow);
+				grid.addChild(gHrulerow);
+				
+			}
+			var maxcolspan:int=2;
+			for each(row in rows) {
+				var fields:XMLList = row.descendants("field"); 
+				var field:XML;
+				
+				var gItemrow:GridRow=new GridRow();
+				var colspan:int=0;
+				var gItemrow1:GridRow=new GridRow();
+				var hasChild : Boolean = false;
+				for each(field in fields) {
+	            	eachProperty = new Array();
+	            	var fieldId:String = field.child("id").toString();
+	            	fieldId = fieldId.replace(/ /g,"");
+	            	var fieldName:String = null; 
+	            	if(field.child("name").length()!=0) fieldName=field.child("name").toString();
+	            	
+	            	var tooltip:String = field.child("tooltip").toString();
+	            	eachProperty["field"] = field;
+	            	eachProperty["fieldId"] = fieldId;
+
+					hasChild = true;
+	            	var gLabel:GridItem=new GridItem();
+	            	var gItemlabel:Label=new Label();
+	            	gItemlabel.text=fieldName;
+	            	var styleName:String="viewLabel";
+	            	
+	            	if (field.child("name").attribute("styleName").toString()!=""){
+	            		styleName=field.child("name").attribute("styleName").toString();
+	            	}
+
+	            	if (field.child("name").attribute("height").toString()!=""){
+	            		gItemlabel.height=int(field.child("name").attribute("height"));
+	            	}
+	            	
+	            	gItemlabel.styleName=styleName;
+	            	gItemlabel.toolTip=tooltip;
+	            	gLabel.addChild(gItemlabel);
+	            	
+	            	var renderer:CFormItemRenderer = createCFormItemRenderer(fieldId, fieldName, field, fields);
+	            	renderer.getUIComponent().name = fieldId;
+	            	
+	            	if (field.child("type").attribute("styleName").toString()!=""){
+		            	renderer.getUIComponent().styleName=field.child("type").attribute("styleName").toString();
+	            	}
+	            	
+	            	var gItemvalue:GridItem = new GridItem();
+	            	gItemvalue.addChild(renderer.getUIComponent());
+	            	if(renderer.getUIComponent() is SectionTitle || renderer.getUIComponent() is DataGrid){
+	            		gItemvalue.colSpan = 2;
+	            		gItemrow.addChild(gItemvalue);
+	            	}
+	            	else{
+		            	if(fieldName!=null) {
+		            		if (((field.child("name").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("name").attribute("enableNextrow").toString()!="false")){
+		            			gLabel.colSpan=2;
+		            			gItemrow.addChild(gLabel);
+		            		}
+		            		else{
+	            				gItemrow.addChild(gLabel);
+		            		}
+		            		colspan++;
+		            	}
+		            	if (((field.child("name").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("name").attribute("enableNextrow").toString()!="false")){
+	            			gItemvalue.colSpan=2;
+	            	 		gItemrow1.addChild(gItemvalue);   
+		            	}
+		            	else {
+							gItemrow.addChild(gItemvalue);
+		            	}
+		            	if(field.child("type").attribute("colspan").length()!=0) {
+		            		var span:int=int(field.child("type").attribute("colspan").toString());
+		            		gItemvalue.colSpan=span;
+		            		colspan=colspan+span;
+		            	}
+		            	else {
+		            		colspan++;
+		            	}
+	            	}
+	            	eachProperty["formItem"] = gItemlabel;
+	            	eachProperty["renderer"] = renderer;
+	            	properties[fieldId] = eachProperty;	
+				}
+				if(hasChild == true){
+					grid.addChild(gItemrow);
+					if (((field.child("name").attribute("enableNextrow").toString()=="true")
+							||(groupXML.attribute("enableNextrow").toString()=="true")) 
+						&& (field.child("name").attribute("enableNextrow").toString()!="false"))
+							grid.addChild(gItemrow1);
+				}
+				maxcolspan=Math.max(maxcolspan,colspan);
+			}
+			if(gTitleItem!=null) gTitleItem.colSpan=maxcolspan;
+			if(gHruleItem!=null) gHruleItem.colSpan=maxcolspan;			
+
+            // For empty space after a group like General, CLI, etc,.
+			if (name != '') {
+				var grow:GridRow=new GridRow();
+				grid.addChild(grow);
+			}
+		}
+		
+		private function validateCForm():Boolean {
+			var valid:Boolean=true;
+			if(_customValidatorFunction!=null) {
+				var values:Object=getCFormValues(false);
+				for (var key:String in values) {
+					var result:ValidationResult=_customValidatorFunction(key,values[key],values);
+					if(result.isError) {
+						properties[key].renderer.getUIComponent().errorString=result.errorMessage;
+						valid=false;
+					} else {
+						properties[key].renderer.getUIComponent().errorString="";
+					}
+				}
+			}
+			return valid;
+		}
+		
+		private function createCFormItem(id:String, name:String, field:XML, fields:XMLList):FormItem {			
+		   	var formItem:FormItem = new FormItem();
+		    formItem.label = name;
+		    return formItem;
+		}
+		
+		private function createCFormItemRenderer(id:String, name:String, field:XML, fields:XMLList):CFormItemRenderer {
+        	var type:XMLList = field.child("type");
+        	var typeId:String = type.attribute("id").toString();
+        	fieldType[id] = typeId;
+        	if(typeId == "table"){
+        		var table :XMLList = field.child("table");
+        		var column :XMLList = table.child("column");
+        		return renderDefaultItem(typeId,type,column);
+        	}
+        	else{
+        		return renderDefaultItem(typeId, type);
+        	}
+		}
+		
+		private function renderDefaultItem(typeId:String, attributes:XMLList, columns:XMLList= null):CFormItemRenderer {
+			var renderer:CFormItemRenderer;
+			if(typeId.toLocaleLowerCase() == "boolean") {
+				renderer = new CFormItemRadioButton();
+			} else if(typeId.toLocaleLowerCase() == "display") {
+				renderer = new CFormItemDisplay();
+				CFormItemDisplay(renderer).setAttributesFromXML(attributes);
+			} else if(typeId.toLocaleLowerCase() == "dualdisplay") {
+				renderer = new CFormItemDualDisplay();
+				CFormItemDualDisplay(renderer).setAttributesFromXML(attributes);
+			} else if(typeId.toLocaleLowerCase() == "numericstepper") {
+				renderer = new CFormItemNumericStepper();
+				CFormItemNumericStepper(renderer).setAttributesFromXML(attributes);
+			} else if(typeId.toLocaleLowerCase() == "date") {
+				renderer = new CFormItemDate();
+				CFormItemDate(renderer).setAttributesFromXML(attributes);
+			} else if(typeId.toLocaleLowerCase() == "dropdown") {
+				renderer = new CFormItemCombobox();
+				var tmp:XMLList=attributes.attribute("values");
+				if(tmp) {
+					var _tmp:Array=tmp.toString().split(".");
+					if(_tmp.length>1) {
+						var prettyNames:Object = MetaHelper.prettyNames(_tmp[0],_tmp[1]);
+						var dataProvider:ArrayCollection=new ArrayCollection();
+						for(var key:String in prettyNames) {
+							var _data:Object=new Object();
+							_data.label=prettyNames[key];
+							_data.data=key;
+							
+							dataProvider.addItem(_data);
+						}
+						
+						(CFormItemCombobox(renderer)).setDataProvider(dataProvider);
+					}
+				}
+				CFormItemCombobox(renderer).setAttributesFromXML(attributes);
+			} else if(typeId.toLocaleLowerCase() == "textarea") {
+				renderer = new CFormItemTextArea();
+				CFormItemTextArea(renderer).setAttributesFromXML(attributes);
+			} else if(typeId.toLocaleLowerCase() == "dualtext") {
+				renderer = new CFormItemDualText();
+				CFormItemDualText(renderer).setAttributesFromXML(attributes);
+			} else if (typeId.toLocaleLowerCase() == "table") {
+				renderer = new CFormItemTable();
+				CFormItemTable(renderer).setAttributesFromXML(attributes)
+				CFormItemTable(renderer).setColumns(columns);
+			} else if (typeId.toLocaleLowerCase() == "title") {
+				renderer = new CFormItemTitle();
+				CFormItemTitle(renderer).setAttributesFromXML(attributes);
+			} else if (typeId.toLocaleLowerCase()=="spacer"){
+				renderer = new CFormItemSpace();
+				CFormItemSpace(renderer).setAttributesFromXML(attributes);
+			}else {
+				renderer = new CFormItemText();
+				CFormItemText(renderer).setAttributesFromXML(attributes);
+			}
+			return renderer;
+		}
+			
+		private function setFormValues(values:Object):void {
+			var property:Array;
+			var key:String;
+			for (key in properties) {
+				if (values[key] != null) {
+					properties[key]["renderer"].setValue(values[key]);
+					originalData[key] = values[key];
+				} else if(values[key]==null){
+					if (properties[key]["renderer"] is CFormItemDisplay)
+						properties[key]["renderer"].setValue("-");
+					else if (properties[key]["renderer"] is CFormItemText)
+						properties[key]["renderer"].setValue("");
+				}
+			}
+		}
+		
+		public function resetCForm():void {
+			var property:Array;
+			var key:String;
+			for (key in properties) {
+					if (properties[key]["renderer"] is CFormItemText || properties[key]["renderer"] is CFormItemTextArea){
+						properties[key]["renderer"].setValue("");	
+					}else if (properties[key]["renderer"] is CFormItemCombobox){
+						properties[key]["renderer"].getUIComponent().selectedIndex=0;	
+					}else if (properties[key]["renderer"] is CFormItemDisplay){
+						properties[key]["renderer"].setValue("");
+					}else if (properties[key]["renderer"] is CFormItemRadioButton){
+						properties[key]["renderer"].setValue(null);
+					}else if (properties[key]["renderer"] is CFormItemNumericStepper){
+						properties[key]["renderer"].setValue(0);
+					}
+				}
+		}
+			
+			
+		public function setData(obj:Object):void {
+			var values:Object=new Object();
+			
+			var property:Array;
+			var key:String;
+			for (key in properties) {
+				var value:Object = obj[key];
+				
+				if(key.indexOf(".")!=-1) {
+					var tmp:Array=key.split(".");
+					var _tmp0:String=tmp[0];
+					var _tmp1:String=tmp[1];
+					var _tmp2:String=tmp[2];
+					
+					if(tmp.length>2){
+						if(obj[_tmp0][_tmp1]) value=obj[_tmp0][_tmp1][_tmp2];					
+					}else{
+						if(obj[_tmp0]) value=obj[_tmp0][_tmp1];
+					}
+				}
+				values[key]=value;
+			}			
+			setFormValues(values);
+		}
+		
+		public function getData(onlyModifiedValues:Boolean=true):Object {
+			var obj:Object=new Object();
+			var values:Object=getCFormValues(onlyModifiedValues);
+			
+			var property:Array;
+			var key:String;
+			for (key in values) {
+				var value:Object = values[key];
+				if(key.indexOf(".")!=-1) {
+					var tmp:Array=key.split(".");
+					if(!obj[tmp[0]]) obj[tmp[0]]=new Object();
+					if(tmp.length>2){
+						if(!obj[tmp[0]][tmp[1]]) obj[tmp[0]][tmp[1]]=new Object();
+						obj[tmp[0]][tmp[1]][tmp[2]]=value;
+					}else
+					{
+					obj[tmp[0]][tmp[1]]=value;
+					}
+				} else {
+					obj[key]=value;
+				}
+			}
+			return obj;
+		}		
+
+
+		public function getRenderer(id:String):CFormItemRenderer {
+			if(properties[id]) return properties[id]["renderer"];
+			return null;
+		}
+		
+		/**
+		 * Reset : Resets the value of the controls. Boolean Control will have none of the controls selected.
+		 * Text Field will be empty.
+		 * Used by Port Bulk Save. 
+		 * Incase of Bulk Save Property Sheet, original Values shall always remain null.
+		 */
+		public function resetCFormItem():void{
+			for each(var property:Array in properties) {
+				var type:XMLList = property["field"].child("type");
+	        	var typeId:String = type.attribute("id").toString();
+				if(typeId.toLowerCase() == "boolean"){
+					property["renderer"].setValue(null);
+				}
+				else if(typeId.toLowerCase() == "text"){
+					property["renderer"].setValue("");
+				}
+			}
+		}
+		
+		
+		/**
+		 * Called by getData. Soon getCFormValues will be made private and all external calls for getCFormValues
+		 *	replaced by getData
+		 */ 
+		public function getCFormValues(onlyModifiedValues:Boolean=true): Object {
+			var values:Object=new Object();
+
+			for each(var property:Array in properties) {
+				var fieldId:String = property["fieldId"];
+				var currentValue:Object = property["renderer"].getValue();
+				var originalValue:Object = originalData[property["fieldId"]];
+				if(currentValue == null)
+					continue;
+				
+	        	var type:XMLList = property["field"].child("type");
+	        	var typeId:String = type.attribute("id").toString();
+	        	if (typeId.toLowerCase() == "boolean" 
+	        		&& (originalValue != null)) {
+	        		originalValue = String(originalValue);
+	        	}
+	        	else if (typeId.toLowerCase() == "display"&& onlyModifiedValues)
+	        		continue;
+	        	else if (typeId.toLowerCase() == "table" && onlyModifiedValues)
+	        	    continue;
+	        	else if(typeId.toLowerCase() == "title"){
+	        		continue;
+	        	}
+	        	else{
+	        		originalValue = (originalValue == null)? "" : originalValue;
+	        	}
+				if(currentValue == originalValue && onlyModifiedValues) 
+					continue;
+				values[fieldId]=currentValue;
+			}
+
+			return values;
+		}
+		
+	]]>
+	</mx:Script>
+	<mx:VBox id="wrap" width="98%" verticalGap="0" horizontalGap="0" height="100%" scroll="false" horizontalScrollPolicy="off" paddingTop="3" paddingLeft="5">
+		<mx:HBox id="cont" width="100%" horizontalGap="8" verticalGap="0" height="100%" scroll="false" horizontalScrollPolicy="off" />
+	</mx:VBox>
+</mx:Canvas>
