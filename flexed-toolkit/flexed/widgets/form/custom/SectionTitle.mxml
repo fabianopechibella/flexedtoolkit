@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox width="100%" xmlns:mx="http://www.adobe.com/2006/mxml" verticalGap="1" >
+	<mx:HBox width="100%" height="100%" verticalAlign="middle" >
+		<mx:Script>
+			<![CDATA[
+			[Bindable] public var viewName:String;
+			[Bindable] public var lineVisibility:Boolean=true;
+			[Bindable] private var m_style	: String = "viewTitle";
+			
+			public function addControls(control:DisplayObject):void {
+				controlBar.addChild(control);
+			}
+			
+			public function removeControls(control:DisplayObject):void {
+				controlBar.removeChild(control);
+			}
+			
+			public function setLabelStyle(style:String):void {
+				m_style = style;
+				lineVisibility = false;
+			}
+			
+			]]>
+		</mx:Script>
+		<mx:Label id="sectionName" text="{viewName}" styleName="{m_style}"/>
+		<mx:Spacer width="100%"/>
+		<mx:HBox textAlign="right" horizontalGap="1" id="controlBar" width="100%" height="100%" horizontalAlign="right" verticalAlign="middle" />
+	</mx:HBox>
+	<mx:HRule visible="{lineVisibility}" width="100%" styleName="viewTitleHRule"/>
+	
+</mx:VBox>
+

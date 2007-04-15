@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" initialize="initApp()" horizontalGap="0" verticalAlign="middle">
+
+<!-- 
+TimePicker component by Randy Drisgill (randy@drisgill.com)
+Based on code by Andrew Lisse
+
+To use it, you simply place it in the same directory as your mxml file and include it with:
+<timePicker id="mytime">
+
+Or you can pass in now="true" and it will default to the current time:
+<timePicker id="mytime" now="true"/>
+
+Or you can pass in an hour, minute, and second to set the time:
+<timePicker id="mytime" hour="4" minute="44" meridian="34"/>
+
+Or you can use the setValue method, if that suits you better:
+<mx:Button label="setTime" click="mytime.setValue('3','1','34');" />
+
+And finally you can get the selected time by using the getValue method:
+<mx:Button label="getTime" click="alert(mytime.getValue());" />
+-->
+
+	<mx:Script>
+	<![CDATA[
+		//incoming variables (now = true tells it to use current time)
+		private var hour:String = '0';
+		private var minute:String = '0';
+		private var second:String = '0';
+		private var now:Boolean = false;
+		
+		//internal vars
+		private var selTimeFocus:TextInput = tHour;
+		private var minTime:Number = 0;
+		private var maxTime:Number = 23;
+		
+		//init functiona
+		private function initApp():void	{
+			//if now is passed in as true use current time
+			if(now){
+				//get current hours and mins
+				var d:Date = new Date();
+				var hour:Number = d.getHours();
+				var minute:Number = d.getMinutes();
+				var second:Number = d.getSeconds();
+				//adjust away from military time
+			}
+			//set the actual time in the picker
+			setValue(hour.toString(),minute.toString(),second.toString());
+			//set the initial picker focus to hours
+			focusTime(tHour,0,23);
+		}
+		
+		//on up arrow click
+		private function arrowUp():void{
+			//if we have hit our max for this focus, cycle back to the minimum for this focus
+			if(selTimeFocus.text == maxTime.toString()){
+				if(selTimeFocus == tHour){
+					selTimeFocus.text = minTime.toString();
+				//for mins, pad the zero
+				}else{
+					selTimeFocus.text = minTime.toString();
+				}
+			//otherwise increment
+			}else{
+				var nValue:Number = Number(selTimeFocus.text)+1;
+				
+				//for mins, pad zero if needed
+//				if(selTimeFocus == tHour){
+//					selTimeFocus.text = nValue
+//				}else{
+					selTimeFocus.text = nValue.toString(); // (nValue < 10 ? "0"+nValue : nValue);
+//				}
+			}
+			//if the focused field is not a number, pad it
+			if(isNaN(Number(selTimeFocus.text))){
+				selTimeFocus.text = minTime.toString();
+			}
+		}
+		
+		//on picker arrow down
+		private function arrowDown():void{
+			//if we are at the minimum val, its time to switch to the max value
+			if((selTimeFocus.text == minTime.toString()) || (!selTimeFocus.text)){
+				selTimeFocus.text = maxTime.toString();
+			//else decrement it
+			}else{
+				var nValue:Number = Number(selTimeFocus.text)-1;
+					selTimeFocus.text = nValue.toString(); 
+			}
+			//if the focused field is not a number, pad it
+			if(isNaN(Number(selTimeFocus.text))){
+				selTimeFocus.text = minTime.toString();
+			}
+		}
+		
+		//validate manual inputs
+		private function valTime(theBox:TextInput,minNum:Number,maxNum:Number):void{
+			if(Number(theBox.text)<minNum){
+				theBox.text = minNum.toString();
+			}else if(Number(theBox.text)>maxNum){
+				theBox.text = maxNum.toString();
+			}
+			//if focus was on minutes, pad the low nums
+			if(theBox == tMinute){
+				theBox.text = (Number(theBox.text) < 10 ? "0"+theBox.text : theBox.text);
+			}
+		}
+		
+		//sets the focused area and min max numbers
+		private function focusTime(theBox:TextInput,minNum:Number,maxNum:Number):void{
+			selTimeFocus = theBox;
+			maxTime = maxNum;
+			minTime = minNum;
+		}
+		
+		//get the picked time as a string
+		public function getValue():String{
+			return tHour.text+":"+tMinute.text+":"+tSecond.text;
+		}
+
+		//set the picker value
+		public function setValue(h:String,m:String,s:String):void{
+			tHour.text   = h; //(h < 10 ? "0"+Number(h) : h);
+			tMinute.text = m; //(m < 10 ? "0"+Number(m) : m);
+			tSecond.text = s; //(s < 10 ? "0"+Number(s) : s);
+		}
+		
+	]]>
+	</mx:Script>
+
+	<mx:HBox horizontalGap="0" borderStyle="inset" verticalAlign="middle" height="22">
+  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tHour" width="17" text="1" focusIn="focusTime(tHour,1,12)" focusOut="valTime(tHour,0,23)"/>
+		<mx:TextInput borderStyle="none" textAlign="right" editable="false" text=":" width="7"/>
+  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tMinute" width="17" text="0" focusIn="focusTime(tMinute,00,59)" focusOut="valTime(tMinute,0,59)"/>
+		<mx:TextInput borderStyle="none" textAlign="right" editable="false" text=":" width="7"/>
+  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tSecond" width="17" text="0" focusIn="focusTime(tSecond,00,59)" focusOut="valTime(tSecond,0,59)"/>
+	</mx:HBox>
+	
+	<mx:VBox verticalAlign="bottom" verticalGap="0" horizontalGap="0">
+		<mx:Button verticalGap="0" cornerRadius="0" width="15" height="11" click="arrowUp()"/>
+		<mx:Button verticalGap="0" cornerRadius="0" width="15" height="11" click="arrowDown()"/>
+	</mx:VBox>
+
+</mx:HBox>
