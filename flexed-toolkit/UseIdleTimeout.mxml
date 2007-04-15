@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:utils="flexed.utils.timeout.*" backgroundGradientColors="[#000000, #39579d]">
+<mx:Application initialize="init()" xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:utils="flexed.utils.timeout.*" backgroundGradientColors="[#000000, #39579d]">
 	<mx:Script>
 		<![CDATA[
 			import mx.events.DynamicEvent;
 			import mx.controls.Alert;
 			
-			private function go(e:Event=null):void{
-				Alert.show("The Client has been timed out due to inactivity","Client Timeout");
+			//passed to the component as value of onTimeOut attribute
+			private function onTimeOutHandler(e:Event=null):void{
+				Alert.show("The Client has been timed out due to inactivity","Timeout Message by Method call");
 			}
+			
+			//adding an event listener for the appTimedOut event.
 			private function init():void{
-				//this.addEventListener("appTimedOut",go);
+				this.addEventListener("appTimedOut",appTimedOutHandler);
+			}
+			
+			//Fired when the appTimedOut event occurs in the component
+			private function appTimedOutHandler(devent:DynamicEvent):void{
+				var expiryTime:String = devent.expiryTime.toString();
+				Alert.show("The Client has been timed out at "+expiryTime,"Timeout Message by Event trigger");
 			}
 		]]>
 	</mx:Script>
@@ -40,7 +49,7 @@
 			color:#FFFFFF;
 		}
 	</mx:Style>
-	<utils:ClientIdleTimeOut id="myTimeOut" onTimeOut="go" listenKeyStroke="true" listenMouseMove="true" timeOutInterval="4" confirmInterval="2" />
+	<utils:ClientIdleTimeOut id="myTimeOut" onTimeOut="onTimeOutHandler" listenKeyStroke="true" listenMouseMove="true" timeOutInterval="3" confirmInterval="2" />
 	<mx:Panel title="Idle Timeout Example" width="353" height="162" layout="absolute" backgroundColor="#ffffff" horizontalCenter="0" verticalCenter="0">
 		<mx:TextInput height="54" fontSize="36" text="kk" width="242" color="#eec520" cornerRadius="6" borderStyle="solid" borderColor="#000000" horizontalCenter="0" verticalCenter="0"/>
 	</mx:Panel>
