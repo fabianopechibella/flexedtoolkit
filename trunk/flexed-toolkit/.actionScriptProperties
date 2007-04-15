@@ -18,7 +18,7 @@
 </sourceAttachmentPath>
 </compiler>
 <applications>
-<application path="TestDrive.mxml"/>
+<application path="UseIdleTimeout.mxml"/>
 </applications>
 <buildCSSFiles/>
 </actionScriptProperties>

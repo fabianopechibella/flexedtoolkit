@@ -117,8 +117,7 @@ package flexed.utils.timeout
 			_timerConfirm.addEventListener(TimerEvent.TIMER, onConfirmTimer);
 			
 			(Application.application as Application).addEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
-			(Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);			
-			eventTimeOut.startTime = new Date().getHours().toString() +"-"+ new Date().getMinutes().toString() +"-"+ new Date().getSeconds().toString();
+			(Application.application as Application).addEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);
 		}		
 		
 		/**
@@ -181,10 +180,11 @@ package flexed.utils.timeout
 	     *  there are keystrokes for time interval specified, the UI will timeout
 	     *  as long as there are no mouse movements.
 	     *
-	     *  @param registerKeys The default value is false.
+	     *  @param registerKeys The default value is true.
 	     */		
 		public function set listenKeyStroke(registerKeys:Boolean):void{
 			_keyListener = registerKeys;
+			if(registerKeys == false) (Application.application as Application).removeEventListener(KeyboardEvent.KEY_DOWN, resetLastActivity);
 		}
 
 		public function get listenKeyStroke():Boolean{
@@ -197,10 +197,11 @@ package flexed.utils.timeout
 	     *  there are mouse movements for time interval specified, the 
 	     *  UI will timeout as long as there are no key strokes.
 	     *
-	     *  @param registerMouse The default value is false.
+	     *  @param registerMouse The default value is true.
 	     */		
 		public function set listenMouseMove(registerMouse:Boolean):void{
 			_mouseListener = registerMouse;
+			if(registerMouse == false) (Application.application as Application).removeEventListener(MouseEvent.MOUSE_MOVE, resetLastActivity);
 		}
 
 		public function get listenMouseMove():Boolean{
@@ -211,7 +212,7 @@ package flexed.utils.timeout
 	     *  Setter for onTimeOut function. A function from the caller can 
 	     *  be set here and will be executed when the idle timeout occurs.
 	     *
-	     *  @param timeoutFn Function of type void.
+	     *  @param timeoutFn Function of type void passed in by the caller.
 	     */		
 		public function set onTimeOut(timeoutFn:Function):void{
 			_timedOutFunction = timeoutFn;
@@ -282,9 +283,13 @@ package flexed.utils.timeout
 		 *  @private
 	     *  Times out the application and then calls the 
 	     *  onTimeOut function specified in the caller.
+	     *  This method also dispatches a dynamic event of 
+	     *  type <b>appTimedOut</b>. The event has a 
+	     *  property - <code>expiryTime</code> which contains
+	     *  the time of timeout.
 	     */		
 		public function timeoutApp():void{
-			eventTimeOut.expiryTime = new Date().getHours().toString() +"-"+ new Date().getMinutes().toString() +"-"+ new Date().getSeconds().toString();
+			eventTimeOut.expiryTime = new Date().toTimeString();
 			(Application.application as Application).dispatchEvent(eventTimeOut);
 			(Application.application as Application).enabled = false;
 			_timedOutFunction();
@@ -375,6 +380,5 @@ package flexed.utils.timeout
 			
 			return timoutPrompt;
 		}
- 		
 	}
 }
