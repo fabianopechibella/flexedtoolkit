@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// *Copyright (c) 2007
+// *Copyright (c) 2007 Uday M. Shankar
 //
 // The usual Yada-Yada!
 //
@@ -32,9 +32,8 @@
 //
 // Peace!
 //
-// @file: AutoRefresher
-// @author: Uday M. Shankar
-// @original author: Easwar Natarajan
+// @file: ClientIdleTimeOut
+// @authors: Uday M. Shankar, Easwar Natarajan
 // @date: 31-03-2007
 // @description: A Autorefresher component. If this is added to a view. The 
 // view auto refreshes every x seconds. It would be more correct to say that 
@@ -53,7 +52,20 @@ package flexed.utils
 	import flash.events.TimerEvent;
 	import flash.display.DisplayObjectContainer;
 	import flash.utils.Timer;
-	
+
+	/**
+	 *  A Autorefresher component. If this is added to a view. The 
+	 *  view auto refreshes every x seconds. It would be more correct to say that 
+	 *  a specified method at caller will be executed every x seconds. Refreshing 
+	 *  is one such task that might be required to be auto-executed every x seconds.
+	 *  Hence, this component is called AutoRefresher.
+	 *
+	 *  @mxml
+	 *
+	 *  <p>Using this component in the application is very simple. Use the following 
+	 *  syntax for basic usage:</p>
+	 *  &lt;flexed:AutoRefresher id="exampleAutoRefresh" delay="1" refreshFunction="FunctionPassedFromCaller" /&gt;
+	 */		
 	public class AutoRefresher
 	{	
 		private var _delay:int = 15*1000;
@@ -61,53 +73,76 @@ package flexed.utils
 		private var _refreshFunction:Function;
 		private var _refresherOwner:UIComponent;
 		private var _refreshAlways:Boolean = false;
+		
 		private var timer:Timer;
 		private var paused:Boolean;
 		
-		private static var instanceColl:ArrayCollection = new ArrayCollection();
+		private static var allInstances:ArrayCollection = new ArrayCollection();
 		
+		//--------------------------------------------------------------------------
+		//
+		//  Constructor
+		//
+		//--------------------------------------------------------------------------
+
+		/**
+		 *  Constructor.
+		 */		
 		public function Refresher():void{
-			instanceColl.addItem(this);
+			allInstances.addItem(this);
 		}
 		
 		/**
-		 * Retrieves all active instances of 
-		 * the refresher obj
-		 */
+	     *  Retrieves all instances of the AutoRefresher.
+	     */
 		public static function getAllInstances():ArrayCollection{
-			return instanceColl;
+			return allInstances;
 		}
 
 		/**
-		 * Retrieves all active instances of 
-		 * the refresher obj
-		 */
+	     *  Starts all instances of the AutoRefresher.
+	     */		 
 		public static function startAll():void{
-			if(instanceColl != null){
-				for(var k:int=0; k<instanceColl.length; k++){
-					if(instanceColl[k] is AutoRefresher)
-						instanceColl[k]._refreshFunction();
+			if(allInstances != null){
+				for(var k:int=0; k<allInstances.length; k++){
+					if(allInstances[k] is AutoRefresher)
+						allInstances[k]._refreshFunction();
 				}
-				for(var i:int=0; i<instanceColl.length; i++){
-					if(instanceColl[i] is AutoRefresher)
-						instanceColl[i].start();
+				for(var i:int=0; i<allInstances.length; i++){
+					if(allInstances[i] is AutoRefresher)
+						allInstances[i].start();
 				}
 			}
 		}
 		
+		/**
+	     *  Stops all instances of the AutoRefresher.
+	     */
 		public static function stopAll():void{
-			if(instanceColl != null){
-				for(var i:int=0; i<instanceColl.length; i++){
-					if(instanceColl[i] is AutoRefresher)
-						instanceColl[i].stop();
+			if(allInstances != null){
+				for(var i:int=0; i<allInstances.length; i++){
+					if(allInstances[i] is AutoRefresher)
+						allInstances[i].stop();
 				}
 			}
 		}
 		
-		public function set refreshFunction(fn:Function):void{
-			_refreshFunction = fn;
+		/**
+	     *  A function from the caller can be set here 
+	     *  and will be executed when the idle timeout occurs.
+	     *
+	     *  @param refreshFunction Function of type void passed in by the caller.
+	     */
+		public function set refreshFunction(refresherfn:Function):void{
+			_refreshFunction = refresherfn;
 		}
 		
+		/**
+	     *  Getter & Setter for the time interval of the AutoRefresher.
+	     *
+	     *  @param delay The interval at which the refresher 
+	     *  should execute the function specified.
+	     */
 		public function set delay(delay:int):void{
 			_delay = delay;
 		}
@@ -116,10 +151,32 @@ package flexed.utils
 			return _delay;
 		}
 		
+		/**
+	     *  Getter & Setter for number of times the AutoRefresher 
+	     *  should repeat execution.
+	     *
+	     *  @param repeatCount The interval at which the refresher 
+	     *  should execute the function specified.
+	     */
 		public function set repeatCount(repeatCount:int):void{
 			_repeatCount = repeatCount;
 		}
 		
+		/**
+	     *  Getter & Setter for the owner of the AutoRefresher. This is 
+	     *  done to support one of the key features of the AutoRefresher.
+	     * 
+	     *  <p>The AutoRefresher stops when the view on which its running 
+	     *  is not visible. This is so that the refresher doesnt waste 
+	     *  client/server resources when the view is not 
+	     *  actually visible on the screen.</p>
+	     * 
+	     *  <p>If this attribute is not set, then the autorefresher just 
+	     *  keeps on executing even if the screen is invisible.</p>
+	     *
+	     *  @param owner The owner of the AutoRefresher 
+	     *  i.e The caller screen of the the AutoRefresher.
+	     */
 		public function set owner(owner:UIComponent):void{
 			if(_refresherOwner != null) {
 				_refresherOwner.removeEventListener(FlexEvent.HIDE, hideListener);
@@ -130,6 +187,9 @@ package flexed.utils
 			_refresherOwner.addEventListener(FlexEvent.SHOW, showListener);
 		}
 		
+		/**
+	     *  Starts the refresher.
+	     */
 		public function start():void{
 			if(timer && timer.running) timer.stop();
 			if(timer == null){
@@ -137,7 +197,6 @@ package flexed.utils
 				timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 			}
 			
-			// Just in case the refresher is not set to the view.....
 			var tempParent:DisplayObjectContainer = _refresherOwner;
 			var flag:Boolean = false;
 			while(tempParent != null && tempParent.visible == true){
@@ -149,12 +208,20 @@ package flexed.utils
 				if(timer.running) stop();
 			}
 		}
-		
+
+		/**
+	     *  Stops the refresher if its running.
+	     */
 		public function stop():void{
 			if(timer != null && timer.running)
 				timer.stop();
 		}
-		
+
+		/**
+	     *  @private 
+	     *  The function that will be fired the owner view
+	     *  is made visible.
+	     */
 		private function showListener(event:FlexEvent):void{
 			if(timer && !timer.running) {
 				if(_refreshFunction != null) 
@@ -164,15 +231,24 @@ package flexed.utils
 			}
 		}
 		
+		/**
+	     *  @private 
+	     *  The function that will be fired the owner view
+	     *  is made invisible.
+	     */
 		private function hideListener(event:FlexEvent):void{
 			if(timer != null && timer.running) 
 				timer.stop();
 		}
 
+		/**
+	     *  @private 
+	     *  The function that will be fired whenever the timer
+	     *  event occurs.
+	     */
 		private function onTimerComplete(event:TimerEvent):void{
 			if(_refreshFunction != null) 
 				_refreshFunction();
-			// do not start the timer if the object is not visible 
 			start();
 		}		
 	}
