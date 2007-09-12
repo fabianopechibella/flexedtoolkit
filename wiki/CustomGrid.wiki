@@ -1,4 +1,4 @@
-#Custom Grid v1.2 ~ A Customized Datagrid with some bells ans whistles! :)
+Custom Grid v1.2 ~ A Customized Datagrid with some bells ans whistles! :)
 
 =CGrid v1.2 - Custom DataGrid=
 Releasing the v1.2 of CGrid. It’s been in drafts for a long while now.This time, a few more basic niceties have been added to the CGrid. :)
