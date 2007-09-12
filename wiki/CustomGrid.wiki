@@ -3,10 +3,15 @@
 Releasing the v1.2 of CGrid. It’s been in drafts for a long while now.This time, a few more basic niceties have been added to the CGrid. :)
 
 ==Few Key Features==
-# Export to Excel (Copy selected rows or entire grid to clipboard and paste in excel)
-# User can select columns to view and width of the columns etc. This setting for each grid in the application is remembered across sessions.(For this to work properly, you will have to ensure that you always specify a distinct ID for for each grid in your application.) This feature is very useful, if you are fetching a lot of columns to display but are not sure whether all the users would be interested in all the columns. Now, the user can choose to see columns of his/her choice and that choice is remembered across sessions.
-# Fixed the sorting logic in the column sort.
-# The CGrid can now take in custom itemRenderer from the caller.
+   1. Takes in Column names and data as an arraycol
+   2. Two kinds of data search – Filtering & Highlighting
+   3. Displays a data count
+   4. Printing the grid contents
+   5. Status area
+   6. Export to Excel (Copy selected rows or entire grid to clipboard and paste in excel)
+   7. User can select columns to view and width of the columns etc. This setting for each   grid in the application is remembered across sessions.(For this to work properly, you will have to ensure that you always specify a distinct ID for for each grid in your application.) This feature is very useful, if you are fetching a lot of columns to display but are not sure whether all the users would be interested in all the columns. Now, the user can choose to see columns of his/her choice and that choice is remembered across sessions.
+   8. Fixed the sorting logic in the column sort.
+   9. The CGrid can now take in custom itemRenderer from the caller.
 
 == Usage and Implementation ==
 Pass in the columns of the grid as one arraycollection and the data as another arraycollection.
