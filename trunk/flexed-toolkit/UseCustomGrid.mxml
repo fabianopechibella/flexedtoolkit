@@ -42,16 +42,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 -->
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" themeColor="#ffcc00" color="#663300" xmlns:local="*" xmlns:example="examples.cgrid.*">
-<mx:Style source="/flexed/widgets/grid/grid.css"/>
-	<mx:Style>
-	/* Link Button */
-	LinkButton {
-		text-decoration :none;
-		text-roll-over-color : #e35d04;
-		button-height : 17;
-		font-size : 10;
-	}
-	</mx:Style>
 	<!-- Using the Tab Navigator to hold my components. -->
 	<mx:TabNavigator paddingLeft="3" paddingRight="3" horizontalCenter="0" horizontalAlign="center" verticalCenter="0" cornerRadius="5" alpha="1.0" borderColor="#7c2c10" fillColors="[#ffffff, #ffffe6]" fillAlphas="[1.0, 1.0]" width="100%" height="100%">
 		<!-- The RSS Reader component -->

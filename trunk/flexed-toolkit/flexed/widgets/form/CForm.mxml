@@ -341,10 +341,11 @@
 				var hasChild : Boolean = false;
 				for each(field in fields) {
 	            	eachWidget = new Array();
-	            	var fieldId:String = field.child("id").toString();
+	            	var fieldId:String = field.attribute("id").toString();
 	            	fieldId = fieldId.replace(/ /g,"");
 	            	var fieldName:String = null; 
-	            	if(field.child("name").length()!=0) fieldName=field.child("name").toString();
+	            	if(field.attribute("name").length()!= 0)
+	            		fieldName = field.attribute("name").toString();
 	            	
 	            	var tooltip:String = field.child("tooltip").toString();
 	            	eachWidget["field"] = field;

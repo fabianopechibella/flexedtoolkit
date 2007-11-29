@@ -8,7 +8,7 @@
 			<field>
 				<id>fname</id>
 				<name>Full Name</name>
-				<type id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
+				<type width="200" id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
 			</field>
 		</row> 
 		<row>

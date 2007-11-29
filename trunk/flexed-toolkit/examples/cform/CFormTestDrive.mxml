@@ -18,19 +18,10 @@
 			if(lstCtrlSchemes.selectedItems.length > 0){
 				cfrm.clearCform();
 				var str:String =  lstCtrlSchemes.selectedItem.filename as String;
-
 				if(str != ""){
 					str =  "examples/cform/xmls/"+str+".xml";
 					cfrm.widgetsFile = str;
 					cfrm.initCForm();
-					//load content of xml into txtarea
-					var loader:URLLoader = new URLLoader();
-					loader.addEventListener(Event.COMPLETE, openXml);
-				
-					var request:URLRequest = new URLRequest(str);
-					loader.load(request);
-				}else{
-					txtaraSchemaXml.text = "";
 				}
 			}
 		}
@@ -40,13 +31,24 @@
 				btnLoadCtrlScheme.enabled = false;
 			}else{
 				btnLoadCtrlScheme.enabled = true;
+				var str:String = List(event.currentTarget).selectedItem.filename as String;
+				if(str != ""){
+					str =  "examples/cform/xmls/"+str+".xml";
+					//load content of xml into txtarea
+					var loader:URLLoader = new URLLoader();
+					loader.addEventListener(Event.COMPLETE, openXml);
+				
+					var request:URLRequest = new URLRequest(str);
+					loader.load(request);
+				}else{
+					txtaraSchemaXml.text = "";
+				}				
 			}
 		}
 		
 		private function openXml(event:Event):void{
 			var loader:URLLoader = URLLoader(event.target);
-			var widgetsXML:XML = new XML(loader.data);
-			txtaraSchemaXml.text = widgetsXML.toString();
+			txtaraSchemaXml.text = loader.data.toString();
 		}
 		
 	]]>
