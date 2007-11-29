@@ -61,33 +61,6 @@
 			
 		]]>
 	</mx:Script>
-	<mx:Style>
-		Alert{
-	color : #0f3177;
-	title-style-name : "alertTitle";
-	header-height:19;
-	border-thickness: 1;
-	drop-shadow-enabled: true;
-	drop-shadow-color :#d1ddf7;
-	background-color: #ffffff;
-	corner-radius :6;
-	border-style :solid;
-	header-colors : #90a4d1, #5970a0;
-   	footer-colors : #9db6d9, #ffffff;
-	border-color : #5970a0;
-	} 
-
-/* all alert popup titles */
-
-.alertTitle{
-	font-family :Verdana;
-	font-size :10;
-	font-weight :bold;
-	text-align :left;
-	color :#ffffff;
-}
-
-	</mx:Style>
 	<flexed:AutoRefresher id="exampleAutoRefresh" delay="3000" refreshFunction="rfrshTime"/>
 	<mx:Label id="lblTime" text="Label" fontFamily="Times New Roman" fontWeight="normal" fontSize="20" width="100%" horizontalCenter="0" verticalCenter="0" textAlign="center" color="#e67300" click="{alert.info('Are you sure you wish to delete all files?')}"/>
 </mx:Canvas>
