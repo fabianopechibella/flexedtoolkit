@@ -16,7 +16,7 @@
 	<![CDATA[
 		import flexed.widgets.form.custom.SectionTitle;
 		import flexed.widgets.form.meta.MetaHelper;
-		import flexed.widgets.form.CFormItemRenderer;
+		
 		import mx.controls.ComboBox;
 		import mx.accessibility.ComboBoxAccImpl;
 		import mx.containers.Grid;
@@ -60,7 +60,7 @@
 		private var _customizeCForm:Function;
 		private var _updateCForm:Function;
 		private var _indicatorGap:int = 14;
-		
+		private var _xmlContent:XML = new XML();
 		/**
 		 *  Initializes the CForm. Loads the widgets xml file.
 		 *
@@ -110,6 +110,17 @@
 		}
 
 		/**
+		 *  Returns the entire xml content 
+		 *  of the controls xml.
+		 *
+		 *  @return XML from the controls xml
+		 *
+		 */
+		public function get xmlContent():XML {
+			return _xmlContent;
+		}
+
+		/**
 		 *  Need to document this.
 		 *  Custom validation for the form. This will be 
 		 *  used in <code>validateCForm</code>
@@ -156,6 +167,7 @@
 		private function loadFromXML(event:Event): void { 
 			var loader:URLLoader = URLLoader(event.target);
 			widgetsXML = new XML(loader.data);
+			_xmlContent = widgetsXML;
 			layoutCForm(widgetsXML);
 		}
 
@@ -170,28 +182,27 @@
 		 *  @event <i>CFormLoadComplete eventObjectClassName [description]</i> 
 		 *
 		 */			
-		private function layoutCForm(widgetsXML:XML): void {		
+		private function layoutCForm(widgetsXML:XML): void {
+			var alertFlag:Boolean = false;		
 			var label:String  = widgetsXML.descendants("label");
 			var cols :String = widgetsXML.descendants("columns").toString();
-			var verticalgap:String =widgetsXML.descendants("verticalgap").toString();
-			var indigap:String =widgetsXML.descendants("indicatorgap").toString();
+			var verticalgap:String = widgetsXML.descendants("verticalgap").toString();
+			var indigap:String = widgetsXML.descendants("indicatorgap").toString();
+
 			this.label = label.toString();
-			if (cols != "") {
+
+			if (cols != "")
 				this.columns = int(cols);
-			}
-			else {
-				this.columns = 1;
-			}
+			else
+				this.columns = 0;
+
 			var vgap:int=5;
+
 			if (verticalgap!=null && verticalgap!="")
-			{
 				vgap=int(verticalgap);
-			}
+
 			if (indigap!=null && indigap!="")
-			{
 				_indicatorGap=int(indigap);
-			}
-			
 			
 			var colCount:int;
 			for (colCount = 0; colCount < this.columns; colCount++) {
@@ -201,7 +212,7 @@
 				grid.percentHeight = 100;
 				grid.percentWidth = 100;
 				cont.addChild(grid);
-				gridColumns[colCount] = grid;
+				gridColumns[colCount+1] = grid;
 			}
 
 			var groups:XMLList = widgetsXML.descendants("group");
@@ -211,18 +222,24 @@
 			for each(group in groups) {
 				var whichColumn:String = group.attribute("column").toString();
 				var currentColumn:int;
-				if (whichColumn != "") {
+
+				if (whichColumn != "")
 					currentColumn = int(whichColumn);
-				}
-				else {
+				else
 					currentColumn = 0;
-				}
-				layoutCFormGroup(group, currentColumn);
+
+				if(currentColumn > 0 && currentColumn <= columns){
+					layoutCFormGroup(group, currentColumn);
+				}else{
+					if(alertFlag != true){
+						Alert.show("Error in the columns specified.","Screen Layout Error");
+						alertFlag = true;
+					}
+				}		
 			}
-						
+
 			var event:DynamicEvent=new DynamicEvent("CFormLoadComplete");
 			dispatchEvent(event);
-
 		}
 
 		/**
@@ -241,6 +258,7 @@
 			var name:String = groupXML.attribute("name").toString();
 
 			var grid:Grid = gridColumns[currentColumn];
+
 			var gTitleItem:GridItem=null;
 			var gHruleItem:GridItem=null;
 			
@@ -702,6 +720,14 @@
 		public function getRenderer(id:String):CFormItemRenderer {
 			if(widgets[id]) return widgets[id]["renderer"];
 			return null;
+		}
+		
+		/**
+		 *  Removes all controls from the container.
+		 *
+		 */
+		public function clearCform():void{
+			cont.removeAllChildren();
 		}
 		
 	]]>
