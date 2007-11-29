@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component>
+	<columns>2</columns>
+	<verticalgap>5</verticalgap>
+	<indicatorgap>1</indicatorgap>
+	<group name="Personal" column="1">
+		<row>
+			<field>
+				<id>fname</id>
+				<name>Full Name</name>
+				<type id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
+			</field>
+		</row> 
+		<row>
+			<field>
+				<id>age</id>
+				<name>Age</name>
+				<type id="NumericStepper" min="2" max="4095" editable="true"/>
+			</field>
+		</row>
+		<row>
+			<field>
+				<id>gender</id>
+				<name>Gender</name>
+				<type height="15" width="120" id="Display"/>
+			</field>
+		</row>
+	</group>
+	<group name="Occupation" column="2">
+		<row>
+			<field>
+				<id>coname</id>
+				<name>Company Name</name>
+				<type id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="coname"/>
+			</field>
+		</row> 
+		<row>
+			<field>
+				<id>coindustry</id>
+				<name>Age</name>
+				<type id="combobox" editable="true"/>
+			</field>
+		</row>
+		<row>
+			<field>
+				<id>fname</id>
+				<name>Full Name</name>
+				<type id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
+			</field>
+		</row> 
+	</group>		
+</component>
