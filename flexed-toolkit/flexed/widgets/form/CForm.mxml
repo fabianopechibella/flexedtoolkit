@@ -3,16 +3,20 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initCForm()" xmlns="*" width="100%" height="100%">
 	<mx:Metadata>
 		/**
-		 * 	CFormLoadComplete is dispatched after all the controls are created 
-		 *	and the properties array is created.
+		 *  CFormLoadComplete is dispatched after all the controls are created
+		 *  and the properties array is created. 
+		 *
 		 *  @eventType mx.events.DynamicEvent
-		 */
+		 *
+		 *  @see mx.events.DynamicEvent
+		 */		 
 		[Event(name="CFormLoadComplete",type="mx.events.DynamicEvent")]
 	</mx:Metadata>
     <mx:Script>
 	<![CDATA[
 		import flexed.widgets.form.custom.SectionTitle;
 		import flexed.widgets.form.meta.MetaHelper;
+		import flexed.widgets.form.CFormItemRenderer;
 		import mx.controls.ComboBox;
 		import mx.accessibility.ComboBoxAccImpl;
 		import mx.containers.Grid;
@@ -45,76 +49,132 @@
 		import mx.rpc.events.*;
 		import mx.events.DynamicEvent;
 		
-		public var properties:Object;
-		public var propertiesFile:String;
-		
-		public var propertiesXML:XML;
-		public var commandList:Array = new Array;
-		public var commandAlias:Array = new Array;
+		public var widgets:Object;
+		public var widgetsFile:String;
+		public var widgetsXML:XML;
+		public var fieldType:Array = new Array;
 		public var originalData:Array = new Array;
 		public var gridColumns:Array = new Array;
-		public var fieldType:Array = new Array;
 		public var columns:int;
-		public var activeCommand:String;
 				
 		private var _customizeCForm:Function;
 		private var _updateCForm:Function;
-		private var _customValidatorFunction:Function;
 		private var _indicatorGap:int = 14;
 		
+		/**
+		 *  Initializes the CForm. Loads the widgets xml file.
+		 *
+		 *  Called on <i>creationComplete</i>.
+		 * 
+		 */
 		public function initCForm():void {
-			if(propertiesFile != null) createCForm(propertiesFile);
+			if(widgetsFile != null) createCForm(widgetsFile);
 		}		
 		
+		/**
+		 *  Sets a custom function specified by the caller. This
+		 *  function can be used to manipulate fields in the CForm. 
+		 *
+		 *  @param customizer The custom function located in the caller, 
+		 *  which will be fired on the CForm
+		 *
+		 */
 		public function set cFormCustomizer(customizer:Function):void {
 			this._customizeCForm = customizer;
 		}
+		
+		/**
+		 *  Returns the custom function (if there is one) specified by the caller.
+		 *
+		 *  @return The custom function
+		 *
+		 */
 		public function get cFormCustomizer():Function {
 			return _customizeCForm;
 		}
 
+		/**
+		 *  Need to document this.
+		 *
+		 */
 		public function set cFormUpdater(updater:Function):void {
 			this._updateCForm = updater;
 		}
+
+		/**
+		 *  Need to document this.
+		 *
+		 */
 		public function get cFormUpdater():Function {
 			return _updateCForm;
 		}
 
+		/**
+		 *  Need to document this.
+		 *  Custom validation for the form. This will be 
+		 *  used in <code>validateCForm</code>
+		 *
+		 */
 		public function set cFormValidation(validatorFunction:Function):void {
-			_customValidatorFunction = validatorFunction;
+			_customizeCForm = validatorFunction;
 		}
+		
+		/**
+		 *  This returns all the values from the form. The original values 
+		 *  that were set by the caller.
+		 *
+		 *  @return Original values from the form. 
+		 *
+		 */
 		public function fetchCFormValues():Array {
 			return originalData;
 		}
 
-	
-		public function createCForm(propertiesFile:String): void {
+		/**
+		 *  @private
+		 *  This returns all the values from the form. The original values 
+		 *  that were set by the caller.
+		 *
+		 *  @return Original values from the form. 
+		 *
+		 */	
+		private function createCForm(widgetsFile:String): void {
 			var loader:URLLoader = new URLLoader();
 			loader.addEventListener(Event.COMPLETE, loadFromXML);
 			
-			var request:URLRequest = new URLRequest(propertiesFile);
+			var request:URLRequest = new URLRequest(widgetsFile);
 			loader.load(request);
 		}
 
-		private function loadFromXML(event:Event): void {
-			var loader:URLLoader = URLLoader(event.target);
-			propertiesXML = new XML(loader.data);
-			layoutCForm(propertiesXML);
-		}
-		
 		/**
-		* Function Name : layoutCForm
-		* Parameters : XML component created based on user specified field xml file.
-		*		It will have the list of fields grouped together to display with the columns.
-		* Description : Renders all UI components in specified group and column.		* 
-		* Modified :
-		* @event <i>CFormLoadComplete eventObjectClassName [description]</i> 
-		*/
-		private function layoutCForm(propertiesXML:XML): void {		
-			var label:String  = propertiesXML.descendants("label");
-			var cols :String = propertiesXML.descendants("columns").toString();
-			var verticalgap:String =propertiesXML.descendants("verticalgap").toString();
-			var indigap:String =propertiesXML.descendants("indicatorgap").toString();
+		 *  @private
+		 *  Fired on Event.COMPLETE  of URLLoader in createCForm
+		 *
+		 *  @param event Original values from the form. 
+		 *
+		 */	
+		private function loadFromXML(event:Event): void { 
+			var loader:URLLoader = URLLoader(event.target);
+			widgetsXML = new XML(loader.data);
+			layoutCForm(widgetsXML);
+		}
+
+		/**
+		 *  @private
+		 *  Renders all UI components in specified group and column.
+		 *
+		 *  @param widgetsXML  XML component created based on user 
+		 *  specified field xml file. It will have the list of fields 
+		 *  grouped together to display with the columns.
+		 *
+		 *  @event <i>CFormLoadComplete eventObjectClassName [description]</i> 
+		 *
+		 */			
+		private function layoutCForm(widgetsXML:XML): void {		
+			var label:String  = widgetsXML.descendants("label");
+			var cols :String = widgetsXML.descendants("columns").toString();
+			var verticalgap:String =widgetsXML.descendants("verticalgap").toString();
+			var indigap:String =widgetsXML.descendants("indicatorgap").toString();
 			this.label = label.toString();
 			if (cols != "") {
 				this.columns = int(cols);
@@ -144,9 +204,9 @@
 				gridColumns[colCount] = grid;
 			}
 
-			var groups:XMLList = propertiesXML.descendants("group");
+			var groups:XMLList = widgetsXML.descendants("group");
 			var group:XML;
-			properties = new Object();
+			widgets = new Object();
 			
 			for each(group in groups) {
 				var whichColumn:String = group.attribute("column").toString();
@@ -165,18 +225,19 @@
 
 		}
 
-
 		/**
-		* @Function Name: layoutCFormGroup
-		* @Parameters: fields XML and column location.
-		* @Description: Renders UI components of a group in the specified column.
-		* @Author: Shahabudeen Yahiya
-		*/
+		 *  @private
+		 *  Renders UI components of a group in the specified column.
+		 *
+		 *  @param groupXML  Fields falling under a group.
+		 *  @param currentColumn Column number for layout.
+		 *
+		 */	
 		private function layoutCFormGroup(groupXML:XML, currentColumn:int):void {
 			var rows:XMLList=groupXML.descendants("row");
 			var row:XML;
 
-			var eachProperty:Array = new Array();
+			var eachWidget:Array = new Array();
 			var name:String = groupXML.attribute("name").toString();
 
 			var grid:Grid = gridColumns[currentColumn];
@@ -220,15 +281,15 @@
 				var gItemrow1:GridRow=new GridRow();
 				var hasChild : Boolean = false;
 				for each(field in fields) {
-	            	eachProperty = new Array();
+	            	eachWidget = new Array();
 	            	var fieldId:String = field.child("id").toString();
 	            	fieldId = fieldId.replace(/ /g,"");
 	            	var fieldName:String = null; 
 	            	if(field.child("name").length()!=0) fieldName=field.child("name").toString();
 	            	
 	            	var tooltip:String = field.child("tooltip").toString();
-	            	eachProperty["field"] = field;
-	            	eachProperty["fieldId"] = fieldId;
+	            	eachWidget["field"] = field;
+	            	eachWidget["fieldId"] = fieldId;
 
 					hasChild = true;
 	            	var gLabel:GridItem=new GridItem();
@@ -288,9 +349,9 @@
 		            		colspan++;
 		            	}
 	            	}
-	            	eachProperty["formItem"] = gItemlabel;
-	            	eachProperty["renderer"] = renderer;
-	            	properties[fieldId] = eachProperty;	
+	            	eachWidget["formItem"] = gItemlabel;
+	            	eachWidget["renderer"] = renderer;
+	            	widgets[fieldId] = eachWidget;	
 				}
 				if(hasChild == true){
 					grid.addChild(gItemrow);
@@ -304,36 +365,68 @@
 			if(gTitleItem!=null) gTitleItem.colSpan=maxcolspan;
 			if(gHruleItem!=null) gHruleItem.colSpan=maxcolspan;			
 
-            // For empty space after a group like General, CLI, etc,.
 			if (name != '') {
 				var grow:GridRow=new GridRow();
 				grid.addChild(grow);
 			}
 		}
-		
+
+		/**
+		 *  @private
+		 *  Validate the CForm using the custom 
+		 *  validation function specified using <code>cFormCustomizer</code>
+		 *
+		 *  @return Boolean based on whether the content of 
+		 *  the form pass validation or not.
+		 *
+		 */			
 		private function validateCForm():Boolean {
 			var valid:Boolean=true;
-			if(_customValidatorFunction!=null) {
+			if(_customizeCForm!=null) {
 				var values:Object=getCFormValues(false);
 				for (var key:String in values) {
-					var result:ValidationResult=_customValidatorFunction(key,values[key],values);
+					var result:ValidationResult=_customizeCForm(key,values[key],values);
 					if(result.isError) {
-						properties[key].renderer.getUIComponent().errorString=result.errorMessage;
+						widgets[key].renderer.getUIComponent().errorString=result.errorMessage;
 						valid=false;
 					} else {
-						properties[key].renderer.getUIComponent().errorString="";
+						widgets[key].renderer.getUIComponent().errorString="";
 					}
 				}
 			}
 			return valid;
 		}
-		
+
+		/**
+		 *  @private
+		 *  Create label-control <code>FormItem</code> item in the CForm
+		 *
+		 *  @param id Id of the control
+		 *  @param name Name of the control
+		 *  @param field The XML containing the field details
+		 *  @param fields An XML List of all fields
+		 *
+		 *  @return formItem created from the params passed.
+		 *
+		 */		
 		private function createCFormItem(id:String, name:String, field:XML, fields:XMLList):FormItem {			
 		   	var formItem:FormItem = new FormItem();
 		    formItem.label = name;
 		    return formItem;
 		}
 		
+		/**
+		 *  @private
+		 *  Create each formItem using the renderers
+		 *
+		 *  @param id Id of the control
+		 *  @param name Name of the control
+		 *  @param field The XML containing the field details
+		 *  @param fields An XML List of all fields
+		 *
+		 *  @return CFormItemRenderer Output of <code>renderDefaultItem</code> 
+		 *
+		 */			
 		private function createCFormItemRenderer(id:String, name:String, field:XML, fields:XMLList):CFormItemRenderer {
         	var type:XMLList = field.child("type");
         	var typeId:String = type.attribute("id").toString();
@@ -348,6 +441,17 @@
         	}
 		}
 		
+		/**
+		 *  @private
+		 *  Create each formItem using default custom renderers
+		 *
+		 *  @param typeId Type of control
+		 *  @param attributes XML List of attributes of the control
+		 *  @param columns The XML List containing the column info
+		 *
+		 *  @return renderer Created from the passed parameters
+		 *
+		 */
 		private function renderDefaultItem(typeId:String, attributes:XMLList, columns:XMLList= null):CFormItemRenderer {
 			var renderer:CFormItemRenderer;
 			if(typeId.toLocaleLowerCase() == "boolean") {
@@ -406,49 +510,85 @@
 			}
 			return renderer;
 		}
-			
+
+		/**
+		 *  @private
+		 *  Set the values passed in to the controls in CForm
+		 *
+		 *  @param values an Object containing values 
+		 *
+		 */
 		private function setFormValues(values:Object):void {
-			var property:Array;
+			var widget:Array;
 			var key:String;
-			for (key in properties) {
+			for (key in widgets) {
 				if (values[key] != null) {
-					properties[key]["renderer"].setValue(values[key]);
+					widgets[key]["renderer"].setValue(values[key]);
 					originalData[key] = values[key];
 				} else if(values[key]==null){
-					if (properties[key]["renderer"] is CFormItemDisplay)
-						properties[key]["renderer"].setValue("-");
-					else if (properties[key]["renderer"] is CFormItemText)
-						properties[key]["renderer"].setValue("");
+					if (widgets[key]["renderer"] is CFormItemDisplay)
+						widgets[key]["renderer"].setValue("-");
+					else if (widgets[key]["renderer"] is CFormItemText)
+						widgets[key]["renderer"].setValue("");
 				}
 			}
 		}
 		
+		/**
+		 *  Resets the values in the controls to empty or 0 
+		 *
+		 */
 		public function resetCForm():void {
-			var property:Array;
+			var widget:Array;
 			var key:String;
-			for (key in properties) {
-					if (properties[key]["renderer"] is CFormItemText || properties[key]["renderer"] is CFormItemTextArea){
-						properties[key]["renderer"].setValue("");	
-					}else if (properties[key]["renderer"] is CFormItemCombobox){
-						properties[key]["renderer"].getUIComponent().selectedIndex=0;	
-					}else if (properties[key]["renderer"] is CFormItemDisplay){
-						properties[key]["renderer"].setValue("");
-					}else if (properties[key]["renderer"] is CFormItemRadioButton){
-						properties[key]["renderer"].setValue(null);
-					}else if (properties[key]["renderer"] is CFormItemNumericStepper){
-						properties[key]["renderer"].setValue(0);
+			for (key in widgets) {
+					if (widgets[key]["renderer"] is CFormItemText || widgets[key]["renderer"] is CFormItemTextArea){
+						widgets[key]["renderer"].setValue("");	
+					}else if (widgets[key]["renderer"] is CFormItemCombobox){
+						widgets[key]["renderer"].getUIComponent().selectedIndex=0;	
+					}else if (widgets[key]["renderer"] is CFormItemDisplay){
+						widgets[key]["renderer"].setValue("");
+					}else if (widgets[key]["renderer"] is CFormItemRadioButton){
+						widgets[key]["renderer"].setValue(null);
+					}else if (widgets[key]["renderer"] is CFormItemNumericStepper){
+						widgets[key]["renderer"].setValue(0);
 					}
 				}
 		}
+		
+		/**
+		 *  Resets the value of the controls. Boolean Control will 
+		 *  have none of the controls selected. Text Fields will be made empty.
+		 *
+		 */
+		public function resetCFormItem():void{
+			for each(var widget:Array in widgets) {
+				var type:XMLList = widget["field"].child("type");
+	        	var typeId:String = type.attribute("id").toString();
+				if(typeId.toLowerCase() == "boolean"){
+					widget["renderer"].setValue(null);
+				}
+				else if(typeId.toLowerCase() == "text"){
+					widget["renderer"].setValue("");
+				}
+			}
+		}
+		
 			
-			
-		public function setData(obj:Object):void {
+		/**
+		 *  Set the values passed in to the controls in CForm
+		 *  <span style="hide">Why is there two methods for the same purpose?</span>
+		 *
+		 *  @param values an Object containing values 
+		 *
+		 */
+		public function setData(values:Object):void {
 			var values:Object=new Object();
 			
-			var property:Array;
+			var widget:Array;
 			var key:String;
-			for (key in properties) {
-				var value:Object = obj[key];
+			for (key in widgets) {
+				var value:Object = values[key];
 				
 				if(key.indexOf(".")!=-1) {
 					var tmp:Array=key.split(".");
@@ -457,21 +597,31 @@
 					var _tmp2:String=tmp[2];
 					
 					if(tmp.length>2){
-						if(obj[_tmp0][_tmp1]) value=obj[_tmp0][_tmp1][_tmp2];					
+						if(values[_tmp0][_tmp1]) value=values[_tmp0][_tmp1][_tmp2];					
 					}else{
-						if(obj[_tmp0]) value=obj[_tmp0][_tmp1];
+						if(values[_tmp0]) value=values[_tmp0][_tmp1];
 					}
 				}
 				values[key]=value;
 			}			
 			setFormValues(values);
 		}
-		
+
+		/**
+		 *  Gets values from CForm 
+		 *
+		 *  @param onlyModifiedValues If <code>true</code> is 
+		 *  passed, only modified items are returned. if <code>false</code> 
+		 *  is passed, all the values are returned.
+		 *
+		 *  @default true
+		 *
+		 */		
 		public function getData(onlyModifiedValues:Boolean=true):Object {
 			var obj:Object=new Object();
 			var values:Object=getCFormValues(onlyModifiedValues);
 			
-			var property:Array;
+			var widget:Array;
 			var key:String;
 			for (key in values) {
 				var value:Object = values[key];
@@ -492,47 +642,29 @@
 			return obj;
 		}		
 
-
-		public function getRenderer(id:String):CFormItemRenderer {
-			if(properties[id]) return properties[id]["renderer"];
-			return null;
-		}
-		
 		/**
-		 * Reset : Resets the value of the controls. Boolean Control will have none of the controls selected.
-		 * Text Field will be empty.
-		 * Used by Port Bulk Save. 
-		 * Incase of Bulk Save Property Sheet, original Values shall always remain null.
+		 *  Called by <code>getData</code>. Soon <code>getCFormValues</code> will be made private 
+		 *  and all external calls for <code>getCFormValues</code>
+		 *	replaced by <code>getData</code>
+		 * 
+		 *  @param onlyModifiedValues If <code>true</code> is 
+		 *  passed, only modified items are returned. if <code>false</code> 
+		 *  is passed, all the values are returned.
+		 *
+		 *  @default true		 
+		 *
 		 */
-		public function resetCFormItem():void{
-			for each(var property:Array in properties) {
-				var type:XMLList = property["field"].child("type");
-	        	var typeId:String = type.attribute("id").toString();
-				if(typeId.toLowerCase() == "boolean"){
-					property["renderer"].setValue(null);
-				}
-				else if(typeId.toLowerCase() == "text"){
-					property["renderer"].setValue("");
-				}
-			}
-		}
-		
-		
-		/**
-		 * Called by getData. Soon getCFormValues will be made private and all external calls for getCFormValues
-		 *	replaced by getData
-		 */ 
 		public function getCFormValues(onlyModifiedValues:Boolean=true): Object {
 			var values:Object=new Object();
 
-			for each(var property:Array in properties) {
-				var fieldId:String = property["fieldId"];
-				var currentValue:Object = property["renderer"].getValue();
-				var originalValue:Object = originalData[property["fieldId"]];
+			for each(var widget:Array in widgets) {
+				var fieldId:String = widget["fieldId"];
+				var currentValue:Object = widget["renderer"].getValue();
+				var originalValue:Object = originalData[widget["fieldId"]];
 				if(currentValue == null)
 					continue;
 				
-	        	var type:XMLList = property["field"].child("type");
+	        	var type:XMLList = widget["field"].child("type");
 	        	var typeId:String = type.attribute("id").toString();
 	        	if (typeId.toLowerCase() == "boolean" 
 	        		&& (originalValue != null)) {
@@ -554,6 +686,22 @@
 			}
 
 			return values;
+		}
+
+		/**
+		 *  Returns the renderer of the control with the passed 
+		 *  id. This is useful, if caller wants to perform specific 
+		 *  actions on select controls in CForm. Eg:- Setting 
+		 *  dataproviders dynamically to combo drop downs.
+		 *
+		 *  @param id Id of the control
+		 *
+		 *  @return CFormItemRenderer If renderer is found, else return null
+		 *
+		 */
+		public function getRenderer(id:String):CFormItemRenderer {
+			if(widgets[id]) return widgets[id]["renderer"];
+			return null;
 		}
 		
 	]]>
