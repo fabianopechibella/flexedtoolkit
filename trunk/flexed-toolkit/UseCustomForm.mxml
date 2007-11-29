@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:form="flexed.widgets.form.*" horizontalAlign="center" verticalAlign="middle" backgroundGradientColors="[#ffffff, #f8fceb]" backgroundGradientAlphas="[1.0, 0.93]">
-<mx:Canvas width="600" height="300" horizontalCenter="0" verticalCenter="0" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#d2d200" borderThickness="1">
-	<form:CForm verticalCenter="0" horizontalCenter="0" horizontalScrollPolicy="off" verticalScrollPolicy="auto" id="formSwitchDetails" propertiesFile="CFormSampleXML.xml" width="90%" height="90%"/>
-</mx:Canvas>
-		
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:form="flexed.widgets.form.*" horizontalAlign="center" verticalAlign="middle" backgroundGradientColors="[#ffffff, #f8fceb]" backgroundGradientAlphas="[1.0, 0.93]" xmlns:cform="examples.cform.*">
+<mx:Style>
+	Application {
+   themeColor: #ffcc00;
+}
+</mx:Style>
+	<cform:CFormTestDrive id="useCForm"  horizontalCenter="0" verticalCenter="0"/>		
 </mx:Application>
  

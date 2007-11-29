@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component>
-	<columns>2</columns>
+	<columns>1</columns>
 	<verticalgap>5</verticalgap>
 	<indicatorgap>1</indicatorgap>
-	<group name="Personal" column="0">
+	<group name="Personal" column="1">
 		<row>
 			<field>
 				<id>fname</id>

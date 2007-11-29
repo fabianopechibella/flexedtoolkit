@@ -58,7 +58,7 @@
 		import mx.controls.Menu;
 		import mx.events.IndexChangedEvent;
 		import mx.controls.Alert;
-		import flexed.widgets.grid.PrintGridContent;
+		
 		import mx.controls.Button;
 		import mx.core.Application;
 		import mx.printing.FlexPrintJob;
