@@ -55,6 +55,20 @@
 	</mx:Metadata>
     <mx:Script>
 	<![CDATA[
+		import flexed.widgets.form.meta.MetaData;
+		/**
+		 *  The CForm allows users to create entry forms very easily. CForm picks up 
+		 *  field names, types and attributes from an xml file and lays out the form.
+		 *  The values entered in the form are available by single methods exposed. For
+		 *  further information on these, check out the Methods section.
+		 *
+		 *  @mxml
+		 *
+		 *  <p>Using this component in the application is very simple. Use the following 
+		 *  syntax for basic usage:</p>
+		 *  &lt;flexed:CForm id="exampleCform" widgetsFile="controls.xml" width="100%" height="100%" /&gt;
+		 */
+	
 		import flexed.widgets.form.custom.SectionTitle;
 		import flexed.widgets.form.meta.MetaHelper;
 		
@@ -95,6 +109,7 @@
 		public var widgetsXML:XML;
 		public var fieldType:Array = new Array;
 		public var originalData:Array = new Array;
+		public var defaultData:Array = new Array;
 		public var gridColumns:Array = new Array;
 		public var columns:int;
 				
@@ -102,6 +117,7 @@
 		private var _updateCForm:Function;
 		private var _indicatorGap:int = 14;
 		private var _xmlContent:XML = new XML();
+		private var _prettyNamesPath:String = "";
 		/**
 		 *  Initializes the CForm. Loads the widgets xml file.
 		 *
@@ -162,6 +178,21 @@
 		}
 
 		/**
+		 *  Returns the entire xml content 
+		 *  of the controls xml.
+		 *
+		 *  @return XML from the controls xml
+		 *
+		 */
+		public function get isDirty():Boolean{
+			var obj:Object = this.getData();
+			if(obj != null)
+				return true;
+			else
+				return false;
+		}
+
+		/**
 		 *  Need to document this.
 		 *  Custom validation for the form. This will be 
 		 *  used in <code>validateCForm</code>
@@ -211,6 +242,14 @@
 			_xmlContent = widgetsXML;
 			layoutCForm(widgetsXML);
 		}
+		
+		private function parsePrettyNamesPath(pathval:String):String{
+			var reg:RegExp = /\./g
+			var actualPath:String = pathval;
+			actualPath = actualPath.replace(reg,"/")+".xml";
+			
+			return actualPath;
+		}
 
 		/**
 		 *  @private
@@ -224,6 +263,8 @@
 		 *
 		 */			
 		private function layoutCForm(widgetsXML:XML): void {
+			_prettyNamesPath =  parsePrettyNamesPath(widgetsXML.descendants("prettynames"));
+			var mHelper:MetaData = new MetaData(_prettyNamesPath);
 			var alertFlag:Boolean = false;		
 			var label:String  = widgetsXML.descendants("label");
 			var cols :String = widgetsXML.descendants("columns").toString();
@@ -346,15 +387,17 @@
 	            	var fieldName:String = null; 
 	            	if(field.attribute("name").length()!= 0)
 	            		fieldName = field.attribute("name").toString();
-	            	
-	            	var tooltip:String = field.child("tooltip").toString();
+					var tooltip:String = null;
+	            	if(field.attribute("tooltip").length()!= 0)
+	            		tooltip = field.attribute("tooltip").toString();
+	            		
 	            	eachWidget["field"] = field;
 	            	eachWidget["fieldId"] = fieldId;
 
 					hasChild = true;
 	            	var gLabel:GridItem=new GridItem();
 	            	var gItemlabel:Label=new Label();
-	            	gItemlabel.text=fieldName;
+	            	gItemlabel.text = fieldName;
 	            	var styleName:String="viewLabel";
 	            	
 	            	if (field.child("name").attribute("styleName").toString()!=""){
@@ -411,7 +454,7 @@
 	            	}
 	            	eachWidget["formItem"] = gItemlabel;
 	            	eachWidget["renderer"] = renderer;
-	            	widgets[fieldId] = eachWidget;	
+	            	widgets[fieldId] = eachWidget;
 				}
 				if(hasChild == true){
 					grid.addChild(gItemrow);
@@ -528,13 +571,13 @@
 			} else if(typeId.toLocaleLowerCase() == "date") {
 				renderer = new CFormItemDate();
 				CFormItemDate(renderer).setAttributesFromXML(attributes);
-			} else if(typeId.toLocaleLowerCase() == "dropdown") {
+			} else if(typeId.toLocaleLowerCase() == "combobox") {
 				renderer = new CFormItemCombobox();
 				var tmp:XMLList=attributes.attribute("values");
 				if(tmp) {
 					var _tmp:Array=tmp.toString().split(".");
 					if(_tmp.length>1) {
-						var prettyNames:Object = MetaHelper.prettyNames(_tmp[0],_tmp[1]);
+						var prettyNames:Object = MetaHelper.prettyNames(_tmp[0], _tmp[1]);
 						var dataProvider:ArrayCollection=new ArrayCollection();
 						for(var key:String in prettyNames) {
 							var _data:Object=new Object();
@@ -602,17 +645,16 @@
 			var widget:Array;
 			var key:String;
 			for (key in widgets) {
-					if (widgets[key]["renderer"] is CFormItemText || widgets[key]["renderer"] is CFormItemTextArea){
+					if (widgets[key]["renderer"] is CFormItemText || widgets[key]["renderer"] is CFormItemTextArea)
 						widgets[key]["renderer"].setValue("");	
-					}else if (widgets[key]["renderer"] is CFormItemCombobox){
+					else if(widgets[key]["renderer"] is CFormItemCombobox)
 						widgets[key]["renderer"].getUIComponent().selectedIndex=0;	
-					}else if (widgets[key]["renderer"] is CFormItemDisplay){
+					else if(widgets[key]["renderer"] is CFormItemDisplay)
 						widgets[key]["renderer"].setValue("");
-					}else if (widgets[key]["renderer"] is CFormItemRadioButton){
+					else if(widgets[key]["renderer"] is CFormItemRadioButton)
 						widgets[key]["renderer"].setValue(null);
-					}else if (widgets[key]["renderer"] is CFormItemNumericStepper){
+					else if(widgets[key]["renderer"] is CFormItemNumericStepper)
 						widgets[key]["renderer"].setValue(0);
-					}
 				}
 		}
 		
@@ -703,6 +745,7 @@
 		}		
 
 		/**
+		 *  @private
 		 *  Called by <code>getData</code>. Soon <code>getCFormValues</code> will be made private 
 		 *  and all external calls for <code>getCFormValues</code>
 		 *	replaced by <code>getData</code>
@@ -714,7 +757,7 @@
 		 *  @default true		 
 		 *
 		 */
-		public function getCFormValues(onlyModifiedValues:Boolean=true): Object {
+		private function getCFormValues(onlyModifiedValues:Boolean=true): Object {
 			var values:Object=new Object();
 
 			for each(var widget:Array in widgets) {

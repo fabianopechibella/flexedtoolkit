@@ -1,17 +1,19 @@
 package flexed.widgets.form.meta {
-	import flash.net.URLLoader;
 	import flash.events.Event;
+	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
 	public class MetaData {
 		public var _prettyNames:Object;
+		private var xmlFile:String = "";
 		
-		public function MetaData():void {
+		public function MetaData(filePath:String = "prettyNames.xml"):void {
+			xmlFile = filePath;
 			init();
 		}
 		private function init():void {
 			_prettyNames=new Object();
-			loadMetaFile("prettyNames.xml",prettyNamesLoaded);
+			loadMetaFile(xmlFile, prettyNamesLoaded);
 		}
 
 		private function loadMetaFile(metaFile:String,completeFunction:Function):void {
