@@ -2,6 +2,7 @@
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="815" height="438" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#d2d200" borderThickness="1" verticalCenter="69" horizontalCenter="85" paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6" xmlns:form="flexed.widgets.form.*">
 <mx:Script>
 	<![CDATA[
+		import mx.controls.Alert;
 		import mx.events.ListEvent;
 		import mx.collections.ArrayCollection;
 		
@@ -22,6 +23,12 @@
 					str =  "examples/cform/xmls/"+str+".xml";
 					cfrm.widgetsFile = str;
 					cfrm.initCForm();
+					
+					btnIsDirty.enabled = true;
+					btnGetData.enabled = true;
+					btnResetForm.enabled = true;
+					btnClearForm.enabled = true;
+					
 				}
 			}
 		}
@@ -51,6 +58,27 @@
 			txtaraSchemaXml.text = loader.data.toString();
 		}
 		
+
+		private function isDirtyClickHandler(event:MouseEvent):void{
+			if(cfrm.isDirty == true)
+				Alert.show("Yes. The form is now dirty!","isDirty");
+			else
+				Alert.show("No. The form is clean!","isDirty");
+		}
+		
+		private function resetClickHandler(event:MouseEvent):void{
+			
+		}
+
+		private function clearClickHandler(event:MouseEvent):void{
+			
+		}
+
+		
+		private function getDataClickHandler(event:MouseEvent):void{
+			
+		}
+		
 	]]>
 </mx:Script>
 	<!-- Heading -->
@@ -58,17 +86,25 @@
 	
 	<mx:HBox width="100%" backgroundColor="#F7FFCD" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6" cornerRadius="4" borderStyle="solid" borderColor="#BAD16A">
 		<!-- Show XML content -->		
-		<mx:TextArea width="604" height="100%" id="txtaraSchemaXml" borderStyle="solid" borderColor="#7F9B5A"/>
+		<mx:TextArea width="604" height="100%" id="txtaraSchemaXml" borderStyle="solid" borderColor="#7F9B5A" editable="false"/>
 		<mx:VBox horizontalAlign="center" width="100%" height="100%">
 			<!-- List of XML files -->
 			<mx:List id="lstCtrlSchemes" allowMultipleSelection="false" height="100%" width="100%" borderColor="#7F9B5A" borderStyle="solid" dataProvider="{schemaList}" change="lstClickHandler(event)"/>
 			<!-- Load button -->
-			<mx:Button id="btnLoadCtrlScheme"  textAlign="center" label="Load Schema" borderColor="#7F9B5A" themeColor="#CFF26F" click="btnClickHandler(event)" enabled="false"/>
+			<mx:Button id="btnLoadCtrlScheme" textAlign="center" label="Load Schema" borderColor="#7F9B5A" themeColor="#CFF26F" click="btnClickHandler(event)" enabled="false"/>
 		</mx:VBox>
 	</mx:HBox>
 	
 	<!-- The CForm component -->	
 	<form:CForm id="cfrm" verticalCenter="0" horizontalCenter="0" horizontalScrollPolicy="off" verticalScrollPolicy="auto" width="100%" height="100%"/>
+	
+	<!-- The bar containing controls to use the data from CForm -->
+	<mx:HBox id="controlBar" width="100%" horizontalGap="4" horizontalCenter="0" horizontalAlign="right" cornerRadius="4" borderStyle="solid" borderColor="#E5F165" paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3">
+		<mx:Button id="btnIsDirty" textAlign="center" label="Is CForm Dirty?" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="isDirtyClickHandler(event)"/>
+		<mx:Button id="btnResetForm" textAlign="center" label="Reset CForm" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="resetClickHandler(event)"/>
+		<mx:Button id="btnClearForm" textAlign="center" label="Clear CForm" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="clearClickHandler(event)"/>
+		<mx:Button id="btnGetData" textAlign="center" label="Get CForm Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="getDataClickHandler(event)"/>
+	</mx:HBox>
 	
 	<!-- Copyright text (???) :) -->
 	<mx:Label horizontalCenter="0" text="CForm v1.0 | http://flexed.wordpress.com | ©Uday M. Shankar 2007"  bottom="0" color="#98B300"/>

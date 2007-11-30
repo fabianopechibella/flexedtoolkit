@@ -2,7 +2,7 @@ package flexed.widgets.form.meta {
 	public class MetaHelper {
 		private static var metaData:MetaData=new MetaData();
 		
-		public function MetaHelper():void {
+		public function MetaHelper(_prettyNamesPath:String):void {
 			
 		}
 		
