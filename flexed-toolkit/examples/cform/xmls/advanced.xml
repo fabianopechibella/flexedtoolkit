@@ -29,7 +29,11 @@
 		</row> 
 		<row>
 			<field id="coindustry" name="Industry">
-				<type id="combobox" values="example.coindustry" editable="true"/>
+				<type id="combobox">
+					<item data="tele" label="Telecom"/>
+					<item data="banking" label="Banking"/>			
+					<item data="ites" label="ITES"/>
+				</type>
 			</field>
 		</row>
 	</group>	

@@ -55,7 +55,6 @@
 	</mx:Metadata>
     <mx:Script>
 	<![CDATA[
-		import flexed.widgets.form.meta.MetaData;
 		/**
 		 *  The CForm allows users to create entry forms very easily. CForm picks up 
 		 *  field names, types and attributes from an xml file and lays out the form.
@@ -70,8 +69,6 @@
 		 */
 	
 		import flexed.widgets.form.custom.SectionTitle;
-		import flexed.widgets.form.meta.MetaHelper;
-		
 		import mx.controls.ComboBox;
 		import mx.accessibility.ComboBoxAccImpl;
 		import mx.containers.Grid;
@@ -117,7 +114,7 @@
 		private var _updateCForm:Function;
 		private var _indicatorGap:int = 14;
 		private var _xmlContent:XML = new XML();
-		private var _prettyNamesPath:String = "";
+
 		/**
 		 *  Initializes the CForm. Loads the widgets xml file.
 		 *
@@ -243,13 +240,7 @@
 			layoutCForm(widgetsXML);
 		}
 		
-		private function parsePrettyNamesPath(pathval:String):String{
-			var reg:RegExp = /\./g
-			var actualPath:String = pathval;
-			actualPath = actualPath.replace(reg,"/")+".xml";
-			
-			return actualPath;
-		}
+
 
 		/**
 		 *  @private
@@ -263,8 +254,6 @@
 		 *
 		 */			
 		private function layoutCForm(widgetsXML:XML): void {
-			_prettyNamesPath =  parsePrettyNamesPath(widgetsXML.descendants("prettynames"));
-			var mHelper:MetaData = new MetaData(_prettyNamesPath);
 			var alertFlag:Boolean = false;		
 			var label:String  = widgetsXML.descendants("label");
 			var cols :String = widgetsXML.descendants("columns").toString();
@@ -488,9 +477,9 @@
 			if(_customizeCForm!=null) {
 				var values:Object=getCFormValues(false);
 				for (var key:String in values) {
-					var result:ValidationResult=_customizeCForm(key,values[key],values);
+					var result:ValidationResult = _customizeCForm(key, values[key], values);
 					if(result.isError) {
-						widgets[key].renderer.getUIComponent().errorString=result.errorMessage;
+						widgets[key].renderer.getUIComponent().errorString = result.errorMessage;
 						valid=false;
 					} else {
 						widgets[key].renderer.getUIComponent().errorString="";
@@ -574,22 +563,17 @@
 			} else if(typeId.toLocaleLowerCase() == "combobox") {
 				renderer = new CFormItemCombobox();
 				var tmp:XMLList=attributes.attribute("values");
-				if(tmp) {
-					var _tmp:Array=tmp.toString().split(".");
-					if(_tmp.length>1) {
-						var prettyNames:Object = MetaHelper.prettyNames(_tmp[0], _tmp[1]);
-						var dataProvider:ArrayCollection=new ArrayCollection();
-						for(var key:String in prettyNames) {
-							var _data:Object=new Object();
-							_data.label=prettyNames[key];
-							_data.data=key;
-							
-							dataProvider.addItem(_data);
-						}
-						
-						(CFormItemCombobox(renderer)).setDataProvider(dataProvider);
-					}
-				}
+				var dataProvider:ArrayCollection = new ArrayCollection();
+				var items:XMLList=attributes.descendants("item");
+				
+				for each(var item:XML in items) {
+                	var _data:Object=new Object();
+					_data.label = item.attribute("label").toString();
+					_data.data = item.attribute("data").toString();
+					dataProvider.addItem(_data);
+            	}
+				
+				(CFormItemCombobox(renderer)).setDataProvider(dataProvider);
 				CFormItemCombobox(renderer).setAttributesFromXML(attributes);
 			} else if(typeId.toLocaleLowerCase() == "textarea") {
 				renderer = new CFormItemTextArea();

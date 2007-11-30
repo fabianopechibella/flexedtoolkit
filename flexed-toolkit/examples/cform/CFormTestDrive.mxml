@@ -10,8 +10,7 @@
 																{label:"Basic", filename:"basic"},
 																{label:"Advanced", filename:"advanced"},
 																{label:"Single Column Scroll", filename:"simple_1col_scroll"},
-																{label:"Multi Column - 2", filename:"simple_2col"},
-																{label:"Multi Column - 3", filename:"simple_3col"},
+																{label:"Multi Column", filename:"simple_2col"},
 																{label:"Dynamic Combobox", filename:""}
 																]);
 			
