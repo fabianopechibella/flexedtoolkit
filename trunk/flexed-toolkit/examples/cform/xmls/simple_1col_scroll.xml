@@ -1,43 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component>
-	<columns>1</columns>
-	<verticalgap>5</verticalgap>
-	<indicatorgap>1</indicatorgap>
+<component columns="1" vgap="5" igap="1">
 	<group name="Personal" column="1">
 		<row>
-			<field>
-				<id>fname</id>
-				<name>Full Name</name>
-				<type id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
+			<field id="fname" name="Full Name">
+				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
 			</field>
 		</row> 
 		<row>
-			<field>
-				<id>age</id>
-				<name>Age</name>
-				<type id="NumericStepper" min="2" max="4095" editable="true"/>
+			<field id="age" name="Age">
+				<widget type="NumericStepper" min="2" max="4095" editable="true"/>
 			</field>
 		</row>
 		<row>
-			<field>
-				<id>gender</id>
-				<name>Gender</name>
-				<type height="15" width="120" id="Display"/>
+			<field id="gender" name="Gender">
+				<widget height="15" width="120" id="Display"/>
 			</field>
 		</row>
 		<row>
-			<field>
-				<id>coname</id>
-				<name>Company Name</name>
-				<type id="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="coname"/>
+			<field id="fname" name="Full Name">
+				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
 			</field>
 		</row> 
 		<row>
-			<field>
-				<id>coindustry</id>
-				<name>Age</name>
-				<type id="combobox" editable="true"/>
+			<field id="age" name="Age">
+				<widget type="NumericStepper" min="2" max="4095" editable="true"/>
 			</field>
 		</row>
-	</group>	
+		<row>
+			<field id="gender" name="Gender">
+				<widget type="Display" height="15" width="120"/>
+			</field>
+		</row>		
+	</group>
 </component>

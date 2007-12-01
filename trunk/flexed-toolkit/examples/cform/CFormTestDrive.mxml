@@ -21,7 +21,7 @@
 				if(str != ""){
 					str =  "examples/cform/xmls/"+str+".xml";
 					cfrm.widgetsFile = str;
-					cfrm.initCForm();
+					cfrm.init();
 					
 					btnIsDirty.enabled = true;
 					btnGetData.enabled = true;
@@ -75,7 +75,7 @@
 
 		
 		private function getDataClickHandler(event:MouseEvent):void{
-			
+			var obj:Object = cfrm.getData();
 		}
 		
 	]]>
@@ -98,13 +98,15 @@
 	<form:CForm id="cfrm" verticalCenter="0" horizontalCenter="0" horizontalScrollPolicy="off" verticalScrollPolicy="auto" width="100%" height="100%"/>
 	
 	<!-- The bar containing controls to use the data from CForm -->
-	<mx:HBox id="controlBar" width="100%" horizontalGap="4" horizontalCenter="0" horizontalAlign="right" cornerRadius="4" borderStyle="solid" borderColor="#E5F165" paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3">
+	<mx:HBox id="controlBar" width="100%" horizontalGap="4" horizontalCenter="0" horizontalAlign="right" cornerRadius="4" borderStyle="solid" borderColor="#E5F165" paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3" verticalAlign="middle">
+		<!-- Copyright text (???) :) -->
+		<mx:Label horizontalCenter="0" text="http://flexed.wordpress.com | ©udayms 2007"  bottom="0" color="#98B300"/>
+		<mx:Spacer width="100%"/>
 		<mx:Button id="btnIsDirty" textAlign="center" label="Is CForm Dirty?" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="isDirtyClickHandler(event)"/>
 		<mx:Button id="btnResetForm" textAlign="center" label="Reset CForm" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="resetClickHandler(event)"/>
 		<mx:Button id="btnClearForm" textAlign="center" label="Clear CForm" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="clearClickHandler(event)"/>
 		<mx:Button id="btnGetData" textAlign="center" label="Get CForm Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="getDataClickHandler(event)"/>
 	</mx:HBox>
 	
-	<!-- Copyright text (???) :) -->
-	<mx:Label horizontalCenter="0" text="CForm v1.0 | http://flexed.wordpress.com | ©Uday M. Shankar 2007"  bottom="0" color="#98B300"/>
+	
 </mx:VBox>
