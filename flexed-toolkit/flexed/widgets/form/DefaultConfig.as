@@ -20,7 +20,16 @@ package flexed.widgets.form
 		public static const GENERAL_TITLEHR_STYLE:String 		= "viewTitleHRule";
 		public static const GENERAL_LABEL_STYLE:String 			= "viewLabel";
 		
-
+		public static const WIDGET_COMBOBOX_STYLE:String		= "";
+		public static const WIDGET_DATE_STYLE:String			= "";
+		public static const WIDGET_DISPLAY_STYLE:String			= "";
+		public static const WIDGET_DUALDISPLAY_STYLE:String		= "";
+		public static const WIDGET_NUMERICSTEPPER_STYLE:String	= "";
+		public static const WIDGET_RADIOBUTTON_STYLE:String		= "";
+		public static const WIDGET_SPACE_STYLE:String			= "";
+		public static const WIDGET_TABLE_STYLE:String			= "";
+		public static const WIDGET_TEXT_STYLE:String			= "";
+		public static const WIDGET_TEXTAREA_STYLE:String		= "";
 		
 	}
 }

@@ -102,13 +102,14 @@ package flexed.widgets.form {
 		
 		public function setColumns(columns:XMLList):void {
 			var colInfo : Array = new Array();
-			for(var pName:String in columns) {
-				var column : DataGridColumn = new DataGridColumn();
-				column.headerText = columns[pName].name;
-				column.dataField = columns[pName].id;
-				column.width = columns[pName].width;
+			
+			for each(var col:XML in columns) {
+ 				var column : DataGridColumn = new DataGridColumn();
+				column.headerText = col.attribute("label").toString();
+				column.dataField = col.attribute("data").toString();
+				column.width = col.attribute("width").toString();
 				colInfo.push(column);
-			}
+         	}
 			table.columns = colInfo;
 		}
 	}
