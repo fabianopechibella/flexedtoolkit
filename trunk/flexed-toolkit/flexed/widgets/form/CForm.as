@@ -289,7 +289,7 @@
 			var row:XML;
 
 			var eachWidget:Array = new Array();
-			var name:String = groupXML.attribute("name").toString();
+			var name:String = groupXML.attribute("label").toString();
 
 			var grid:Grid = gridColumns[currentColumn];
 
@@ -337,8 +337,8 @@
 	            	var fieldId:String = field.attribute("id").toString();
 	            	fieldId = fieldId.replace(/ /g,"");
 	            	var fieldName:String = null; 
-	            	if(field.attribute("name").length()!= 0)
-	            		fieldName = field.attribute("name").toString();
+	            	if(field.attribute("label").length()!= 0)
+	            		fieldName = field.attribute("label").toString();
 					var tooltip:String = null;
 	            	if(field.attribute("tooltip").length()!= 0)
 	            		tooltip = field.attribute("tooltip").toString();
@@ -352,12 +352,12 @@
 	            	gItemlabel.text = fieldName;
 	            	var styleName:String = DefaultConfig.GENERAL_LABEL_STYLE; 
 	            	
-	            	if (field.child("name").attribute("styleName").toString()!=""){
-	            		styleName=field.child("name").attribute("styleName").toString();
+	            	if (field.child("label").attribute("styleName").toString()!=""){
+	            		styleName=field.child("label").attribute("styleName").toString();
 	            	}
 
-	            	if (field.child("name").attribute("height").toString()!=""){
-	            		gItemlabel.height=int(field.child("name").attribute("height"));
+	            	if (field.child("label").attribute("height").toString()!=""){
+	            		gItemlabel.height=int(field.child("label").attribute("height"));
 	            	}
 	            	
 	            	gItemlabel.styleName=styleName;
@@ -379,7 +379,7 @@
 	            	}
 	            	else{
 		            	if(fieldName!=null) {
-		            		if (((field.child("name").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("name").attribute("enableNextrow").toString()!="false")){
+		            		if (((field.child("label").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("label").attribute("enableNextrow").toString()!="false")){
 		            			gLabel.colSpan=2;
 		            			gItemrow.addChild(gLabel);
 		            		}
@@ -388,7 +388,7 @@
 		            		}
 		            		colspan++;
 		            	}
-		            	if (((field.child("name").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("name").attribute("enableNextrow").toString()!="false")){
+		            	if (((field.child("label").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("label").attribute("enableNextrow").toString()!="false")){
 	            			gItemvalue.colSpan=2;
 	            	 		gItemrow1.addChild(gItemvalue);   
 		            	}
@@ -410,9 +410,9 @@
 				}
 				if(hasChild == true){
 					grid.addChild(gItemrow);
-					if (((field.child("name").attribute("enableNextrow").toString()=="true")
+					if (((field.child("label").attribute("enableNextrow").toString()=="true")
 							||(groupXML.attribute("enableNextrow").toString()=="true")) 
-						&& (field.child("name").attribute("enableNextrow").toString()!="false"))
+						&& (field.child("label").attribute("enableNextrow").toString()!="false"))
 							grid.addChild(gItemrow1);
 				}
 				maxcolspan=Math.max(maxcolspan,colspan);
@@ -424,32 +424,6 @@
 				var grow:GridRow=new GridRow();
 				grid.addChild(grow);
 			}
-		}
-
-		/**
-		 *  @private
-		 *  Validate the CForm using the custom 
-		 *  validation function specified using <code>cFormCustomizer</code>
-		 *
-		 *  @return Boolean based on whether the content of 
-		 *  the form pass validation or not.
-		 *
-		 */			
-		private function validateCForm():Boolean {
-			var valid:Boolean=true;
-			if(_customizeCForm!=null) {
-				var values:Object=getCFormValues(false);
-				for (var key:String in values) {
-					var result:ValidationResult = _customizeCForm(key, values[key], values);
-					if(result.isError) {
-						widgets[key].renderer.getUIComponent().errorString = result.errorMessage;
-						valid=false;
-					} else {
-						widgets[key].renderer.getUIComponent().errorString="";
-					}
-				}
-			}
-			return valid;
 		}
 
 		/**
@@ -487,8 +461,7 @@
         	var widgetType:String = widget.attribute("type").toString();
         	fieldType[id] = widgetType;
         	if(widgetType == "table"){
-        		var table :XMLList = field.child("table");
-        		var column :XMLList = table.child("column");
+        		var column :XMLList = widget.child("column");
         		return renderDefaultItem(widgetType,widget,column);
         	}
         	else{
@@ -517,7 +490,7 @@
 			} else if(widgetType.toLocaleLowerCase() == "dualdisplay") {
 				renderer = new CFormItemDualDisplay();
 				CFormItemDualDisplay(renderer).setAttributesFromXML(attributes);
-			} else if(widgetType.toLocaleLowerCase() == "numericstepper") {
+			} else if(widgetType.toLocaleLowerCase() == "stepper") {
 				renderer = new CFormItemNumericStepper();
 				CFormItemNumericStepper(renderer).setAttributesFromXML(attributes);
 			} else if(widgetType.toLocaleLowerCase() == "date") {
@@ -525,7 +498,6 @@
 				CFormItemDate(renderer).setAttributesFromXML(attributes);
 			} else if(widgetType.toLocaleLowerCase() == "combobox") {
 				renderer = new CFormItemCombobox();
-				var tmp:XMLList=attributes.attribute("values");
 				var dataProvider:ArrayCollection = new ArrayCollection();
 				var items:XMLList=attributes.descendants("item");
 				var selectedItem:String = "";
@@ -547,6 +519,7 @@
 				CFormItemDualText(renderer).setAttributesFromXML(attributes);
 			} else if (widgetType.toLocaleLowerCase() == "table") {
 				renderer = new CFormItemTable();
+				var tableAttribs:XMLList = attributes.descendants("column");
 				CFormItemTable(renderer).setAttributesFromXML(attributes)
 				CFormItemTable(renderer).setColumns(columns);
 			} else if (widgetType.toLocaleLowerCase() == "title") {
@@ -721,7 +694,7 @@
 	        		&& (originalValue != null)) {
 	        		originalValue = String(originalValue);
 	        	}
-	        	else if(widgetType.toLowerCase() == "numericstepper")
+	        	else if(widgetType.toLowerCase() == "stepper")
 	        		originalValue = Number(xmlWidget.attribute("min"));
 	        	else if (widgetType.toLowerCase() == "display"&& onlyModifiedValues)
 	        		continue;
@@ -739,6 +712,32 @@
 			}
 
 			return values;
+		}
+
+		/**
+		 *  @private
+		 *  Validate the CForm using the custom 
+		 *  validation function specified using <code>cFormCustomizer</code>
+		 *
+		 *  @return Boolean based on whether the content of 
+		 *  the form pass validation or not.
+		 *
+		 */			
+		private function validateCForm():Boolean {
+			var valid:Boolean=true;
+			if(_customizeCForm!=null) {
+				var values:Object=getCFormValues(false);
+				for (var key:String in values) {
+					var result:ValidationResult = _customizeCForm(key, values[key], values);
+					if(result.isError) {
+						widgets[key].renderer.getUIComponent().errorString = result.errorMessage;
+						valid=false;
+					} else {
+						widgets[key].renderer.getUIComponent().errorString="";
+					}
+				}
+			}
+			return valid;
 		}
 
 		/**

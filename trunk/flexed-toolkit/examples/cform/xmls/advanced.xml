@@ -1,34 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component columns="2" vgap="5" igap="1">
-	<group name="Personal" column="1">
+	<group label="Personal" column="1">
 		<row>
-			<field id="fname" name="Full Name">
+			<field id="fname" label="Full Name">
 				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
 			</field>
 		</row> 
 		<row>
-			<field id="age" name="Age">
-				<widget type="NumericStepper" min="2" max="4095" editable="true"/>
+			<field id="age" label="Age">
+				<widget type="stepper" min="2" max="100" editable="true"/>
 			</field>
 		</row>
 		<row>
-			<field id="gender" name="Gender">
-				<widget height="15" width="120" id="Display"/>
-			</field>
-		</row>
-	</group>
-	<group name="Occupation" column="2">
-		<row>
-			<field id="coname" name="Company Name">
-				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="coname"/>
-			</field>
-		</row> 
-		<row>
-			<field id="coindustry" name="Industry">
+			<field id="coindustry" label="Industry">
 				<widget type="combobox">
 					<item data="tele" label="Telecom"/>
 					<item data="banking" label="Banking" selected="true"/>			
 					<item data="ites" label="ITES"/>
+				</widget>
+			</field>
+		</row>
+	</group>
+	<group label="Occupation" column="2">
+		<row>
+			<field id="coname" label="Company Name">
+				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="coname"/>
+			</field>
+		</row>
+		<row>
+			<field id="friends" label="Friends">
+				<widget type="table" width="150" height="50">
+					<column data="name" label="Name" width="40"/>
+					<column data="email" label="Email" width="60"/>
 				</widget>
 			</field>
 		</row>
