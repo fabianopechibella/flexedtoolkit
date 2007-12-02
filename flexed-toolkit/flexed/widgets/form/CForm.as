@@ -84,7 +84,7 @@
 		 * Called on <i>creationComplete</i>.
 		 * 
 		 */
-		private function initCForm(event:Event = null):void {
+		private function initCForm(event:Event = null):void{
 			if(widgetsFile != null) createCForm(widgetsFile);
 		}		
 		
@@ -96,7 +96,7 @@
 		 *  which will be fired on the CForm
 		 *
 		 */
-		public function set cFormCustomizer(customizer:Function):void {
+		public function set cFormCustomizer(customizer:Function):void{
 			this._customizeCForm = customizer;
 		}
 		
@@ -106,7 +106,7 @@
 		 *  @return The custom function
 		 *
 		 */
-		public function get cFormCustomizer():Function {
+		public function get cFormCustomizer():Function{
 			return _customizeCForm;
 		}
 
@@ -114,7 +114,7 @@
 		 *  Need to document this.
 		 *
 		 */
-		public function set cFormUpdater(updater:Function):void {
+		public function set cFormUpdater(updater:Function):void{
 			this._updateCForm = updater;
 		}
 
@@ -122,7 +122,7 @@
 		 *  Need to document this.
 		 *
 		 */
-		public function get cFormUpdater():Function {
+		public function get cFormUpdater():Function{
 			return _updateCForm;
 		}
 
@@ -133,7 +133,7 @@
 		 *  @return XML from the controls xml
 		 *
 		 */
-		public function get xmlContent():XML {
+		public function get xmlContent():XML{
 			return _xmlContent;
 		}
 
@@ -158,7 +158,7 @@
 		 *  used in <code>validateCForm</code>
 		 *
 		 */
-		public function set cFormValidation(validatorFunction:Function):void {
+		public function set cFormValidation(validatorFunction:Function):void{
 			_customizeCForm = validatorFunction;
 		}
 		
@@ -169,7 +169,7 @@
 		 *  @return Original values from the form. 
 		 *
 		 */
-		public function fetchCFormValues():Array {
+		public function fetchCFormValues():Array{
 			return originalData;
 		}
 
@@ -181,12 +181,12 @@
 		 *  @return Original values from the form. 
 		 *
 		 */	
-		private function createCForm(widgetsFile:String): void {
+		private function createCForm(widgetsFile:String): void{
 			var loader:URLLoader = new URLLoader();
-			loader.addEventListener(Event.COMPLETE, loadFromXML);
+				loader.addEventListener(Event.COMPLETE, loadFromXML);
 			
 			var request:URLRequest = new URLRequest(widgetsFile);
-			loader.load(request);
+				loader.load(request);
 		}
 
 		/**
@@ -196,7 +196,7 @@
 		 *  @param event Original values from the form. 
 		 *
 		 */	
-		private function loadFromXML(event:Event): void { 
+		private function loadFromXML(event:Event): void{ 
 			var loader:URLLoader = URLLoader(event.target);
 			widgetsXML = new XML(loader.data);
 			_xmlContent = widgetsXML;
@@ -216,30 +216,31 @@
 		 *  @event <i>CFormLoadComplete eventObjectClassName [description]</i> 
 		 *
 		 */			
-		private function layoutCForm(widgetsXML:XML): void {
-			var alertFlag:Boolean = false;		
+		private function layoutCForm(widgetsXML:XML): void{
+			var alertFlag:Boolean = false;
+					
+			var groups:XMLList = widgetsXML.descendants("group");
 			var label:String  = widgetsXML.descendants("label");
-			var cols :String = widgetsXML.attribute("columns").toString();
+			var cols:String = widgetsXML.attribute("columns").toString();
 			var verticalgap:String = widgetsXML.attribute("vgap").toString();
 			var indigap:String = widgetsXML.attribute("igap").toString();
-
+			var vgap:int = DefaultConfig.GENERAL_VERTICALGAP;
+			
 			this.label = label.toString();
 
-			if (cols != "")
+			if (cols != "")	
 				this.columns = int(cols);
-			else
+			else 
 				this.columns = 0;
 
-			var vgap:int=5;
-
-			if (verticalgap!=null && verticalgap!="")
+			if (verticalgap!=null && verticalgap!="") 
 				vgap=int(verticalgap);
 
-			if (indigap!=null && indigap!="")
+			if (indigap!=null && indigap!="") 
 				_indicatorGap=int(indigap);
-			
-			var colCount:int;
-			for (colCount = 0; colCount < this.columns; colCount++) {
+
+			for (var colCount:int = 0; colCount < this.columns; colCount++) 
+			{
 				var grid:Grid = new Grid();
 				grid.id = grid + colCount.toString();
 				grid.setStyle("verticalGap", vgap);
@@ -248,18 +249,15 @@
 				BASE_CONTAINER.addChild(grid);
 				gridColumns[colCount+1] = grid;
 			}
-
-			var groups:XMLList = widgetsXML.descendants("group");
-			var group:XML;
-			widgets = new Object();
 			
-			for each(group in groups) {
+			widgets = new Object();
+			for each(var group:XML in groups) {
 				var whichColumn:String = group.attribute("column").toString();
 				var currentColumn:int;
 
-				if (whichColumn != "")
+				if (whichColumn != "") 
 					currentColumn = int(whichColumn);
-				else
+				else 
 					currentColumn = 0;
 
 				if(currentColumn > 0 && currentColumn <= columns){
@@ -284,7 +282,7 @@
 		 *  @param currentColumn Column number for layout.
 		 *
 		 */	
-		private function layoutCFormGroup(groupXML:XML, currentColumn:int):void {
+		private function layoutCFormGroup(groupXML:XML, currentColumn:int):void{
 			var rows:XMLList=groupXML.descendants("row");
 			var row:XML;
 
@@ -293,8 +291,8 @@
 
 			var grid:Grid = gridColumns[currentColumn];
 
-			var gTitleItem:GridItem=null;
-			var gHruleItem:GridItem=null;
+			var gTitleItem:GridItem = null;
+			var gHruleItem:GridItem = null;
 			
 			if (name != '') {
 				var title:Label = new Label();
@@ -305,18 +303,18 @@
 				hRule.percentWidth = 100;
 				hRule.styleName = DefaultConfig.GENERAL_TITLEHR_STYLE;
 				
-				var gTitlerow:GridRow=new GridRow();				
-				gTitleItem=new GridItem();
+				var gTitlerow:GridRow = new GridRow();				
+				gTitleItem = new GridItem();
 				gTitleItem.addChild(title);
-				gTitleItem.colSpan=2;
-				gTitleItem.percentWidth=100;
+				gTitleItem.colSpan = 2;
+				gTitleItem.percentWidth = 100;
 				gTitlerow.addChild(gTitleItem);
 				
-				var gHrulerow:GridRow=new GridRow();
-				gHruleItem=new GridItem();
+				var gHrulerow:GridRow = new GridRow();
+				gHruleItem = new GridItem();
 				gHruleItem.addChild(hRule);
-				gHruleItem.colSpan=2;
-				gHruleItem.percentWidth=100;
+				gHruleItem.colSpan = 2;
+				gHruleItem.percentWidth = 100;
 				gHrulerow.addChild(gHruleItem);
 				
 				grid.addChild(gTitlerow);
@@ -373,34 +371,33 @@
 	            	
 	            	var gItemvalue:GridItem = new GridItem();
 	            	gItemvalue.addChild(renderer.getUIComponent());
-	            	if(renderer.getUIComponent() is SectionTitle || renderer.getUIComponent() is DataGrid){
+	            	
+	            	if(renderer.getUIComponent() is SectionTitle){
 	            		gItemvalue.colSpan = 2;
 	            		gItemrow.addChild(gItemvalue);
-	            	}
-	            	else{
+	            	}else{
 		            	if(fieldName!=null) {
 		            		if (((field.child("label").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("label").attribute("enableNextrow").toString()!="false")){
 		            			gLabel.colSpan=2;
 		            			gItemrow.addChild(gLabel);
-		            		}
-		            		else{
+		            		}else{
 	            				gItemrow.addChild(gLabel);
 		            		}
 		            		colspan++;
 		            	}
+		            	
 		            	if (((field.child("label").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("label").attribute("enableNextrow").toString()!="false")){
 	            			gItemvalue.colSpan=2;
 	            	 		gItemrow1.addChild(gItemvalue);   
-		            	}
-		            	else {
+		            	}else{
 							gItemrow.addChild(gItemvalue);
 		            	}
+		            	
 		            	if(field.child("widget").attribute("colspan").length()!=0) {
 		            		var span:int=int(field.child("widget").attribute("colspan").toString());
 		            		gItemvalue.colSpan=span;
 		            		colspan=colspan+span;
-		            	}
-		            	else {
+		            	}else {
 		            		colspan++;
 		            	}
 	            	}
