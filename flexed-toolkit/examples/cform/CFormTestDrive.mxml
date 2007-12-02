@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="815" height="438" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#d2d200" borderThickness="1" verticalCenter="69" horizontalCenter="85" paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6" xmlns:form="flexed.widgets.form.*">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="815" height="500" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#d2d200" borderThickness="1" verticalCenter="69" horizontalCenter="85" paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6" xmlns:form="flexed.widgets.form.*">
 <mx:Script>
 	<![CDATA[
 		import mx.controls.Alert;
