@@ -34,10 +34,20 @@
 	import mx.rpc.events.*;
 	import mx.validators.ValidationResult;
 	
+	/**
+	 *  CFormLoadComplete is dispatched after all the controls are created
+	 *  and the properties array is created. 
+	 *
+	 *  @eventType mx.events.DynamicEvent
+	 *
+	 *  @see mx.events.DynamicEvent
+	 */		 
+	[Event(name="CFormLoadComplete", type="mx.events.DynamicEvent")]
+	
 	public class CForm extends Canvas
 	{
 		
-		public var BASE_CONTAINER:HBox = new HBox();
+		private var BASE_CONTAINER:HBox = new HBox();
 		
 		public var widgets:Object;
 		public var widgetsFile:String;
@@ -581,7 +591,7 @@
 		 *  have none of the controls selected. Text Fields will be made empty.
 		 *
 		 */
-		public function resetCFormItem():void{
+		private function resetCFormItem():void{
 			for each(var widget:Array in widgets) {
 				var xmlWidget:XMLList = widget["field"].child("widget");
 	        	var widgetType:String = xmlWidget.attribute("type").toString();
@@ -603,7 +613,7 @@
 		 *
 		 */
 		public function setData(values:Object):void {
-			var values:Object=new Object();
+			var vals:Object=new Object();
 			
 			var widget:Array;
 			var key:String;
@@ -622,9 +632,9 @@
 						if(values[_tmp0]) value=values[_tmp0][_tmp1];
 					}
 				}
-				values[key]=value;
+				vals[key]=value;
 			}			
-			setFormValues(values);
+			setFormValues(vals);
 		}
 
 		/**
