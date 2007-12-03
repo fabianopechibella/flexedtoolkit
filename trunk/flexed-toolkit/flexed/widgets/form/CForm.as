@@ -21,7 +21,6 @@
 	
 	import mx.collections.ArrayCollection;
 	import mx.containers.Canvas;
-	import mx.containers.FormItem;
 	import mx.containers.Grid;
 	import mx.containers.GridItem;
 	import mx.containers.GridRow;
@@ -48,13 +47,16 @@
 		
 		private var BASE_CONTAINER:HBox = new HBox();
 		
+		// object that will contain all the widgets
 		public var widgets:Object;
+		// path of the widgets file
 		public var widgetsFile:String;
+		// the xml 		
 		public var widgetsXML:XML;
-		public var fieldType:Array = new Array;
-		public var originalData:Array = new Array;
-		public var defaultData:Array = new Array;
-		public var gridColumns:Array = new Array;
+		public var fieldType:Array = new Array();
+		public var originalData:Array = new Array();
+		public var defaultData:Object = new Object();
+		public var gridColumns:Array = new Array();
 		public var columns:int;
 				
 		private var _customizeCForm:Function;
@@ -79,7 +81,6 @@
 			BASE_CONTAINER.setStyle("paddingLeft", 4);
 			BASE_CONTAINER.setStyle("paddingRight", 4);
 			this.addChild(BASE_CONTAINER);	
-			
 		}
 		
 		public function init():void{
@@ -349,14 +350,21 @@
 					var tooltip:String = null;
 	            	if(field.attribute("tooltip").length()!= 0)
 	            		tooltip = field.attribute("tooltip").toString();
+	            	var defaultVal:String = null;
+	            	if(field.attribute("default").length()!= 0)
+	            		defaultVal = field.attribute("default").toString();
 	            		
-	            	eachWidget["field"] = field;
 	            	eachWidget["fieldId"] = fieldId;
-
+					eachWidget["default"] = defaultVal;
+					eachWidget["field"] = field;
+					
+					// storing defaultval in an object					
+					defaultData[fieldId] = defaultVal;
+					
 					hasChild = true;
 	            	var gLabel:GridItem=new GridItem();
 	            	var gItemlabel:Label=new Label();
-	            	gItemlabel.text = fieldName;
+	            		gItemlabel.text = fieldName;
 	            	var styleName:String = DefaultConfig.GENERAL_LABEL_STYLE; 
 	            	
 	            	if (field.child("label").attribute("styleName").toString()!=""){
@@ -431,25 +439,7 @@
 				grid.addChild(grow);
 			}
 		}
-
-		/**
-		 *  @private
-		 *  Create label-control <code>FormItem</code> item in the CForm
-		 *
-		 *  @param id Id of the control
-		 *  @param name Name of the control
-		 *  @param field The XML containing the field details
-		 *  @param fields An XML List of all fields
-		 *
-		 *  @return formItem created from the params passed.
-		 *
-		 */		
-		private function createCFormItem(id:String, name:String, field:XML, fields:XMLList):FormItem {			
-		   	var formItem:FormItem = new FormItem();
-		    formItem.label = name;
-		    return formItem;
-		}
-		
+	
 		/**
 		 *  @private
 		 *  Create each formItem using the renderers
@@ -488,6 +478,7 @@
 		 */
 		private function renderDefaultItem(widgetType:String, attributes:XMLList, columns:XMLList= null):CFormItemRenderer {
 			var renderer:CFormItemRenderer;
+			var defaultVal:String = attributes.attribute("default").toString();
 			if(widgetType.toLocaleLowerCase() == "boolean") {
 				var rdos:Array = new Array();
 				var items:XMLList=attributes.descendants("item");
@@ -499,20 +490,23 @@
 						rdoAttribs.value =  item.attribute("selected").toString();
 					rdos.push(rdoAttribs);
             	}
-            	
             	renderer = new CFormItemRadioButtonGroup(rdos);
 			} else if(widgetType.toLocaleLowerCase() == "display") {
 				renderer = new CFormItemDisplay();
 				CFormItemDisplay(renderer).setAttributesFromXML(attributes);
+				CFormItemDisplay(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "dualdisplay") {
 				renderer = new CFormItemDualDisplay();
 				CFormItemDualDisplay(renderer).setAttributesFromXML(attributes);
+				CFormItemDualDisplay(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "stepper") {
 				renderer = new CFormItemNumericStepper();
 				CFormItemNumericStepper(renderer).setAttributesFromXML(attributes);
+				CFormItemNumericStepper(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "date") {
 				renderer = new CFormItemDate();
 				CFormItemDate(renderer).setAttributesFromXML(attributes);
+				CFormItemDate(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "combobox") {
 				renderer = new CFormItemCombobox();
 				var dataProvider:ArrayCollection = new ArrayCollection();
@@ -531,9 +525,11 @@
 			} else if(widgetType.toLocaleLowerCase() == "textarea") {
 				renderer = new CFormItemTextArea();
 				CFormItemTextArea(renderer).setAttributesFromXML(attributes);
+				CFormItemTextArea(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "dualtext") {
 				renderer = new CFormItemDualText();
 				CFormItemDualText(renderer).setAttributesFromXML(attributes);
+				CFormItemDualText(renderer).setValue(defaultVal);
 			} else if (widgetType.toLocaleLowerCase() == "table") {
 				renderer = new CFormItemTable();
 				var tableAttribs:XMLList = attributes.descendants("column");
@@ -542,12 +538,14 @@
 			} else if (widgetType.toLocaleLowerCase() == "title") {
 				renderer = new CFormItemTitle();
 				CFormItemTitle(renderer).setAttributesFromXML(attributes);
+				CFormItemTitle(renderer).setValue(defaultVal);
 			} else if (widgetType.toLocaleLowerCase()=="spacer"){
 				renderer = new CFormItemSpace();
 				CFormItemSpace(renderer).setAttributesFromXML(attributes);
 			}else {
 				renderer = new CFormItemText();
 				CFormItemText(renderer).setAttributesFromXML(attributes);
+				CFormItemText(renderer).setValue(defaultVal);
 			}
 			return renderer;
 		}
@@ -559,7 +557,33 @@
 		 *  @param values an Object containing values 
 		 *
 		 */
-		private function setFormValues(values:Object):void {
+		private function setFormValues(values:Object, mode:String = "original"):void {
+			var widget:Array;
+			var key:String;
+			
+			originalData = new Array();
+			for (key in widgets) {
+				if (values[key] != null) {
+					widgets[key]["renderer"].setValue(values[key]);
+					if(mode == "original")
+						originalData[key] = values[key];
+				} else if(values[key]==null){
+					if (widgets[key]["renderer"] is CFormItemDisplay)
+						widgets[key]["renderer"].setValue("-");
+					else if (widgets[key]["renderer"] is CFormItemText)
+						widgets[key]["renderer"].setValue("");
+				}
+			}
+		}
+
+		/**
+		 *  @private
+		 *  Set the values passed in to the controls in CForm
+		 *
+		 *  @param values an Object containing values 
+		 *
+		 */
+		private function setDefaultValues(values:Object):void {
 			var widget:Array;
 			var key:String;
 			for (key in widgets) {
@@ -583,17 +607,17 @@
 			var widget:Array;
 			var key:String;
 			for (key in widgets) {
-					if (widgets[key]["renderer"] is CFormItemText || widgets[key]["renderer"] is CFormItemTextArea)
-						widgets[key]["renderer"].setValue("");	
-					else if(widgets[key]["renderer"] is CFormItemCombobox)
-						widgets[key]["renderer"].getUIComponent().selectedIndex=0;	
-					else if(widgets[key]["renderer"] is CFormItemDisplay)
-						widgets[key]["renderer"].setValue("");
-					else if(widgets[key]["renderer"] is CFormItemRadioButtonGroup)
-						widgets[key]["renderer"].setValue(null);
-					else if(widgets[key]["renderer"] is CFormItemNumericStepper)
-						widgets[key]["renderer"].setValue(0);
-				}
+				if (widgets[key]["renderer"] is CFormItemText || widgets[key]["renderer"] is CFormItemTextArea)
+					widgets[key]["renderer"].setValue("");	
+				else if(widgets[key]["renderer"] is CFormItemCombobox)
+					widgets[key]["renderer"].getUIComponent().selectedIndex=0;	
+				else if(widgets[key]["renderer"] is CFormItemDisplay)
+					widgets[key]["renderer"].setValue("");
+				else if(widgets[key]["renderer"] is CFormItemRadioButtonGroup)
+					widgets[key]["renderer"].setValue(null);
+				else if(widgets[key]["renderer"] is CFormItemNumericStepper)
+					widgets[key]["renderer"].setValue(0);
+			}
 		}
 		
 		/**
@@ -607,8 +631,7 @@
 	        	var widgetType:String = xmlWidget.attribute("type").toString();
 				if(widgetType.toLowerCase() == "boolean"){
 					widget["renderer"].setValue(null);
-				}
-				else if(widgetType.toLowerCase() == "text"){
+				}else if(widgetType.toLowerCase() == "text"){
 					widget["renderer"].setValue("");
 				}
 			}

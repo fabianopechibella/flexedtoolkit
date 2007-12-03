@@ -4,17 +4,20 @@
 	<group label="Personal" column="1">
 		<row>
 			<field id="fname" label="Full Name">
-				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
+				<widget type="text" default="Shankar" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
 			</field>
 		</row> 
 		<row>
 			<field id="age" label="Age">
-				<widget type="stepper" min="2" max="80" editable="true"/>
+				<widget type="stepper" default="35" min="2" max="80" editable="true"/>
 			</field>
 		</row>
 		<row>
 			<field id="gender" label="Gender">
-				<widget type="boolean"/>
+				<widget type="boolean" default="true">
+					<item data="male" label="Male"/>
+					<item data="female" label="Female"/>
+				</widget>
 			</field>
 		</row>
 	</group>
