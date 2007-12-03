@@ -14,7 +14,7 @@
 		</row>
 		<row>
 			<field id="gender" label="Gender">
-				<widget type="boolean" default="true">
+				<widget type="radiogroup" default="true">
 					<item data="male" label="Male"/>
 					<item data="female" label="Female"/>
 				</widget>
