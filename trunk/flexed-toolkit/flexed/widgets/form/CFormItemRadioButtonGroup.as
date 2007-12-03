@@ -1,37 +1,50 @@
 package flexed.widgets.form{
-	import mx.core.UIComponent;
-	import mx.controls.RadioButtonGroup;
-	import mx.containers.HBox;
-	import mx.controls.RadioButton;
 	import flash.events.Event;
-	import flexed.widgets.form.CFormItemRenderer;
 	
-	public class CFormItemRadioButton implements CFormItemRenderer{
+	import mx.containers.Tile;
+	import mx.controls.RadioButton;
+	import mx.controls.RadioButtonGroup;
+	import mx.core.UIComponent;
+	
+	public class CFormItemRadioButtonGroup implements CFormItemRenderer{
 			
 		private var radioButtonGroup:RadioButtonGroup;
-		public var comp:HBox;
+		public var container:Tile;
 		
-		public function CFormItemRadioButton() {
-			radioButtonGroup=new RadioButtonGroup();
-			comp=new HBox();
+		public function CFormItemRadioButtonGroup(radioButtons:Array = null) {
 			
-			var rb1:RadioButton=new RadioButton();
-			rb1.id="enabled";
-			rb1.label="Enabled";
-			rb1.group=radioButtonGroup;
-			rb1.value=true;
-			comp.addChild(rb1);
+			if(radioButtons.length == 0){
+				var rdoAttribs:Object = new Object();
+					rdoAttribs.label = "Yes";
+					rdoAttribs.data = "yes";
+					rdoAttribs.value =  "true";
+					radioButtons.push(rdoAttribs);
+
+					rdoAttribs = new Object();
+					rdoAttribs.label = "No";
+					rdoAttribs.data = "no";
+					rdoAttribs.value =  "false";
+					radioButtons.push(rdoAttribs);
+			}
 			
-			var rb2:RadioButton=new RadioButton();
-			rb2.id="disabled";
-			rb2.label="Disabled";
-			rb2.group=radioButtonGroup;
-			rb2.value=false;
-			comp.addChild(rb2);
+			radioButtonGroup = new RadioButtonGroup();
+			container = new Tile();
+			container.direction = "horizontal";
+			
+			for(var i:int = 0; i < radioButtons.length; i++){
+				var rdoBtn:RadioButton = new RadioButton();
+					rdoBtn.id = radioButtons[i].data;
+					rdoBtn.label = radioButtons[i].label;
+					rdoBtn.group = radioButtonGroup;
+					if(radioButtons[i].value == "true")
+						rdoBtn.selected = true;
+					container.addChild(rdoBtn);
+			}
+
 		}
 		
 		public function getUIComponent():UIComponent{
-			return comp;
+			return container;
 		}
 		
 		public function getRadioGroup():RadioButtonGroup{

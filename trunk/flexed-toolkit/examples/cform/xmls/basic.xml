@@ -9,12 +9,12 @@
 		</row> 
 		<row>
 			<field id="age" label="Age">
-				<widget type="NumericStepper" min="2" max="4095" editable="true"/>
+				<widget type="stepper" min="2" max="80" editable="true"/>
 			</field>
 		</row>
 		<row>
 			<field id="gender" label="Gender">
-				<widget type="Display" height="15" width="120"/>
+				<widget type="boolean"/>
 			</field>
 		</row>
 	</group>

@@ -27,7 +27,6 @@
 	import mx.containers.GridRow;
 	import mx.containers.HBox;
 	import mx.controls.Alert;
-	import mx.controls.DataGrid;
 	import mx.controls.HRule;
 	import mx.controls.Label;
 	import mx.events.DynamicEvent;
@@ -490,7 +489,18 @@
 		private function renderDefaultItem(widgetType:String, attributes:XMLList, columns:XMLList= null):CFormItemRenderer {
 			var renderer:CFormItemRenderer;
 			if(widgetType.toLocaleLowerCase() == "boolean") {
-				renderer = new CFormItemRadioButton();
+				var rdos:Array = new Array();
+				var items:XMLList=attributes.descendants("item");
+				var selectedItem:String = "";
+				for each(var item:XML in items) {
+                	var rdoAttribs:Object=new Object();
+						rdoAttribs.label = item.attribute("label").toString();
+						rdoAttribs.data = item.attribute("data").toString();
+						rdoAttribs.value =  item.attribute("selected").toString();
+					rdos.push(rdoAttribs);
+            	}
+            	
+            	renderer = new CFormItemRadioButtonGroup(rdos);
 			} else if(widgetType.toLocaleLowerCase() == "display") {
 				renderer = new CFormItemDisplay();
 				CFormItemDisplay(renderer).setAttributesFromXML(attributes);
@@ -579,7 +589,7 @@
 						widgets[key]["renderer"].getUIComponent().selectedIndex=0;	
 					else if(widgets[key]["renderer"] is CFormItemDisplay)
 						widgets[key]["renderer"].setValue("");
-					else if(widgets[key]["renderer"] is CFormItemRadioButton)
+					else if(widgets[key]["renderer"] is CFormItemRadioButtonGroup)
 						widgets[key]["renderer"].setValue(null);
 					else if(widgets[key]["renderer"] is CFormItemNumericStepper)
 						widgets[key]["renderer"].setValue(0);
