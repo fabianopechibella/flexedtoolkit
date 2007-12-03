@@ -36,6 +36,7 @@ package flexed.widgets.form{
 					rdoBtn.id = radioButtons[i].data;
 					rdoBtn.label = radioButtons[i].label;
 					rdoBtn.group = radioButtonGroup;
+					rdoBtn.value = radioButtons[i].data;
 					if(radioButtons[i].value == "true")
 						rdoBtn.selected = true;
 					container.addChild(rdoBtn);
@@ -74,12 +75,13 @@ package flexed.widgets.form{
 		}
 		
 		public function setValue(value:Object):void{
-			radioButtonGroup.selectedValue = value;
+			radioButtonGroup.selectedValue = value as String;
 			if(value == null){
+				for(var i:int = 0; i<radioButtonGroup.numRadioButtons; i++){
+					radioButtonGroup.getRadioButtonAt(i).selected = false;
+				}
 				radioButtonGroup.selection = null;
 				radioButtonGroup.selectedValue = null;
-				radioButtonGroup.getRadioButtonAt(0).selected = false;
-				radioButtonGroup.getRadioButtonAt(1).selected = false;
 			}
 
 			var event : Event = new Event(Event.CHANGE,true,false);
