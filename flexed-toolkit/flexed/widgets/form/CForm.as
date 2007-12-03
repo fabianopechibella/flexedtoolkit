@@ -51,17 +51,26 @@
 		public var widgets:Object;
 		// path of the widgets file
 		public var widgetsFile:String;
-		// the xml 		
+		// the xml of all widgets
 		public var widgetsXML:XML;
+		// array containing fieldTypes
 		public var fieldType:Array = new Array();
+		// data that is loaded to cform using the setData() method
 		public var originalData:Array = new Array();
-		public var defaultData:Object = new Object();
+		// data that is loaded to cform using default values from xml  
+		public var defaultData:Array = new Array();
+		// columns in the layout grid
 		public var gridColumns:Array = new Array();
+		// number of columns
 		public var columns:int;
-				
+		
+		// the custom function fired by caller to customize cform 		
 		private var _customizeCForm:Function;
+		// function to update cform
 		private var _updateCForm:Function;
+		// the gap between the label and the renderer
 		private var _indicatorGap:int = DefaultConfig.GENERAL_INDICATORGAP;
+		// entire contents of the xml file
 		private var _xmlContent:XML = new XML();
 		
 		public function CForm():void{
@@ -332,6 +341,7 @@
 				
 			}
 			var maxcolspan:int=2;
+			var defaultDataLength:int = 0;
 			for each(row in rows) {
 				var fields:XMLList = row.descendants("field"); 
 				var field:XML;
@@ -351,15 +361,10 @@
 	            	if(field.attribute("tooltip").length()!= 0)
 	            		tooltip = field.attribute("tooltip").toString();
 	            	var defaultVal:String = null;
-	            	if(field.attribute("default").length()!= 0)
-	            		defaultVal = field.attribute("default").toString();
 	            		
 	            	eachWidget["fieldId"] = fieldId;
 					eachWidget["default"] = defaultVal;
 					eachWidget["field"] = field;
-					
-					// storing defaultval in an object					
-					defaultData[fieldId] = defaultVal;
 					
 					hasChild = true;
 	            	var gLabel:GridItem=new GridItem();
@@ -367,8 +372,8 @@
 	            		gItemlabel.text = fieldName;
 	            	var styleName:String = DefaultConfig.GENERAL_LABEL_STYLE; 
 	            	
-	            	if (field.child("label").attribute("styleName").toString()!=""){
-	            		styleName=field.child("label").attribute("styleName").toString();
+	            	if (field.child("label").attribute("style").toString()!=""){
+	            		styleName=field.child("label").attribute("style").toString();
 	            	}
 
 	            	if (field.child("label").attribute("height").toString()!=""){
@@ -382,9 +387,15 @@
 	            	var renderer:CFormItemRenderer = createCFormItemRenderer(fieldId, fieldName, field, fields);
 	            	renderer.getUIComponent().name = fieldId;
 	            	
-	            	if (field.child("widget").attribute("styleName").toString()!=""){
-		            	renderer.getUIComponent().styleName=field.child("widget").attribute("styleName").toString();
-	            	}
+	            	if (field.child("widget").attribute("style").toString()!="")
+		            	renderer.getUIComponent().styleName=field.child("widget").attribute("style").toString();
+	            	
+	            	if(field.child("widget").attribute("default").toString() != "")
+	            		defaultVal = field.child("widget").attribute("default").toString();
+					
+					// storing defaultval in an object					
+					defaultData[fieldId] = defaultVal;
+					defaultDataLength++;
 	            	
 	            	var gItemvalue:GridItem = new GridItem();
 	            	gItemvalue.addChild(renderer.getUIComponent());
@@ -422,6 +433,8 @@
 	            	eachWidget["renderer"] = renderer;
 	            	widgets[fieldId] = eachWidget;
 				}
+				defaultData["length"] = defaultDataLength;
+				
 				if(hasChild == true){
 					grid.addChild(gItemrow);
 					if (((field.child("label").attribute("enableNextrow").toString()=="true")
@@ -479,7 +492,7 @@
 		private function renderDefaultItem(widgetType:String, attributes:XMLList, columns:XMLList= null):CFormItemRenderer {
 			var renderer:CFormItemRenderer;
 			var defaultVal:String = attributes.attribute("default").toString();
-			if(widgetType.toLocaleLowerCase() == "boolean") {
+			if(widgetType.toLocaleLowerCase() == "radiogroup") {
 				var rdos:Array = new Array();
 				var items:XMLList=attributes.descendants("item");
 				var selectedItem:String = "";
@@ -510,18 +523,18 @@
 			} else if(widgetType.toLocaleLowerCase() == "combobox") {
 				renderer = new CFormItemCombobox();
 				var dataProvider:ArrayCollection = new ArrayCollection();
-				var items:XMLList=attributes.descendants("item");
-				var selectedItem:String = "";
-				for each(var item:XML in items) {
+				var cmboitems:XMLList=attributes.descendants("item");
+				var selectedCmboItem:String = "";
+				for each(var cmboitem:XML in cmboitems) {
                 	var _data:Object=new Object();
-					_data.label = item.attribute("label").toString();
-					_data.data = item.attribute("data").toString();
+					_data.label = cmboitem.attribute("label").toString();
+					_data.data = cmboitem.attribute("data").toString();
 					dataProvider.addItem(_data);
-					if(item.attribute("selected").toString() == "true") selectedItem =  item.attribute("data").toString();
+					if(cmboitem.attribute("selected").toString() == "true") selectedCmboItem =  cmboitem.attribute("data").toString();
             	}
 				CFormItemCombobox(renderer).setDataProvider(dataProvider);
 				CFormItemCombobox(renderer).setAttributesFromXML(attributes);
-				if(selectedItem != "") CFormItemCombobox(renderer).setValue(selectedItem);
+				if(selectedItem != "") CFormItemCombobox(renderer).setValue(selectedCmboItem);
 			} else if(widgetType.toLocaleLowerCase() == "textarea") {
 				renderer = new CFormItemTextArea();
 				CFormItemTextArea(renderer).setAttributesFromXML(attributes);
@@ -562,6 +575,7 @@
 			var key:String;
 			
 			originalData = new Array();
+			var originalDataLength:int = 0;
 			for (key in widgets) {
 				if (values[key] != null) {
 					widgets[key]["renderer"].setValue(values[key]);
@@ -573,32 +587,11 @@
 					else if (widgets[key]["renderer"] is CFormItemText)
 						widgets[key]["renderer"].setValue("");
 				}
+				originalDataLength++;
 			}
+			originalData["length"] = originalDataLength;
 		}
 
-		/**
-		 *  @private
-		 *  Set the values passed in to the controls in CForm
-		 *
-		 *  @param values an Object containing values 
-		 *
-		 */
-		private function setDefaultValues(values:Object):void {
-			var widget:Array;
-			var key:String;
-			for (key in widgets) {
-				if (values[key] != null) {
-					widgets[key]["renderer"].setValue(values[key]);
-					originalData[key] = values[key];
-				} else if(values[key]==null){
-					if (widgets[key]["renderer"] is CFormItemDisplay)
-						widgets[key]["renderer"].setValue("-");
-					else if (widgets[key]["renderer"] is CFormItemText)
-						widgets[key]["renderer"].setValue("");
-				}
-			}
-		}
-		
 		/**
 		 *  Resets the values in the controls to empty or 0 
 		 *
@@ -629,7 +622,7 @@
 			for each(var widget:Array in widgets) {
 				var xmlWidget:XMLList = widget["field"].child("widget");
 	        	var widgetType:String = xmlWidget.attribute("type").toString();
-				if(widgetType.toLowerCase() == "boolean"){
+				if(widgetType.toLowerCase() == "radiogroup"){
 					widget["renderer"].setValue(null);
 				}else if(widgetType.toLowerCase() == "text"){
 					widget["renderer"].setValue("");
@@ -683,26 +676,7 @@
 		public function getData(onlyModifiedValues:Boolean=true):Object {
 			var obj:Object=new Object();
 			var values:Object=getCFormValues(onlyModifiedValues);
-			
-			var widget:Array;
-			var key:String;
-			for (key in values) {
-				var value:Object = values[key];
-				if(key.indexOf(".")!=-1) {
-					var tmp:Array=key.split(".");
-					if(!obj[tmp[0]]) obj[tmp[0]]=new Object();
-					if(tmp.length>2){
-						if(!obj[tmp[0]][tmp[1]]) obj[tmp[0]][tmp[1]]=new Object();
-						obj[tmp[0]][tmp[1]][tmp[2]]=value;
-					}else
-					{
-					obj[tmp[0]][tmp[1]]=value;
-					}
-				} else {
-					obj[key]=value;
-				}
-			}
-			return obj;
+			return values;
 		}		
 
 		/**
@@ -720,7 +694,9 @@
 		 */
 		private function getCFormValues(onlyModifiedValues:Boolean=true): Object {
 			var values:Object=new Object();
-
+			if(originalData.length == 0)
+				originalData = defaultData;
+					
 			for each(var widget:Array in widgets) {
 				var fieldId:String = widget["fieldId"];
 				var currentValue:Object = widget["renderer"].getValue();
@@ -730,13 +706,9 @@
 				
 	        	var xmlWidget:XMLList = widget["field"].child("widget");
 	        	var widgetType:String = xmlWidget.attribute("type").toString();
-	        	if (widgetType.toLowerCase() == "boolean" 
-	        		&& (originalValue != null)) {
+	        	if (widgetType.toLowerCase() == "radiogroup" && (originalValue != null)) {
 	        		originalValue = String(originalValue);
-	        	}
-	        	else if(widgetType.toLowerCase() == "stepper")
-	        		originalValue = Number(xmlWidget.attribute("min"));
-	        	else if (widgetType.toLowerCase() == "display"&& onlyModifiedValues)
+	        	}else if (widgetType.toLowerCase() == "display" && onlyModifiedValues)
 	        		continue;
 	        	else if (widgetType.toLowerCase() == "table" && onlyModifiedValues)
 	        	    continue;
@@ -748,7 +720,7 @@
 	        	}
 				if(currentValue == originalValue && onlyModifiedValues) 
 					continue;
-				values[fieldId]=currentValue;
+				values[fieldId] = currentValue;
 			}
 
 			return values;

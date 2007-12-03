@@ -53,7 +53,10 @@ package flexed.widgets.form{
 		}
 		
 		public function getValue():Object{
-			return radioButtonGroup.selectedValue;
+			if(radioButtonGroup.selectedValue == null)
+				return "";
+			else
+				return radioButtonGroup.selectedValue;
 		}
 		
 		public function isEditable():Boolean{
