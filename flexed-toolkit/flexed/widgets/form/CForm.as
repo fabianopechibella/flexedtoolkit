@@ -380,7 +380,7 @@
 					hasChild = true;
 	            	var gLabel:GridItem=new GridItem();
 	            	var gItemlabel:Label=new Label();
-	            		gItemlabel.text = fieldName;
+	            		gItemlabel.htmlText = addHotKey(fieldName);
 	            	var styleName:String = DefaultConfig.GENERAL_LABEL_STYLE; 
 	            	
 	            	if (field.child("label").attribute("style").toString()!=""){
@@ -791,6 +791,17 @@
 		 */
 		public function clearContainer():void{
 			BASE_CONTAINER.removeAllChildren();
+		}
+		
+		private function addHotKey(label:String):String{
+			var keyPos:int = label.indexOf("_"); 
+			var hotKey:String = label.substring(keyPos+1, keyPos+2);
+			var oldChar:String = "_"+hotKey;
+			var newChar:String = "<u>"+hotKey+"</u>";
+			var newLabel:String = label;
+				newLabel = label.replace(oldChar, newChar);
+
+			return newLabel;
 		}
 
 	}
