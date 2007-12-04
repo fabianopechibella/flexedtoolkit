@@ -23,7 +23,7 @@
 			
 		private function btnClickHandler(event:MouseEvent):void{
 			if(lstCtrlSchemes.selectedItems.length > 0){
-				cfrm.clearCform();
+				cfrm.clearContainer();
 				var str:String =  lstCtrlSchemes.selectedItem.filename as String;
 				selectedXML = str;
 				if(str != ""){
@@ -35,6 +35,7 @@
 					btnGetAllData.enabled = true;
 					btnGetChangedData.enabled = true;
 					btnResetForm.enabled = true;
+					btnIsDirty.enabled = true;
 				}
 			}
 		}
@@ -67,9 +68,9 @@
 
 		private function isDirtyClickHandler(event:MouseEvent):void{
 			if(cfrm.isDirty == true)
-				Alert.show("Yes. The form is now dirty!","isDirty");
+				Alert.show("The form is now dirty!","isDirty");
 			else
-				Alert.show("No. The form is clean!","isDirty");
+				Alert.show("The form is clean!","isDirty");
 		}
 		
 		private function resetClickHandler(event:MouseEvent):void{
@@ -122,6 +123,7 @@
 	
 	<!-- The bar containing controls to use the data from CForm -->
 	<mx:HBox id="controlBar" width="100%" horizontalGap="4" horizontalCenter="0" horizontalAlign="right" cornerRadius="4" borderStyle="solid" borderColor="#E5F165" paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3" verticalAlign="middle">
+		<mx:Button id="btnIsDirty" textAlign="center" label="Is CForm Dirty?" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="isDirtyClickHandler(event)"/>
 		<mx:Button id="btnSetData" textAlign="center" label="Set Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="setData(event)"/>
 		<mx:Button id="btnResetForm" textAlign="center" label="Reset CForm" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="resetClickHandler(event)"/>
 		<mx:Button id="btnGetAllData" textAlign="center" label="Get All Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="getDataClickHandler(event)"/>
