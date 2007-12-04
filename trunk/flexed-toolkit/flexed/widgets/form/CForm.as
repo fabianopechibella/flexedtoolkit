@@ -14,6 +14,7 @@
 	 */
 
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
@@ -28,6 +29,7 @@
 	import mx.controls.Alert;
 	import mx.controls.HRule;
 	import mx.controls.Label;
+	import mx.core.Application;
 	import mx.events.DynamicEvent;
 	import mx.rpc.events.*;
 	import mx.utils.ObjectUtil;
@@ -90,7 +92,7 @@
 			BASE_CONTAINER.setStyle("paddingBottom", 4);
 			BASE_CONTAINER.setStyle("paddingLeft", 4);
 			BASE_CONTAINER.setStyle("paddingRight", 4);
-			this.addChild(BASE_CONTAINER);	
+			this.addChild(BASE_CONTAINER);
 		}
 		
 		public function init():void{
@@ -380,7 +382,7 @@
 					hasChild = true;
 	            	var gLabel:GridItem=new GridItem();
 	            	var gItemlabel:Label=new Label();
-	            		gItemlabel.htmlText = addHotKey(fieldName);
+	            		gItemlabel.text = fieldName;
 	            	var styleName:String = DefaultConfig.GENERAL_LABEL_STYLE; 
 	            	
 	            	if (field.child("label").attribute("style").toString()!=""){
@@ -793,16 +795,5 @@
 			BASE_CONTAINER.removeAllChildren();
 		}
 		
-		private function addHotKey(label:String):String{
-			var keyPos:int = label.indexOf("_"); 
-			var hotKey:String = label.substring(keyPos+1, keyPos+2);
-			var oldChar:String = "_"+hotKey;
-			var newChar:String = "<u>"+hotKey+"</u>";
-			var newLabel:String = label;
-				newLabel = label.replace(oldChar, newChar);
-
-			return newLabel;
-		}
-
 	}
 }
