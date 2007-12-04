@@ -30,6 +30,7 @@
 	import mx.controls.Label;
 	import mx.events.DynamicEvent;
 	import mx.rpc.events.*;
+	import mx.utils.ObjectUtil;
 	import mx.validators.ValidationResult;
 	
 	/**
@@ -164,11 +165,22 @@
 		 *
 		 */
 		public function get isDirty():Boolean{
-			var obj:Object = this.getData();
-			if(obj != null)
-				return true;
+			var dirty:Boolean = new Boolean();
+			
+			var modValues:Object = getData(true);
+				
+			var objLength:int = 0;
+			
+			for each(var val:String in modValues){
+				objLength++;
+			}
+					
+			if(objLength > 0)
+				dirty = true
 			else
-				return false;
+				dirty = false;
+				
+			return dirty;
 		}
 
 		/**
@@ -258,8 +270,7 @@
 			if (indigap!=null && indigap!="") 
 				_indicatorGap=int(indigap);
 
-			for (var colCount:int = 0; colCount < this.columns; colCount++) 
-			{
+			for (var colCount:int = 0; colCount < this.columns; colCount++){
 				var grid:Grid = new Grid();
 				grid.id = grid + colCount.toString();
 				grid.setStyle("verticalGap", vgap);
@@ -392,6 +403,19 @@
 	            	
 	            	if(field.child("widget").attribute("default").toString() != "")
 	            		defaultVal = field.child("widget").attribute("default").toString();
+					
+	            	var fieldType:String = field.child("widget").attribute("type").toString();
+	            	if(fieldType != ""){
+		            	if(fieldType == "combobox" || fieldType == "radiogroup"){
+		            		var items:XMLList = field.child("widget").descendants("item");
+		            		for each(var item:XML in items){
+		            			if(item.attribute("selected") == "true")
+		            				defaultVal = item.attribute("data");
+		            		}
+	    	        	}else{
+	    	        		defaultVal = field.child("widget").attribute("default").toString();	
+	    	        	}
+	            	}
 					
 					// storing defaultval in an object					
 					defaultData[fieldId] = defaultVal;
@@ -596,21 +620,14 @@
 		 *  Resets the values in the controls to empty or 0 
 		 *
 		 */
-		public function resetCForm():void {
-			var widget:Array;
-			var key:String;
-			for (key in widgets) {
-				if (widgets[key]["renderer"] is CFormItemText || widgets[key]["renderer"] is CFormItemTextArea)
-					widgets[key]["renderer"].setValue("");	
-				else if(widgets[key]["renderer"] is CFormItemCombobox)
-					widgets[key]["renderer"].getUIComponent().selectedIndex=0;	
-				else if(widgets[key]["renderer"] is CFormItemDisplay)
-					widgets[key]["renderer"].setValue("");
-				else if(widgets[key]["renderer"] is CFormItemRadioButtonGroup)
-					widgets[key]["renderer"].setValue(null);
-				else if(widgets[key]["renderer"] is CFormItemNumericStepper)
-					widgets[key]["renderer"].setValue(0);
+		public function resetCForm(toDefault:Boolean = true):void {
+			var oldData:Object = new Object();
+			if(toDefault){
+				oldData = ObjectUtil.copy(defaultData);
+			}else{
+				oldData = ObjectUtil.copy(originalData);
 			}
+			setData(oldData);
 		}
 		
 		/**
@@ -772,7 +789,7 @@
 		 *  Removes all controls from the container.
 		 *
 		 */
-		public function clearCform():void{
+		public function clearContainer():void{
 			BASE_CONTAINER.removeAllChildren();
 		}
 
