@@ -3,7 +3,7 @@
 <component columns="1" vgap="5" igap="1">
 	<group label="Personal" column="1">
 		<row>
-			<field id="fname" label="Full N_ame">
+			<field id="fname" label="Full Name">
 				<widget type="text" default="Shankar" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
 			</field>
 		</row> 

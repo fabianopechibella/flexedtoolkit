@@ -2,8 +2,32 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:form="flexed.widgets.form.*" horizontalAlign="center" verticalAlign="middle" backgroundGradientColors="[#ffffff, #f8fceb]" backgroundGradientAlphas="[1.0, 0.93]" xmlns:cform="examples.cform.*">
 <mx:Style>
 	Application {
-   themeColor: #ffcc00;
-}
+   		themeColor: #ffcc00;
+	}
+
+	Alert{
+		color : #0f3177;
+		title-style-name : "alertTitle";
+		header-height:19;
+		border-thickness: 1;
+		drop-shadow-enabled: true;
+		drop-shadow-color :#ffffff;
+		shadow-distance: 1;
+		background-color: #ffffff;
+		corner-radius :6;
+		border-style :solid;
+		header-colors : #F7FFCD, #99cc33;
+		footer-colors : #F7FFCD, #ffffff;
+		border-color : #7F9B5A;
+	}
+	
+	.alertTitle{
+		font-family :Verdana;
+		font-size :10;
+		font-weight :bold;
+		text-align :left;
+		color :#336600;
+	}	
 </mx:Style>
 	<cform:CFormTestDrive id="useCForm"  horizontalCenter="0" verticalCenter="0"/>		
 </mx:Application>
