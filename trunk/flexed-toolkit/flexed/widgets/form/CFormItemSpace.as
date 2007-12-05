@@ -1,9 +1,6 @@
 package flexed.widgets.form {
-	import mx.controls.Label;
-	import mx.core.UIComponent;
-	import mx.controls.Alert;
-	import mx.events.IndexChangedEvent;
 	import mx.controls.Spacer;
+	import mx.core.UIComponent;
 	
 	public class CFormItemSpace implements CFormItemRenderer {
 		private var spacer:Spacer;
@@ -11,8 +8,8 @@ package flexed.widgets.form {
 		public function CFormItemSpace()
 		{
 			spacer = new Spacer();
-			spacer.height = 21;
-			spacer.width = 175;
+			spacer.height = DefaultConfig.WIDGET_SPACE_HEIGHT;
+			spacer.width = DefaultConfig.WIDGET_SPACE_WIDTH;
 		}
 				
 		public function getUIComponent():UIComponent	{

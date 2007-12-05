@@ -1,17 +1,17 @@
 package flexed.widgets.form {
-	import mx.controls.DataGrid;
-	import mx.utils.ObjectProxy;
-	import mx.core.UIComponent;
 	import mx.collections.ArrayCollection;
-	import mx.controls.Alert;
+	import mx.controls.DataGrid;
 	import mx.controls.dataGridClasses.DataGridColumn;
+	import mx.core.UIComponent;
+	import mx.utils.ObjectProxy;
 	
 	public class CFormItemTable implements CFormItemRenderer {
 		private var table:DataGrid;
 		
 		public function CFormItemTable() {
 			table = new DataGrid();
-			//table.minHeight = 60;
+			table.minHeight = DefaultConfig.WIDGET_TABLE_MINHEIGHT;
+			table.minWidth = DefaultConfig.WIDGET_TABLE_MINWIDTH;
 		}
 		
 		/**

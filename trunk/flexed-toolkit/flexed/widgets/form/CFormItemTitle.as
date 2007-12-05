@@ -1,6 +1,7 @@
 package flexed.widgets.form {
-	import mx.core.UIComponent;
 	import flexed.widgets.form.custom.SectionTitle;
+	
+	import mx.core.UIComponent;
 	
 	public class CFormItemTitle implements CFormItemRenderer
 	{
@@ -8,8 +9,8 @@ package flexed.widgets.form {
 		
 		public function CFormItemTitle() {
 			title = new SectionTitle();
-			title.height = 20;
-			title.setLabelStyle("viewSubTitle");
+			title.height = DefaultConfig.GENERAL_TITLE_HEIGHT;
+			title.setLabelStyle(DefaultConfig.GENERAL_TITLE_STYLE);
 		}
 		
 		/**
