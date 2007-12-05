@@ -1,0 +1,29 @@
+/* CSS file */
+
+
+.groupTitleLBL{
+	color: #000000;
+	fontSize: 10;
+	fontWeight: bold;
+}
+
+.groupTitleHR{
+	strokeColor: #333333;
+	shadowColor: #ffffff;
+	strokeWidth: 1;	
+}
+
+.formLabels{
+	color: #333333;
+	fontFamily: Verdana;
+	fontSize: 9;
+	fontWeight: normal;
+}
+
+.formValues{
+	color: #000000;
+	fontFamily: Verdana;
+	fontSize: 9;
+	fontWeight: normal;
+
+}
