@@ -29,7 +29,7 @@
 		</row>
 		<row>
 			<field id="friends" label="Friends">
-				<widget type="table" width="200" height="100">
+				<widget type="table" height="100">
 					<column data="name" label="Name" width="40"/>
 					<column data="email" label="Email" width="60"/>
 				</widget>

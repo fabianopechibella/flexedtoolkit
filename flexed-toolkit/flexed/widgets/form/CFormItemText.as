@@ -1,15 +1,14 @@
 package flexed.widgets.form {
 	import mx.controls.TextInput;
 	import mx.core.UIComponent;
-	import mx.controls.Alert;
 	
 	public class CFormItemText implements CFormItemRenderer {
 		private var textInput:TextInput;
 		
 		public function CFormItemText() {
 			textInput = new TextInput();
-			textInput.height = 21;
-			textInput.width = 175;
+			textInput.height = DefaultConfig.WIDGET_TEXT_HEIGHT;
+			textInput.width = DefaultConfig.WIDGET_TEXT_WIDTH;;
 		}
 		public function getUIComponent():UIComponent	{
 			return textInput;

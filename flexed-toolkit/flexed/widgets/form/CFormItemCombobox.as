@@ -1,15 +1,15 @@
 package flexed.widgets.form {
-	import mx.core.UIComponent;
-	import mx.events.IndexChangedEvent;
-	import mx.controls.ComboBox;
 	import mx.collections.ArrayCollection;
+	import mx.controls.ComboBox;
+	import mx.core.UIComponent;
 	
 	public class CFormItemCombobox implements CFormItemRenderer {
 		private var combo:ComboBox;
 		
 		public function CFormItemCombobox() {
 			combo = new ComboBox();
-			combo.height = 21;
+			combo.height = DefaultConfig.WIDGET_COMBOBOX_HEIGHT;
+			combo.width = DefaultConfig.WIDGET_COMBOBOX_WIDTH;
 		}
 		
 		/**

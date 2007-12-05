@@ -7,43 +7,39 @@ package flexed.widgets.form {
 		
 		public function CFormItemTextArea() {
 			textArea = new TextArea();
-			textArea.height = 95;
-			textArea.width = 175;
+			textArea.height = DefaultConfig.WIDGET_TEXTAREA_HEIGHT;
+			textArea.width = DefaultConfig.WIDGET_TEXTAREA_WIDTH;
 		}
-		public function getUIComponent():UIComponent	{
+		
+		public function getUIComponent():UIComponent{
 			return textArea;
 		}
 		
-		public function getValue():Object
-		{
+		public function getValue():Object{
 			return textArea.text;
 		}
 		
-		public function isEditable():Boolean
-		{
+		public function isEditable():Boolean{
 			return textArea.editable;
 		}
 		
-		public function setEnabled(enabled:Boolean):void
-		{
+		public function setEnabled(enabled:Boolean):void{
 			textArea.enabled=enabled;
 		}
 		
-		public function isEnabled():Boolean
-		{
+		public function isEnabled():Boolean{
 			return textArea.enabled;
 		}
 		
-		public function setEditable(editable:Boolean):void
-		{
+		public function setEditable(editable:Boolean):void{
 			textArea.editable=editable;
 		}
 		
-		public function setValue(value:Object):void
-		{
+		public function setValue(value:Object):void{
 			textArea.text=String(value);
 		}
-		public function setAttributes(attributes:Array):void {
+		
+		public function setAttributes(attributes:Array):void{
 			var editable:String=attributes["editable"];
 			
 			var _editable:Boolean=true;
@@ -57,7 +53,8 @@ package flexed.widgets.form {
 				textArea.height=attributes["height"];
 			
 		}
-		public function setAttributesFromXML(attributes:XMLList):void {
+		
+		public function setAttributesFromXML(attributes:XMLList):void{
 			var tmp:Array=new Array();
 			var attrList:XMLList=attributes.attributes();
 			

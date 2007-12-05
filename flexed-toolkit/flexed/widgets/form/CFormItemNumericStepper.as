@@ -1,14 +1,14 @@
 package flexed.widgets.form {
-	import mx.core.UIComponent;
 	import mx.controls.NumericStepper;
-	import mx.events.IndexChangedEvent;
+	import mx.core.UIComponent;
 	
 	public class CFormItemNumericStepper implements CFormItemRenderer {
 		private var numStep:NumericStepper;
 		
 		public function CFormItemNumericStepper() {
 			numStep = new NumericStepper();
-			numStep.height = 21;
+			numStep.height = DefaultConfig.WIDGET_NUMERICSTEPPER_HEIGHT;
+			numStep.width = DefaultConfig.WIDGET_NUMERICSTEPPER_WIDTH;
 		}
 		public function getUIComponent():UIComponent	{
 			return numStep;

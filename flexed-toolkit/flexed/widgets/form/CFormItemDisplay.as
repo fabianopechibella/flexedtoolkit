@@ -1,8 +1,6 @@
 package flexed.widgets.form{
 	import mx.controls.Label;
 	import mx.core.UIComponent;
-	import mx.controls.Alert;
-	import mx.events.IndexChangedEvent;
 	
 	public class CFormItemDisplay implements CFormItemRenderer {
 		private var display:Label;
@@ -10,9 +8,9 @@ package flexed.widgets.form{
 		public function CFormItemDisplay()
 		{
 			display = new Label();
-			display.height = 21;
-			display.width = 175;
-			display.styleName = "viewLabelValue" ;
+			display.height = DefaultConfig.WIDGET_DISPLAY_HEIGHT;
+			display.width = DefaultConfig.WIDGET_DISPLAY_WIDTH;
+			display.styleName = DefaultConfig.WIDGET_DISPLAY_STYLE;;
 		}
 				
 		public function getUIComponent():UIComponent	{

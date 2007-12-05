@@ -1,0 +1,202 @@
+/* CSS file */
+
+Application {
+	themeColor: #ffcc00;
+}
+
+Alert{
+	color : #000000;
+	title-style-name : "alertTitle";
+	header-height:19;
+	border-thickness: 1;
+	drop-shadow-enabled: true;
+	drop-shadow-color :#ffffff;
+	shadow-distance: 1;
+	background-color: #ffffff;
+	corner-radius :6;
+	border-style :solid;
+	header-colors : #F7FFCD, #99cc33;
+	footer-colors : #F7FFCD, #ffffff;
+	border-color : #7F9B5A;
+}
+
+.alertTitle{
+	font-family :Verdana;
+	font-size :10;
+	font-weight :bold;
+	text-align :left;
+	color :#336600;
+}
+
+CheckBox {
+	textIndent: 1;
+	letterSpacing: 0;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	borderColor: #99cc66;
+	color: #000000;
+	textSelectedColor: #000000;
+	textRollOverColor: #006600;
+	themeColor: #ffcc00;
+	fontSize: 10;
+	fontWeight: normal;
+}
+
+ComboBox {
+	cornerRadius: 2;
+	color: #000000;
+	borderColor: #99cc66;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	selectionColor: #ffffcc;
+	textSelectedColor: #006600;
+	textRollOverColor: #006600;
+	themeColor: #ffcc00;
+	openDuration: 110;
+	closeDuration: 107;
+	textAlign: left;
+	fontSize: 10;
+	fontWeight: normal;
+	letterSpacing: 0;
+	dropDownStyleName: "myComboBoxDropDowns";
+}
+
+.myComboBoxDropDowns {
+	cornerRadius: 0;
+	borderThickness: 1;
+	borderColor: #99cc66;
+	color: #000000;
+	fontSize: 10;
+	fontWeight: normal;
+	fontStyle: normal;
+	textDecoration: none;
+}
+
+TextInput {
+	borderStyle: inset;
+	borderColor: #99cc66;
+	backgroundAlpha: 1;
+	color: #000000;
+	paddingLeft: 1;
+	paddingRight: 2;
+	fontSize: 10;
+	fontWeight: normal;
+	dropShadowEnabled: false;
+	shadowDirection: right;
+	shadowDistance: 0;
+}
+
+TextArea {
+	fontSize: 10;
+	color: #000000;
+	fontWeight: normal;
+	paddingLeft: 2;
+	paddingRight: 2;
+	textIndent: 0;
+	borderStyle: inset;
+	borderColor: #99cc66;
+}
+
+RadioButton {
+	textIndent: 1;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	borderColor: #99cc66;
+	color: #000000;
+	textSelectedColor: #000000;
+	textRollOverColor: #006600;
+	themeColor: #ffcc00;
+	fontSize: 10;
+	fontWeight: normal;
+}
+
+NumericStepper {
+	borderColor: #99cc66;
+	cornerRadius: 2;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	color: #000000;
+	themeColor: #ffcc00;
+	fontSize: 10;
+}
+
+ToolTip {
+	backgroundAlpha: 0.3;
+	backgroundColor: #ffffff;
+	color: #000000;
+}
+
+DataGrid {
+	headerColors: #ffffff, #99cc33;
+	horizontalGridLines: true;
+	horizontalGridLineColor: #ffffcc;
+	verticalGridLineColor: #99cc66;
+	rollOverColor: #ffffcc;
+	textRollOverColor: #003300;
+	borderThickness: 1;
+	borderColor: #99cc66;
+	selectionColor: #ffcc00;
+	color: #000000;
+	textSelectedColor: #003300;
+	textIndent: 0;
+	fontSize: 10;
+	headerStyleName: "mydataGridHeaderStyle";
+}
+
+.mydataGridHeaderStyle {
+	color: #000000;
+	fontSize: 10;
+}
+
+HScrollBar {
+	cornerRadius: 1;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	trackColors: #99cc66, #ffffcc;
+	themeColor: #ffcc00;
+	borderColor: #99cc66;
+}
+
+HRule {
+	strokeColor: #003300;
+	shadowColor: #ffffff;
+	strokeWidth: 1;
+}
+
+VRule {
+	strokeColor: #003300;
+	shadowColor: #ffffff;
+	strokeWidth: 1;
+}
+
+List {
+	rollOverColor: #ffffcc;
+	textRollOverColor: #003300;
+	borderStyle: inset;
+	selectionColor: #ffcc00;
+	color: #000000;
+	textSelectedColor: #003300;
+	fontSize: 10;
+	fontWeight: normal;
+	textAlign: left;
+}
+
+DateChooser {
+	cornerRadius: 1;
+	borderThickness: 1;
+	headerColors: #99cc33, #ffffcc;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	todayColor: #cccc00;
+	rollOverColor: #ffffcc;
+	selectionColor: #ffcc00;
+	color: #000000;
+	borderColor: #99cc66;
+	themeColor: #ffcc00;
+	headerStyleName: "mydateChooserHeaderStyle";   weekDayStyleName: "mydateChooserWeekDayStyle";
+}
+
+.mydateChooserHeaderStyle {
+	color: #000000;
+	fontSize: 10;
+
+}
+
+.mydateChooserWeekDayStyle {
+	color: #006600;
+	fontSize: 10;
+}
