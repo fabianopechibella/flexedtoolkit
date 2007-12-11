@@ -1,40 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+A slightly ADVANCED entry form. With 2 columns of fields 
+including a ComboBox box with pre-filled data.
+-->
 <component columns="2" vgap="5" igap="1">
 	<group label="Personal" column="1">
-		<row>
-			<field id="fname" label="Full Name">
-				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="fname"/>
+		<formitem>
+			<field id="txtFName" label="First Name">
+				<widget type="text" default="Uday"/>
 			</field>
-		</row> 
-		<row>
-			<field id="age" label="Age">
-				<widget type="stepper" min="2" max="100" editable="true"/>
+		</formitem> 
+		<formitem>
+			<field id="txtLName" label="Last Name">
+				<widget type="text" default="Shankar"/>
 			</field>
-		</row>
-		<row>
-			<field id="coindustry" label="Industry">
+		</formitem> 
+		<formitem>
+			<field id="nstepAge" label="Age">
+				<widget type="stepper" min="2" max="100"/>
+			</field>
+		</formitem>
+		
+	</group>
+	<group label="Occupation" column="1">
+		<formitem>
+			<field id="txtCoName" label="Company Name">
+				<widget type="text"/>
+			</field>
+		</formitem>
+		<formitem>
+			<field id="cmboIndustry" label="Industry">
 				<widget type="combobox">
 					<item data="tele" label="Telecom"/>
+					<item data="nms" label="Networking"/>
 					<item data="banking" label="Banking" selected="true"/>			
-					<item data="ites" label="ITES"/>
+					<item data="appdev" label="Application Development"/>
+					<item data="webdev" label="Web Development"/>
 				</widget>
 			</field>
-		</row>
+		</formitem>
 	</group>
-	<group label="Occupation" column="2">
-		<row>
-			<field id="coname" label="Company Name">
-				<widget type="text" editable="true" validate="true" notnull="true" datatype="string" fieldelementid="coname"/>
-			</field>
-		</row>
-		<row>
-			<field id="friends" label="Friends">
-				<widget type="table" height="100">
+	<group label="Social Network" column="2">
+		<formitem>
+			<field id="grdFriends" label="Friends">
+				<widget type="table" width="200" height="100">
 					<column data="name" label="Name" width="40"/>
-					<column data="email" label="Email" width="60"/>
+					<column data="network" label="Network" width="60"/>
 				</widget>
 			</field>
-		</row>
+		</formitem>
 	</group>	
 	
 </component>
