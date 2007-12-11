@@ -107,7 +107,7 @@
 		 * 
 		 */
 		private function initCForm(event:Event = null):void{
-			if(widgetsFile != null) createCForm(widgetsFile);
+			if(widgetsFile != null) createCFormFromFile(widgetsFile);
 		}		
 		
 		/**
@@ -207,19 +207,26 @@
 		}
 
 		/**
-		 *  @private
-		 *  This returns all the values from the form. The original values 
-		 *  that were set by the caller.
-		 *
-		 *  @return Original values from the form. 
+		 * @private
+		 * Starts the process of reading from the xml file and
+		 * on COMPLETE of the event fires <code>loadFromXML</code>
 		 *
 		 */	
-		private function createCForm(widgetsFile:String): void{
+		private function createCFormFromFile(widgetsFile:String): void{
 			var loader:URLLoader = new URLLoader();
-				loader.addEventListener(Event.COMPLETE, loadFromXML);
+				loader.addEventListener(Event.COMPLETE, loadFromXMLFile);
 			
 			var request:URLRequest = new URLRequest(widgetsFile);
 				loader.load(request);
+		}
+
+		/**
+		 * Starts laying out the form with the XML passed in. 
+		 *
+		 */	
+		public function createCFormFromXML(widgetsXml:XML): void{
+			_xmlContent = widgetsXml;
+			layoutCForm(widgetsXml);
 		}
 
 		/**
@@ -229,7 +236,7 @@
 		 *  @param event Original values from the form. 
 		 *
 		 */	
-		private function loadFromXML(event:Event): void{ 
+		private function loadFromXMLFile(event:Event): void{ 
 			var loader:URLLoader = URLLoader(event.target);
 			widgetsXML = new XML(loader.data);
 			_xmlContent = widgetsXML;
@@ -315,7 +322,7 @@
 		 *
 		 */	
 		private function layoutCFormGroup(groupXML:XML, currentColumn:int):void{
-			var rows:XMLList=groupXML.descendants("row");
+			var rows:XMLList=groupXML.descendants("formitem");
 			var row:XML;
 
 			var eachWidget:Array = new Array();
@@ -431,7 +438,7 @@
 	            		gItemrow.addChild(gItemvalue);
 	            	}else{
 		            	if(fieldName!=null) {
-		            		if (((field.child("label").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("label").attribute("enableNextrow").toString()!="false")){
+		            		if (((field.attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.attribute("enableNextrow").toString()!="false")){
 		            			gLabel.colSpan=2;
 		            			gItemrow.addChild(gLabel);
 		            		}else{
@@ -440,7 +447,7 @@
 		            		colspan++;
 		            	}
 		            	
-		            	if (((field.child("label").attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.child("label").attribute("enableNextrow").toString()!="false")){
+		            	if (((field.attribute("enableNextrow").toString()=="true")||(groupXML.attribute("enableNextrow").toString()=="true")) && (field.attribute("enableNextrow").toString()!="false")){
 	            			gItemvalue.colSpan=2;
 	            	 		gItemrow1.addChild(gItemvalue);   
 		            	}else{
@@ -463,9 +470,9 @@
 				
 				if(hasChild == true){
 					grid.addChild(gItemrow);
-					if (((field.child("label").attribute("enableNextrow").toString()=="true")
+					if (((field.attribute("enableNextrow").toString()=="true")
 							||(groupXML.attribute("enableNextrow").toString()=="true")) 
-						&& (field.child("label").attribute("enableNextrow").toString()!="false"))
+						&& (field.attribute("enableNextrow").toString()!="false"))
 							grid.addChild(gItemrow1);
 				}
 				maxcolspan=Math.max(maxcolspan,colspan);
