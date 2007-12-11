@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+A custom xml. Copy paste the <formitem> tagset to create 
+another formitem in the form. Try pasting the following 
+inside the <group> tagset below the last <formitem> tagset - 
+
+<formitem>
+	<field id="newField" label="NewField">
+		<widget type="text" default="NEW TEXT FIELD"/>
+	</field>
+</formitem> 
+
+
+-->
+<component columns="1" vgap="5" igap="1">
+	<group label="Personal" column="1">
+		<formitem>
+			<field id="fname" label="Full Name">
+				<widget type="text" default="Uday M. Shankar"/>
+			</field>
+		</formitem> 
+	</group>
+</component>
