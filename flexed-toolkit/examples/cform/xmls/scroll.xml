@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Just another form. But this time, notice the scroll and
+how the fields scroll without issues. Using the set data
+button we can set data programmatically to this form.
+
+-->
+<component columns="2" vgap="5" igap="1">
+	<group label="Personal" column="1">
+		<formitem>
+			<field id="txtFName" label="First Name">
+				<widget type="text" default="Uday"/>
+			</field>
+		</formitem> 
+		<formitem>
+			<field id="txtLName" label="Last Name">
+				<widget type="text" default="Shankar"/>
+			</field>
+		</formitem> 
+		<formitem>
+			<field id="nstepAge" label="Age">
+				<widget type="stepper" min="2" max="100"/>
+			</field>
+		</formitem>
+		
+	</group>
+	<group label="Occupation" column="1">
+		<formitem>
+			<field id="txtCoName" label="Company Name">
+				<widget type="text"/>
+			</field>
+		</formitem>
+		<formitem>
+			<field id="cmboIndustry" label="Industry">
+				<widget type="combobox">
+					<item data="tele" label="Telecom"/>
+					<item data="banking" label="Banking" selected="true"/>			
+					<item data="appdev" label="Application Development"/>
+					<item data="webdev" label="Web Development"/>
+				</widget>
+			</field>
+		</formitem>
+	</group>
+	<group label="Social Network" column="1">
+		<formitem>
+			<field id="grdFriends" label="Friends">
+				<widget type="table" width="200" height="100">
+					<column data="name" label="Name" width="40"/>
+					<column data="email" label="Email" width="60"/>
+				</widget>
+			</field>
+		</formitem>
+	</group>	
+	
+</component>

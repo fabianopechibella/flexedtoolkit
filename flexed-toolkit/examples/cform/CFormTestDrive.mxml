@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="815" height="500" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#d2d200" borderThickness="1" verticalCenter="69" horizontalCenter="85" paddingLeft="6" paddingRight="6" paddingTop="6" paddingBottom="6" xmlns:form="flexed.widgets.form.*" creationComplete="init()">
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="775" height="500" verticalCenter="69" horizontalCenter="85" paddingLeft="4" paddingRight="4" paddingTop="4" paddingBottom="4" xmlns:form="flexed.widgets.form.*" creationComplete="init()" backgroundColor="#ffffff" cornerRadius="4" borderStyle="solid" borderColor="#d2d200" borderThickness="1" verticalGap="4">
 <mx:Script>
 	<![CDATA[
 		import mx.utils.ObjectUtil;
@@ -11,9 +11,8 @@
 		[Bindable] private var schemaList:ArrayCollection = new ArrayCollection([
 																{label:"Basic", filename:"basic"},
 																{label:"Advanced", filename:"advanced"},
-																{label:"Single Column Scroll", filename:"simple_1col_scroll"},
-																{label:"Multi Column", filename:"simple_2col"},
-																{label:"Dynamic Combobox", filename:""}
+																{label:"Single Column Scroll", filename:"scroll"},
+																{label:"XML on the fly", filename:"custom"}
 																]);
 		private var selectedXML:String = "basic";
 		
@@ -24,6 +23,7 @@
 		private function btnClickHandler(event:MouseEvent):void{
 			if(lstCtrlSchemes.selectedItems.length > 0){
 				cfrm.clearContainer();
+				txtaraCFormData.text = "";
 				var str:String =  lstCtrlSchemes.selectedItem.filename as String;
 				selectedXML = str;
 				if(str != ""){
@@ -31,11 +31,33 @@
 					cfrm.widgetsFile = str;
 					cfrm.init();
 					
-					btnSetData.enabled = true;
 					btnGetAllData.enabled = true;
 					btnGetChangedData.enabled = true;
 					btnResetForm.enabled = true;
-					btnIsDirty.enabled = true;
+					
+					if(selectedXML == "basic" || selectedXML == "advanced"){
+						btnSetData.enabled = true;
+						btnGetAllData.enabled = true;
+						btnGetChangedData.enabled = true;
+						btnResetForm.enabled = true;
+					}else if(selectedXML == "custom"){
+						btnXmlOnTheFly.enabled = true;
+						txtaraSchemaXml.enabled = true;
+						txtaraSchemaXml.editable = true;
+						btnSetData.enabled = false;
+						btnGetChangedData.enabled = false;
+						btnResetForm.enabled = false;
+						btnGetAllData.enabled = false;
+					}else{
+						btnGetAllData.enabled = false;
+						btnSetData.enabled = false;
+						btnXmlOnTheFly.enabled = false;
+						txtaraSchemaXml.enabled = false;
+						txtaraSchemaXml.editable = false;
+						btnGetChangedData.enabled = false;
+						btnResetForm.enabled = false;
+					}
+					
 				}
 			}
 		}
@@ -62,7 +84,10 @@
 		
 		private function openXml(event:Event):void{
 			var loader:URLLoader = URLLoader(event.target);
-			txtaraSchemaXml.text = loader.data.toString();
+			var xml:String = loader.data.toString();
+			var regxp:RegExp = /[\r]/g;
+			xml = xml.replace(regxp,""); //just to remove extra blank lines
+			txtaraSchemaXml.text = xml;
 		}
 		
 
@@ -75,6 +100,12 @@
 		
 		private function resetClickHandler(event:MouseEvent):void{
 			cfrm.resetCForm();
+		}
+		
+		private function xmlOnTheFly(event:MouseEvent):void{
+			cfrm.clearContainer();
+			cfrm.createCFormFromXML(new XML(txtaraSchemaXml.text));
+			btnGetAllData.enabled = true;
 		}
 		
 		private function getDataClickHandler(event:MouseEvent):void{
@@ -97,9 +128,30 @@
 			cfrm.setData(oBasicXml);
 		}
 		
+		private function setDataForAdvanced():void{
+			var oBasicXml:Object = new Object();
+				oBasicXml.txtFName = "Uday";
+				oBasicXml.txtLName = "Shankar";
+				oBasicXml.nstepAge = 28;
+				oBasicXml.txtCoName = "Extreme Networks Inc.";
+				oBasicXml.cmboIndustry = "nms";
+				
+				var acFriends:ArrayCollection = 
+				new ArrayCollection([
+									{network:"Orkut", name: "Amit"},
+									{network:"Facebook", name: "Divya"},
+									{network:"Orkut", name: "Milan"}
+									]);
+				oBasicXml.grdFriends = acFriends;
+			
+			cfrm.setData(oBasicXml);
+		}
+		
 		private function setData(event:MouseEvent):void{
 			if(selectedXML == "basic")
 				setDataForBasic();
+			if(selectedXML == "advanced")
+				setDataForAdvanced();
 		}
 		
 	]]>
@@ -107,29 +159,31 @@
 	<!-- Heading -->
 	<mx:Label id="lblHeading" text="CForm v1.0" fontFamily="Verdana" fontSize="15" color="#000000" fontWeight="bold"/>
 	
-	<mx:HBox width="100%" backgroundColor="#F7FFCD" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6" cornerRadius="4" borderStyle="solid" borderColor="#BAD16A">
+	<mx:HBox width="100%" backgroundColor="#F7FFCD" paddingBottom="6" paddingLeft="6" paddingRight="6" paddingTop="6" cornerRadius="4" borderStyle="solid" borderColor="#BAD16A" horizontalGap="4">
 		<!-- Show XML content -->		
-		<mx:TextArea width="604" height="134" id="txtaraSchemaXml" borderStyle="solid" borderColor="#7F9B5A" editable="false"/>
-		<mx:VBox horizontalAlign="center" width="100%" height="100%">
+		<mx:TextArea width="100%" height="134" id="txtaraSchemaXml" borderStyle="solid" borderColor="#7F9B5A" editable="false"/>
+		<mx:VBox horizontalAlign="center" width="180" height="100%">
 			<!-- List of XML files -->
 			<mx:List id="lstCtrlSchemes" allowMultipleSelection="false" height="107" width="100%" borderColor="#7F9B5A" borderStyle="solid" dataProvider="{schemaList}" change="lstClickHandler(event)"/>
 			<!-- Load button -->
 			<mx:Button id="btnLoadCtrlScheme" textAlign="center" label="Load Schema" borderColor="#7F9B5A" themeColor="#CFF26F" click="btnClickHandler(event)" enabled="false"/>
 		</mx:VBox>
 	</mx:HBox>
-	
-	<!-- The CForm component -->	
-	<form:CForm id="cfrm" verticalCenter="0" horizontalCenter="0" horizontalScrollPolicy="off" verticalScrollPolicy="auto" width="100%" height="187"/>
+	<mx:HBox width="100%" height="100%" horizontalGap="4">
+		<!-- The CForm component -->	
+		<form:CForm id="cfrm" verticalCenter="0" horizontalCenter="0" horizontalScrollPolicy="off" verticalScrollPolicy="auto" width="100%" height="100%"/>
+		<!-- Textarea where the data from CForm is displayed -->	
+		<mx:TextArea id="txtaraCFormData" width="190" height="100%" cornerRadius="0" backgroundColor="#F3FFDA" backgroundAlpha="0.71" borderStyle="inset"/>
+	</mx:HBox>
 	
 	<!-- The bar containing controls to use the data from CForm -->
-	<mx:HBox id="controlBar" width="100%" horizontalGap="4" horizontalCenter="0" horizontalAlign="right" cornerRadius="4" borderStyle="solid" borderColor="#E5F165" paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3" verticalAlign="middle">
-		<mx:Button id="btnIsDirty" textAlign="center" label="Is CForm Dirty?" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="isDirtyClickHandler(event)"/>
+	<mx:HBox id="controlBar" width="100%" horizontalGap="4" horizontalCenter="0" horizontalAlign="left" cornerRadius="4" borderStyle="solid" borderColor="#E5F165" paddingBottom="3" paddingLeft="3" paddingRight="3" paddingTop="3" verticalAlign="middle">
 		<mx:Button id="btnSetData" textAlign="center" label="Set Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="setData(event)"/>
 		<mx:Button id="btnResetForm" textAlign="center" label="Reset CForm" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="resetClickHandler(event)"/>
 		<mx:Button id="btnGetAllData" textAlign="center" label="Get All Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="getDataClickHandler(event)"/>
 		<mx:Button id="btnGetChangedData" textAlign="center" label="Get Modified Data" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="getDataClickHandler(event)"/>
+		<mx:Button id="btnXmlOnTheFly" textAlign="center" label="Reload XML" borderColor="#7F9B5A" themeColor="#CFF26F" enabled="false" click="xmlOnTheFly(event)"/>
 	</mx:HBox>
-	<mx:TextArea id="txtaraCFormData" width="100%" height="100%"/>
 	<!-- Copyright text (???) :) -->
-	<mx:Label horizontalCenter="0" text="http://flexed.wordpress.com | ©udayms 2007"  bottom="0" color="#98B300"/>	
+	<mx:Label horizontalCenter="0" text="http://flexed.wordpress.com | ©udayms 2007"  bottom="0" color="#98B300"/>
 </mx:VBox>
