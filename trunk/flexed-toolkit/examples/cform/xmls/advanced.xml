@@ -43,7 +43,7 @@ including a ComboBox box with pre-filled data.
 	<group label="Social Network" column="2">
 		<formitem>
 			<field id="grdFriends" label="Friends">
-				<widget type="table" width="200" height="100">
+				<widget type="table" width="200" height="150">
 					<column data="name" label="Name" width="40"/>
 					<column data="network" label="Network" width="60"/>
 				</widget>

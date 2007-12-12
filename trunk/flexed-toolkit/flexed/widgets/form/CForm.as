@@ -14,7 +14,6 @@
 	 */
 
 	import flash.events.Event;
-	import flash.events.KeyboardEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
@@ -29,7 +28,6 @@
 	import mx.controls.Alert;
 	import mx.controls.HRule;
 	import mx.controls.Label;
-	import mx.core.Application;
 	import mx.events.DynamicEvent;
 	import mx.rpc.events.*;
 	import mx.utils.ObjectUtil;
@@ -47,26 +45,24 @@
 	
 	public class CForm extends Canvas
 	{
-		
-		private var BASE_CONTAINER:HBox = new HBox();
-		
-		// object that will contain all the widgets
-		public var widgets:Object;
 		// path of the widgets file
 		public var widgetsFile:String;
-		// the xml of all widgets
-		public var widgetsXML:XML;
-		// array containing fieldTypes
-		public var fieldType:Array = new Array();
-		// data that is loaded to cform using the setData() method
-		public var originalData:Array = new Array();
-		// data that is loaded to cform using default values from xml  
-		public var defaultData:Array = new Array();
-		// columns in the layout grid
-		public var gridColumns:Array = new Array();
-		// number of columns
-		public var columns:int;
 		
+		private var BASE_CONTAINER:HBox = new HBox();
+		// object that will contain all the widgets
+		private var _widgets:Object;
+		// the xml of all widgets
+		private var _widgetsXML:XML;
+		// array containing fieldTypes
+		private var _fieldType:Array = new Array();
+		// data that is loaded to cform using the setData() method
+		private var _originalData:Array = new Array();
+		// data that is loaded to cform using default values from xml  
+		private var _defaultData:Array = new Array();
+		// columns in the layout grid
+		private var _gridColumns:Array = new Array();
+		// number of columns
+		private var _columns:int;
 		// the custom function fired by caller to customize cform 		
 		private var _customizeCForm:Function;
 		// function to update cform
@@ -108,6 +104,18 @@
 		 */
 		private function initCForm(event:Event = null):void{
 			if(widgetsFile != null) createCFormFromFile(widgetsFile);
+		}		
+		
+		public function get originalData():Array{
+			return _originalData;
+		}
+		
+		public function get defaultData():Array{
+			return _defaultData;
+		}
+		
+		public function get widgets():Object{
+			return _widgets;
 		}		
 		
 		/**
@@ -184,6 +192,17 @@
 				
 			return dirty;
 		}
+		
+		/**
+		 * Returns the renderer of the 
+		 * widget id passed in
+		 *
+		 * @return CFormItemRenderer of the widget
+		 *
+		 */
+		public function getWidget(widgetId:String):CFormItemRenderer{
+			return this.widgets[widgetId]["renderer"];
+		}
 
 		/**
 		 *  Need to document this.
@@ -238,9 +257,9 @@
 		 */	
 		private function loadFromXMLFile(event:Event): void{ 
 			var loader:URLLoader = URLLoader(event.target);
-			widgetsXML = new XML(loader.data);
-			_xmlContent = widgetsXML;
-			layoutCForm(widgetsXML);
+			_widgetsXML = new XML(loader.data);
+			_xmlContent = _widgetsXML;
+			layoutCForm(_widgetsXML);
 		}
 		
 
@@ -269,9 +288,9 @@
 			this.label = label.toString();
 
 			if (cols != "")	
-				this.columns = int(cols);
+				this._columns = int(cols);
 			else 
-				this.columns = 0;
+				this._columns = 0;
 
 			if (verticalgap!=null && verticalgap!="") 
 				vgap=int(verticalgap);
@@ -279,17 +298,17 @@
 			if (indigap!=null && indigap!="") 
 				_indicatorGap=int(indigap);
 
-			for (var colCount:int = 0; colCount < this.columns; colCount++){
+			for (var colCount:int = 0; colCount < this._columns; colCount++){
 				var grid:Grid = new Grid();
 				grid.id = grid + colCount.toString();
 				grid.setStyle("verticalGap", vgap);
 				grid.percentHeight = 100;
 				grid.percentWidth = 100;
 				BASE_CONTAINER.addChild(grid);
-				gridColumns[colCount+1] = grid;
+				_gridColumns[colCount+1] = grid;
 			}
 			
-			widgets = new Object();
+			_widgets = new Object();
 			for each(var group:XML in groups) {
 				var whichColumn:String = group.attribute("column").toString();
 				var currentColumn:int;
@@ -299,7 +318,7 @@
 				else 
 					currentColumn = 0;
 
-				if(currentColumn > 0 && currentColumn <= columns){
+				if(currentColumn > 0 && currentColumn <= _columns){
 					layoutCFormGroup(group, currentColumn);
 				}else{
 					if(alertFlag != true){
@@ -328,7 +347,7 @@
 			var eachWidget:Array = new Array();
 			var name:String = groupXML.attribute("label").toString();
 
-			var grid:Grid = gridColumns[currentColumn];
+			var grid:Grid = _gridColumns[currentColumn];
 
 			var gTitleItem:GridItem = null;
 			var gHruleItem:GridItem = null;
@@ -427,7 +446,7 @@
 	            	}
 					
 					// storing defaultval in an object					
-					defaultData[fieldId] = defaultVal;
+					_defaultData[fieldId] = defaultVal;
 					defaultDataLength++;
 	            	
 	            	var gItemvalue:GridItem = new GridItem();
@@ -466,7 +485,7 @@
 	            	eachWidget["renderer"] = renderer;
 	            	widgets[fieldId] = eachWidget;
 				}
-				defaultData["length"] = defaultDataLength;
+				_defaultData["length"] = defaultDataLength;
 				
 				if(hasChild == true){
 					grid.addChild(gItemrow);
@@ -501,7 +520,7 @@
 		private function createCFormItemRenderer(id:String, name:String, field:XML, fields:XMLList):CFormItemRenderer {
         	var widget:XMLList = field.child("widget");
         	var widgetType:String = widget.attribute("type").toString();
-        	fieldType[id] = widgetType;
+        	_fieldType[id] = widgetType;
         	if(widgetType == "table"){
         		var column :XMLList = widget.child("column");
         		return renderDefaultItem(widgetType,widget,column);
@@ -607,7 +626,7 @@
 			var widget:Array;
 			var key:String;
 			
-			originalData = new Array();
+			_originalData = new Array();
 			var originalDataLength:int = 0;
 			for (key in widgets) {
 				if (values[key] != null) {
@@ -721,7 +740,7 @@
 		private function getCFormValues(onlyModifiedValues:Boolean=true): Object {
 			var values:Object=new Object();
 			if(originalData.length == 0)
-				originalData = defaultData;
+				_originalData = defaultData;
 					
 			for each(var widget:Array in widgets) {
 				var fieldId:String = widget["fieldId"];
@@ -753,7 +772,6 @@
 		}
 
 		/**
-		 *  @private
 		 *  Validate the CForm using the custom 
 		 *  validation function specified using <code>cFormCustomizer</code>
 		 *
@@ -761,7 +779,7 @@
 		 *  the form pass validation or not.
 		 *
 		 */			
-		private function validateCForm():Boolean {
+		public function validateCForm():Boolean {
 			var valid:Boolean=true;
 			if(_customizeCForm!=null) {
 				var values:Object=getCFormValues(false);

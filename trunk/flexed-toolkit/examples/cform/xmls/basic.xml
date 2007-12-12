@@ -15,7 +15,7 @@ programmatically to this form.
 		</formitem> 
 		<formitem>
 			<field id="age" label="Age">
-				<widget type="stepper" default="35" min="2" max="80"/>
+				<widget type="stepper" default="35" min="2" max="500"/>
 			</field>
 		</formitem>
 		<formitem>

@@ -108,6 +108,7 @@ package flexed.widgets.form {
 				column.headerText = col.attribute("label").toString();
 				column.dataField = col.attribute("data").toString();
 				column.width = col.attribute("width").toString();
+				column.editable = true;
 				colInfo.push(column);
          	}
 			table.columns = colInfo;
