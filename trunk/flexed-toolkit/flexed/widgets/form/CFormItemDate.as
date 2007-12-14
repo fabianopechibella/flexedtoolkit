@@ -11,20 +11,29 @@ package  flexed.widgets.form {
 		public var dtBox:HBox;
 		private var dateField:DateField;
 		private var timeField:TimePicker;
+		private var timeShown:Boolean = false;
 		
-		public var currentFormat:String = "ddd mmm dd HH:mm:ss yyyy";
-		public var expectedFormat:String = "MM/DD/YYYY";
+		public var currentFormat:String = DefaultConfig.WIDGET_DATE_CURRENTFORMAT;
+		public var expectedFormat:String = DefaultConfig.WIDGET_DATE_EXPECTEDFORMAT;
 		
-		public function CFormItemDate() {
+		public function CFormItemDate(showTimeEntry:String = "false") {
 			dtBox = new HBox();
-			dtBox.setStyle("horizontalGap", "1");
-			dtBox.setStyle("verticalGap", "1");
+			dtBox.setStyle("horizontalGap", DefaultConfig.WIDGET_DATE_HGAP);
+			dtBox.setStyle("verticalGap", DefaultConfig.WIDGET_DATE_VGAP);
 
 			dateField = new DateField();
+			dateField.width = DefaultConfig.WIDGET_DATE_DATEWIDTH;
 			dtBox.addChild(dateField);
+			
+			if(showTimeEntry == "true"){
+				timeShown = true;
+				dateField.width = DefaultConfig.WIDGET_DATE_DATETIMEWIDTH;
+				timeField = new TimePicker();
+				timeField.width = DefaultConfig.WIDGET_DATE_DATETIMEWIDTH;
+				dtBox.addChild(timeField);
+			}
 
-			timeField = new TimePicker();
-			dtBox.addChild(timeField);
+			
 		}
 		public function getUIComponent():UIComponent	{
 			return dtBox;
@@ -32,7 +41,8 @@ package  flexed.widgets.form {
 		
 		public function getValue():Object
 		{
-			var dtString: String = dateField.text + ' ' + timeField.getValue();
+			var dtString:String = dateField.text;
+			if(timeShown == true) dtString += ' ' + timeField.getValue();
 			return dtString;
 		}
 		
@@ -69,7 +79,7 @@ package  flexed.widgets.form {
 			df.formatString = "S";
 			var sec : String = int(df.format(value)).toString();
 			
-			timeField.setValue (hour, min, sec);
+			if(timeShown == true) timeField.setValue(hour, min, sec);
 		}
 
 		public function setAttributes(attributes:Array):void {

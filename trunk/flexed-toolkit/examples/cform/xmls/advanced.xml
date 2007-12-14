@@ -3,20 +3,20 @@
 A slightly ADVANCED entry form. With 2 columns of fields 
 including a ComboBox box with pre-filled data.
 -->
-<component columns="2" vgap="5" igap="1">
+<cform columns="2" vgap="5" igap="1">
 	<group label="Personal" column="1">
 		<formitem>
-			<field id="txtFName" label="First Name">
+			<field id="txtFName" label="First Name" tooltip="Enter the firstname of the user">
 				<widget type="text" default="Uday"/>
 			</field>
 		</formitem> 
 		<formitem>
-			<field id="txtLName" label="Last Name">
+			<field id="txtLName" label="Last Name" tooltip="Enter the last name of the user">
 				<widget type="text" default="Shankar"/>
 			</field>
 		</formitem> 
 		<formitem>
-			<field id="nstepAge" label="Age">
+			<field id="nstepAge" label="Age" tooltip="Enter the age of the user">
 				<widget type="stepper" min="2" max="100"/>
 			</field>
 		</formitem>
@@ -51,4 +51,4 @@ including a ComboBox box with pre-filled data.
 		</formitem>
 	</group>	
 	
-</component>
+</cform>

@@ -130,16 +130,16 @@ And finally you can get the selected time by using the getValue method:
 	</mx:Script>
 
 	<mx:HBox horizontalGap="0" borderStyle="inset" verticalAlign="middle" height="22">
-  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tHour" width="17" text="1" focusIn="focusTime(tHour,1,12)" focusOut="valTime(tHour,0,23)"/>
-		<mx:TextInput borderStyle="none" textAlign="right" editable="false" text=":" width="7"/>
-  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tMinute" width="17" text="0" focusIn="focusTime(tMinute,00,59)" focusOut="valTime(tMinute,0,59)"/>
-		<mx:TextInput borderStyle="none" textAlign="right" editable="false" text=":" width="7"/>
-  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tSecond" width="17" text="0" focusIn="focusTime(tSecond,00,59)" focusOut="valTime(tSecond,0,59)"/>
+  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tHour" width="17" text="12" focusIn="focusTime(tHour,1,12)" focusOut="valTime(tHour,0,23)" toolTip="Hours" paddingRight="0" paddingLeft="0"/>
+		<mx:Label textAlign="center" text=":" width="7" enabled="true" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="6" fontWeight="bold"/>
+  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tMinute" width="17" text="00" focusIn="focusTime(tMinute,00,59)" focusOut="valTime(tMinute,0,59)" toolTip="Minutes" paddingLeft="0" paddingRight="0"/>
+		<mx:Label textAlign="center" text=":" width="7" paddingTop="0" paddingRight="0" paddingLeft="0" paddingBottom="6" fontWeight="bold"/>
+  		<mx:TextInput maxChars="2" restrict="0-9" borderStyle="none" textAlign="right" id="tSecond" width="17" text="00" focusIn="focusTime(tSecond,00,59)" focusOut="valTime(tSecond,0,59)" toolTip="Seconds" paddingLeft="0" paddingRight="0"/>
 	</mx:HBox>
 	
 	<mx:VBox verticalAlign="bottom" verticalGap="0" horizontalGap="0">
-		<mx:Button verticalGap="0" cornerRadius="0" width="15" height="11" click="arrowUp()"/>
-		<mx:Button verticalGap="0" cornerRadius="0" width="15" height="11" click="arrowDown()"/>
+		<mx:Button icon="@Embed(source='assets/uparrow.png')" verticalGap="0" cornerRadius="0" width="15" height="11" click="arrowUp()"/>
+		<mx:Button icon="@Embed(source='assets/downarrow.png')" verticalGap="0" cornerRadius="0" width="15" height="11" click="arrowDown()"/>
 	</mx:VBox>
 
 </mx:HBox>

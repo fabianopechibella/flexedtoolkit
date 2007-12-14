@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 Just another form. But this time, notice the scroll and
-how the fields scroll without issues. Using the set data
-button we can set data programmatically to this form.
+how the fields scroll without issues. 
 
 -->
-<component columns="2" vgap="5" igap="1">
+<cform columns="2" vgap="5" igap="1">
 	<group label="Personal" column="1">
 		<formitem>
 			<field id="txtFName" label="First Name">
@@ -52,4 +51,4 @@ button we can set data programmatically to this form.
 		</formitem>
 	</group>	
 	
-</component>
+</cform>
