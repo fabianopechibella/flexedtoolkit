@@ -45,7 +45,7 @@ including a ComboBox box with pre-filled data.
 			<field id="grdFriends" label="Friends">
 				<widget type="table" width="200" height="150">
 					<column data="name" label="Name" width="40"/>
-					<column data="network" label="Network" width="60"/>
+					<column data="network" label="Network" width="60" editable="false"/>
 				</widget>
 			</field>
 		</formitem>

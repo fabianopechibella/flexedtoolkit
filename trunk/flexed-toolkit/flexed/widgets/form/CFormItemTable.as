@@ -3,15 +3,19 @@ package flexed.widgets.form {
 	import mx.controls.DataGrid;
 	import mx.controls.dataGridClasses.DataGridColumn;
 	import mx.core.UIComponent;
+	import mx.events.DataGridEvent;
 	import mx.utils.ObjectProxy;
 	
 	public class CFormItemTable implements CFormItemRenderer {
 		private var table:DataGrid;
+		private var nonEditableCols:Array = new Array();
 		
 		public function CFormItemTable() {
 			table = new DataGrid();
 			table.minHeight = DefaultConfig.WIDGET_TABLE_MINHEIGHT;
 			table.minWidth = DefaultConfig.WIDGET_TABLE_MINWIDTH;
+			setEditable(true);
+			
 		}
 		
 		/**
@@ -55,7 +59,7 @@ package flexed.widgets.form {
 		 * @inheritDoc
 		 */		
 		public function isEditable():Boolean{
-			return false;
+			return table.editable;
 		}
 		
 		/**
@@ -63,7 +67,8 @@ package flexed.widgets.form {
 		 * Implementation will be empty as it is a readonly component
 		 */
 		public function setEditable(editable:Boolean):void{
-			// null	
+			table.editable = editable;
+			table.addEventListener(DataGridEvent.ITEM_EDIT_BEGINNING, verifyEdit);
 		}
 
 		/**
@@ -82,7 +87,12 @@ package flexed.widgets.form {
 		}
 		
 		public function setAttributes(attributes:Array):void {
-			var editable:String = attributes["editable"];
+			var editable:Boolean = true; 
+			if(attributes["editable"] != null && attributes["editable"] == "false"){
+				editable = false;
+			}
+			setEditable(editable);
+			
 			if (attributes["width"]!=null)
 				setWidth(attributes["width"]);
 			if (attributes["height"]!=null)
@@ -108,10 +118,20 @@ package flexed.widgets.form {
 				column.headerText = col.attribute("label").toString();
 				column.dataField = col.attribute("data").toString();
 				column.width = col.attribute("width").toString();
-				column.editable = true;
+				if(col.attribute("editable").toString() == "false"){
+					nonEditableCols.push(col.attribute("data").toString());
+				}
 				colInfo.push(column);
          	}
 			table.columns = colInfo;
 		}
+		
+		private function verifyEdit(event:DataGridEvent):void{
+			if(nonEditableCols.length > 0){
+				if(nonEditableCols.indexOf(event.dataField.toString()) != -1)
+					event.preventDefault();
+			}
+		}
+
 	}
 }
