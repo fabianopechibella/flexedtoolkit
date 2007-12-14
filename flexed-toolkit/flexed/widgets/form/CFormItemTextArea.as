@@ -41,7 +41,7 @@ package flexed.widgets.form {
 		
 		public function setAttributes(attributes:Array):void{
 			var editable:String=attributes["editable"];
-			
+			if(editable == null) editable = "true";
 			var _editable:Boolean=true;
 			if(editable.toLocaleLowerCase() == "false") _editable=false;
 			

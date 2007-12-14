@@ -560,6 +560,11 @@
 				renderer = new CFormItemDisplay();
 				CFormItemDisplay(renderer).setAttributesFromXML(attributes);
 				CFormItemDisplay(renderer).setValue(defaultVal);
+			} else if(widgetType.toLocaleLowerCase() == "checkbox") {
+				renderer = new CFormItemCheckBox();
+				CFormItemCheckBox(renderer).setAttributesFromXML(attributes);
+				if(attributes.attribute("selected").toString() == "true")
+					CFormItemCheckBox(renderer).setValue(true);
 			} else if(widgetType.toLocaleLowerCase() == "dualdisplay") {
 				renderer = new CFormItemDualDisplay();
 				CFormItemDualDisplay(renderer).setAttributesFromXML(attributes);
@@ -569,7 +574,9 @@
 				CFormItemNumericStepper(renderer).setAttributesFromXML(attributes);
 				CFormItemNumericStepper(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "date") {
-				renderer = new CFormItemDate();
+				var showTimer:String = "false";
+				showTimer = attributes.attribute("showtime").toString();
+				renderer = new CFormItemDate(showTimer);
 				CFormItemDate(renderer).setAttributesFromXML(attributes);
 				CFormItemDate(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "combobox") {

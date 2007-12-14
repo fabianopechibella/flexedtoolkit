@@ -6,7 +6,7 @@ is to get personal information of a user.
 Using the set data button we can set data 
 programmatically to this form.
 -->
-<component columns="1" vgap="5" igap="1">
+<cform columns="2" vgap="5" igap="1">
 	<group label="Personal Info" column="1">
 		<formitem>
 			<field id="fname" label="Full Name">
@@ -26,5 +26,22 @@ programmatically to this form.
 				</widget>
 			</field>
 		</formitem>
+		<formitem>
+			<field id="bday" label="Birthday">
+				<widget type="date" showtime="true"/>
+			</field>
+		</formitem>
+		<formitem>
+			<field id="alive" label="Alive">
+				<widget type="checkbox" selected="true"/>
+			</field>
+		</formitem>
 	</group>
-</component>
+	<group label="Other Info" column="2">
+		<formitem>
+			<field id="address" label="Address">
+				<widget type="textarea" default="http://udayms.wordpress.com"/>
+			</field>
+		</formitem>
+	</group>
+</cform>

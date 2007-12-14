@@ -37,8 +37,10 @@ package flexed.widgets.form
 		*/
 		public static const WIDGET_COMBOBOX_WIDTH:Number		= 175;
 		public static const WIDGET_COMBOBOX_HEIGHT:Number		= 21;
-		public static const WIDGET_DATE_WIDTH:Number			= 0;
-		public static const WIDGET_DATE_HEIGHT:Number			= 0;
+		public static const WIDGET_DATE_HGAP:Number				= 1;
+		public static const WIDGET_DATE_VGAP:Number				= 1;
+		public static const WIDGET_DATE_DATEWIDTH:Number		= 175;
+		public static const WIDGET_DATE_DATETIMEWIDTH:Number	= 87;
 		public static const WIDGET_DISPLAY_WIDTH:Number			= 175;
 		public static const WIDGET_DISPLAY_HEIGHT:Number		= 21;
 		public static const WIDGET_NUMERICSTEPPER_WIDTH:Number	= 100;
@@ -51,6 +53,13 @@ package flexed.widgets.form
 		public static const WIDGET_TEXT_HEIGHT:Number			= 21;
 		public static const WIDGET_TEXTAREA_WIDTH:Number		= 175;
 		public static const WIDGET_TEXTAREA_HEIGHT:Number		= 95;
+		
+		/**
+		* Widget Attributes
+		*/
+		public static const WIDGET_DATE_CURRENTFORMAT:String	= "ddd mmm dd HH:mm:ss yyyy";
+		public static const WIDGET_DATE_EXPECTEDFORMAT:String	= "MM/DD/YYYY";
+		
 		
 	}
 }

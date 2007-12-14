@@ -12,7 +12,7 @@ inside the <group> tagset below the last <formitem> tagset -
 
 
 -->
-<component columns="1" vgap="5" igap="1">
+<cform columns="1" vgap="5" igap="1">
 	<group label="Personal" column="1">
 		<formitem>
 			<field id="fname" label="Full Name">
@@ -20,4 +20,4 @@ inside the <group> tagset below the last <formitem> tagset -
 			</field>
 		</formitem> 
 	</group>
-</component>
+</cform>
