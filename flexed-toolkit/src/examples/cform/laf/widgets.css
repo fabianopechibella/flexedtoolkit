@@ -252,3 +252,16 @@ DateChooser {
 	color: #006600;
 	fontSize: 10;
 }
+
+Button{
+	borderColor: #99cc66;
+	fillColors: #ffffff, #66cc00, #ffffff, #99cc33;
+	rollOverColor: #ffffcc;
+	textRollOverColor: #003300;
+	borderThickness: 1;
+	borderColor: #99cc66;
+	selectionColor: #ffcc00;
+	color: #000000;
+	textIndent: 0;
+	fontSize: 10;	
+}

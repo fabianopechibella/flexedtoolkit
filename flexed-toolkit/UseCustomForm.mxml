@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:form="flexed.widgets.form.*" horizontalAlign="center" verticalAlign="middle" backgroundGradientColors="[#ffffff, #f8fceb]" backgroundGradientAlphas="[1.0, 0.93]" xmlns:cform="examples.cform.*">
-	<mx:Style source="/examples/cform/laf/widgets.css"/>
-	<mx:Style source="/examples/cform/laf/cfrm.css"/>
-	<cform:CFormTestDrive id="useCForm"  horizontalCenter="0" verticalCenter="0"/>		
-</mx:Application>
- 
