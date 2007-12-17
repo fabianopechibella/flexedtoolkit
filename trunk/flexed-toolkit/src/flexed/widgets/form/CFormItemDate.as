@@ -1,5 +1,5 @@
 package  flexed.widgets.form {
-	import flexed.widgets.form.custom.TimePicker;
+	import flexed.widgets.form.custom.TimeEntry;
 	
 	import mx.containers.HBox;
 	import mx.controls.DateField;
@@ -10,7 +10,7 @@ package  flexed.widgets.form {
 	public class CFormItemDate implements CFormItemRenderer {
 		public var dtBox:HBox;
 		private var dateField:DateField;
-		private var timeField:TimePicker;
+		private var timeField:TimeEntry;
 		private var timeShown:Boolean = false;
 		
 		public var currentFormat:String = DefaultConfig.WIDGET_DATE_CURRENTFORMAT;
@@ -28,7 +28,7 @@ package  flexed.widgets.form {
 			if(showTimeEntry == "true"){
 				timeShown = true;
 				dateField.width = DefaultConfig.WIDGET_DATE_DATETIMEWIDTH;
-				timeField = new TimePicker();
+				timeField = new TimeEntry();
 				timeField.width = DefaultConfig.WIDGET_DATE_DATETIMEWIDTH;
 				dtBox.addChild(timeField);
 			}

@@ -9,15 +9,15 @@ package flexed.widgets.form
 		public static const GENERAL_INDICATORGAP:int 			= 14;
 		public static const GENERAL_GRID_WIDTHPERCENT:Number 	= 100;
 		public static const GENERAL_GRID_HEIGHTPERCENT:Number 	= 100;
-		public static const GENERAL_TITLE_COLSPAN:Number 		= 2;
-		public static const GENERAL_TITLE_HEIGHT:Number 		= 2;
+		public static const GENERAL_GROUP_COLSPAN:Number 		= 2;
+		public static const GENERAL_GROUP_HEIGHT:Number 		= 2;
 		
 		/**
 		* Style Names
 		*/		
 
-		public static const GENERAL_TITLE_STYLE:String 			= "groupTitleLBL";
-		public static const GENERAL_TITLEHR_STYLE:String 		= "groupTitleHR";
+		public static const GENERAL_GROUP_STYLE:String 			= "groupTitleLBL";
+		public static const GENERAL_GROUPHR_STYLE:String 		= "groupTitleHR";
 		public static const GENERAL_LABEL_STYLE:String 			= "formLabels";
 		
 		public static const WIDGET_COMBOBOX_STYLE:String		= "";
@@ -30,7 +30,8 @@ package flexed.widgets.form
 		public static const WIDGET_TABLE_STYLE:String			= "";
 		public static const WIDGET_TEXT_STYLE:String			= "";
 		public static const WIDGET_TEXTAREA_STYLE:String		= "";
-		
+		public static const WIDGET_SUBHEADER_STYLE:String		= "";
+		public static const WIDGET_SUBHEADERHR_STYLE:String		= "";
 		
 		/**
 		* Widget Dimensions
@@ -53,6 +54,7 @@ package flexed.widgets.form
 		public static const WIDGET_TEXT_HEIGHT:Number			= 21;
 		public static const WIDGET_TEXTAREA_WIDTH:Number		= 175;
 		public static const WIDGET_TEXTAREA_HEIGHT:Number		= 95;
+		public static const WIDGET_SUBHEADER_HEIGHT:Number		= 21;
 		
 		/**
 		* Widget Attributes

@@ -1,16 +1,17 @@
 package flexed.widgets.form {
-	import flexed.widgets.form.custom.SectionTitle;
+	import flexed.widgets.form.custom.SubHeader;
 	
 	import mx.core.UIComponent;
 	
 	public class CFormItemTitle implements CFormItemRenderer
 	{
-		private var title:SectionTitle;
+		private var title:SubHeader;
 		
 		public function CFormItemTitle() {
-			title = new SectionTitle();
-			title.height = DefaultConfig.GENERAL_TITLE_HEIGHT;
-			title.setLabelStyle(DefaultConfig.GENERAL_TITLE_STYLE);
+			title = new SubHeader();
+			title.headerStyle = DefaultConfig.WIDGET_SUBHEADER_STYLE;
+			title.lineStyle = DefaultConfig.WIDGET_SUBHEADERHR_STYLE;
+			title.height = DefaultConfig.WIDGET_SUBHEADER_HEIGHT;
 		}
 		
 		/**
@@ -26,7 +27,7 @@ package flexed.widgets.form {
 		 */
 		public function getValue():Object{
 			//TODO: implement function
-			return title.viewName;
+			return title.subHeaderText;
 		}
 		
 		/**
@@ -65,7 +66,7 @@ package flexed.widgets.form {
 		 * @inheritDoc
 		 */
 		public function setValue(value:Object):void{
-			title.viewName = value.toString();
+			title.subHeaderText = value.toString();
 		}		
 
 		public function setAttributes(attributes:Array):void {
