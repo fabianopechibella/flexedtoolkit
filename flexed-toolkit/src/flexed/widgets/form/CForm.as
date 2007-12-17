@@ -17,7 +17,7 @@
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
-	import flexed.widgets.form.custom.SectionTitle;
+	import flexed.widgets.form.custom.SubHeader;
 	
 	import mx.collections.ArrayCollection;
 	import mx.containers.Canvas;
@@ -355,11 +355,11 @@
 			if (name != '') {
 				var title:Label = new Label();
 				title.text = name;
-				title.styleName = DefaultConfig.GENERAL_TITLE_STYLE;
+				title.styleName = DefaultConfig.GENERAL_GROUP_STYLE;
 				
 				var hRule:HRule = new HRule();
 				hRule.percentWidth = 100;
-				hRule.styleName = DefaultConfig.GENERAL_TITLEHR_STYLE;
+				hRule.styleName = DefaultConfig.GENERAL_GROUPHR_STYLE;
 				
 				var gTitlerow:GridRow = new GridRow();				
 				gTitleItem = new GridItem();
@@ -452,7 +452,7 @@
 	            	var gItemvalue:GridItem = new GridItem();
 	            	gItemvalue.addChild(renderer.getUIComponent());
 	            	
-	            	if(renderer.getUIComponent() is SectionTitle){
+	            	if(renderer.getUIComponent() is SubHeader){
 	            		gItemvalue.colSpan = 2;
 	            		gItemrow.addChild(gItemvalue);
 	            	}else{
@@ -565,10 +565,6 @@
 				CFormItemCheckBox(renderer).setAttributesFromXML(attributes);
 				if(attributes.attribute("selected").toString() == "true")
 					CFormItemCheckBox(renderer).setValue(true);
-			} else if(widgetType.toLocaleLowerCase() == "dualdisplay") {
-				renderer = new CFormItemDualDisplay();
-				CFormItemDualDisplay(renderer).setAttributesFromXML(attributes);
-				CFormItemDualDisplay(renderer).setValue(defaultVal);
 			} else if(widgetType.toLocaleLowerCase() == "stepper") {
 				renderer = new CFormItemNumericStepper();
 				CFormItemNumericStepper(renderer).setAttributesFromXML(attributes);
@@ -598,10 +594,6 @@
 				renderer = new CFormItemTextArea();
 				CFormItemTextArea(renderer).setAttributesFromXML(attributes);
 				CFormItemTextArea(renderer).setValue(defaultVal);
-			} else if(widgetType.toLocaleLowerCase() == "dualtext") {
-				renderer = new CFormItemDualText();
-				CFormItemDualText(renderer).setAttributesFromXML(attributes);
-				CFormItemDualText(renderer).setValue(defaultVal);
 			} else if (widgetType.toLocaleLowerCase() == "table") {
 				renderer = new CFormItemTable();
 				var tableAttribs:XMLList = attributes.descendants("column");
