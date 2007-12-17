@@ -42,13 +42,13 @@
 */
 
 .groupTitleLBL{
-	color: #000000;
+	color: #666666;
 	fontSize: 10;
 	fontWeight: bold;
 }
 
 .groupTitleHR{
-	strokeColor: #333333;
+	strokeColor: #99cc33;
 	shadowColor: #ffffff;
 	strokeWidth: 1;	
 }
