@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// *Copyright (c) 2006 Uday M. Shankar
+//
+// The usual Yada-Yada!
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this code and associated documentation
+// files (the "Code"), to deal in the Code without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Code is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Code.
+//
+// THE CODE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+// Further it is worth to mention that no animals have been 
+// harmed during the development. No trees have been cut 
+// down. Womens rights have been treated with full respect.
+// Mankind's safety has been ensured at every step.
+//
+// Peace!
+//
+// @file: cform
+// @author: Uday M. Shankar
+// @date: 10-12-2007
+// @description: Calls the CFormTestDrive. A demo of the CForm component.
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:form="flexed.widgets.form.*" horizontalAlign="center" verticalAlign="middle" backgroundGradientColors="[#ffffff, #f8fceb]" backgroundGradientAlphas="[1.0, 0.93]" xmlns:cform="examples.cform.*" viewSourceURL="srcview/index.html">
+	<mx:Style source="/examples/cform/laf/widgets.css"/>
+	<mx:Style source="/examples/cform/laf/cfrm.css"/>
+	<cform:CFormTestDrive id="useCForm"  horizontalCenter="0" verticalCenter="0"/>		
+</mx:Application>
+ 
