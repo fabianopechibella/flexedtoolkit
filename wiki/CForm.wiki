@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
-
-= CForm v1.0 - CustomForm =
+= CForm v1.0=
 CForm is all about creating data entry screens. This component allows developers to create standardized forms/CRUD screens in their applications. The CForm component is a Data Entry component that can be very useful if -
 
   # you are building business applications with many data entry/view screens
