@@ -1,0 +1,15 @@
+#summary One-sentence summary of this page.
+
+= CForm v1.0 - CustomForm =
+CForm is all about creating data entry screens. This component allows developers to create standardized forms/CRUD screens in their applications. The CForm component is a Data Entry component that can be very useful if -
+
+  # you are building business applications with many data entry/view screens
+  # you are working with a lot of developers. each handling separate screens/modules
+  # you wish all your screens to have the standard look & feel across the application
+  # you wish to avoid different developers/designers designing their own UI/UX paradigms for their specific screens
+
+Let me try to explain this in a very simplified manner. CForm reads XML file to create user entry forms. To implement CForm, the following steps are involved.
+
+  * Developer creates XML file for each screen. The XML will contain the list of fields, controls to be used etc.
+  * CForm is called in an MXML.
+  * Now, the developer can use many of CForm’s exposed methods to access/manipulate data in the CForm.
