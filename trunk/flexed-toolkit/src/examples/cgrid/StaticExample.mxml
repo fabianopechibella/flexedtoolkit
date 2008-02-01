@@ -55,9 +55,9 @@
 		* column names and mapping data
 		*/
 		public var gridColumns:ArrayCollection= new ArrayCollection([
-						{colname:"Blog Name",coldata:"blogname"},
+						{colname:"Blog Name",coldata:"blogname",filter:"true"},
 						{colname:"URL",coldata:"blogurl",sortable:"false"},
-						{colname:"Contents",coldata:"blogcontent", align:"right"},
+						{colname:"Contents",coldata:"blogcontent", align:"right",filter:"true"},
 						{colname:"Author",coldata:"blogauthor", hide:true}
 						]);
 
@@ -69,22 +69,22 @@
 						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
 						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
 						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
-						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
+						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Actionscript', blogauthor:'Jesse Warden'},
 						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Flash player, Adobe', blogauthor:'Jeff Tapper'},
-						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia Technologies', blogauthor:'Abdul Qabiz'},
+						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia', blogauthor:'Abdul Qabiz'},
 						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java, Opensource', blogauthor:'Balakumar Muthu'},
-						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office, UI, Usability', blogauthor:'Jensen Harris'},
-						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'MS Office, UI, Usability', blogauthor:'Narciso (nj) Jaramillo'},
+						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office', blogauthor:'Jensen Harris'},
+						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'Usability', blogauthor:'Narciso (nj) Jaramillo'},
 						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
-						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
-						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
-						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
-						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Flash player, Adobe', blogauthor:'Jeff Tapper'},
-						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Flex, Macromedia Technologies', blogauthor:'Abdul Qabiz'},
-						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java, Opensource', blogauthor:'Balakumar Muthu'},
-						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office, UI, Usability', blogauthor:'Jensen Harris'},
-						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'MS Office, UI, Usability', blogauthor:'Narciso (nj) Jaramillo'},
-						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'personal, travel', blogauthor:'Uday M. Shankar'},
+						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex', blogauthor:'Uday M. Shankar'},
+						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe', blogauthor:'Manish Jethani'},
+						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex', blogauthor:'Jesse Warden'},
+						{blogname:'Notes from the Flash, Flex and ColdFusion trenches', blogurl:'jeff.mxdj.com', blogcontent:'Adobe', blogauthor:'Jeff Tapper'},
+						{blogname:'Abdul Qabiz- Blog - India', blogurl:'www.abdulqabiz.com/blog', blogcontent:'Technologies', blogauthor:'Abdul Qabiz'},
+						{blogname:'Balakumar Muthu', blogurl:'i5bala.blogspot.com', blogcontent:'Java', blogauthor:'Balakumar Muthu'},
+						{blogname:'An Office User Interface Blog', blogurl:'blogs.msdn.com/jensenh', blogcontent:'MS Office', blogauthor:'Jensen Harris'},
+						{blogname:'Much ado about something', blogurl:'rictus.com/muchado', blogcontent:'UI', blogauthor:'Narciso (nj) Jaramillo'},
+						{blogname:'Rising Sun', blogurl:'udayms.wordpress.com', blogcontent:'travel', blogauthor:'Uday M. Shankar'},
 						{blogname:'Flexed', blogurl:'flexed.wordpress.com', blogcontent:'Flex, Actionscript', blogauthor:'Uday M. Shankar'},
 						{blogname:'Ivory Tower', blogurl:'mannu.livejournal.com', blogcontent:'Adobe, Flex, Actionscript', blogauthor:'Manish Jethani'},
 						{blogname:'Jessewarden.com', blogurl:'www.jessewarden.com', blogcontent:'Flex, Actionscript', blogauthor:'Jesse Warden'},
@@ -117,6 +117,6 @@
 			
 	]]>
 </mx:Script>
-	<grid:CGrid id="myDataGrid" printTitle="Blog List [Static Example] " searchType="highlight" />
+	<grid:CGrid id="myDataGrid" printTitle="Blog List [Static Example] " searchType="highlight"/>
  </mx:VBox>
 
