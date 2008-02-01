@@ -125,5 +125,5 @@
 			
 	]]>
 </mx:Script>
-		<grid:CGrid id="myDataGrid" printTitle="Blog Posts from MXNA [RSS Reader]" searchType="filter" allowPrint="false" />
+		<grid:CGrid id="myDataGrid" printTitle="Blog Posts from MXNA [RSS Reader]" searchType="normal" allowPrint="false" />
 </mx:Canvas>

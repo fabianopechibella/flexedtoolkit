@@ -124,3 +124,19 @@ PrintDataGrid {
 	modalTransparencyDuration: 100;
 	backgroundImage: "a.gif";
 }
+
+HeaderFilter {
+	border-style: none;
+	corner-radius: 0;
+	background-alpha: 1;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+}
+
+.filterCombo{
+	corner-radius: 0;
+	border-style: none;
+	background-alpha: 0;
+}
