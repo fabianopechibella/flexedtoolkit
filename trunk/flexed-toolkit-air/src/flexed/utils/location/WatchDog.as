@@ -92,14 +92,21 @@ package flexed.utils.location
 		}
 		
 		protected function dirListHandler(event:FileListEvent):void{
-			_currentFiles = filterFiles(event.files as Array, fileExtensions, includeSystemFiles);
+			_currentFiles = event.files as Array;
 			_currentFiles.sortOn("creationDate");
+			
+			if(includeSystemFiles == false)
+				_currentFiles = filterSysFiles(_currentFiles);
+			
+			if(fileExtensions.length > 0)
+				_currentFiles = filterExtensions(_currentFiles, fileExtensions);
+			
 			_currentFileCount = _currentFiles.length;
 			 
 			if(_pingCounter == 1){
-				_lastFileCount = _currentFiles.length;
 				_existingFiles = _currentFiles; //saving initial state
 				_existingFileCount = _existingFiles.length;
+				_lastFileCount = _currentFiles.length;
 			}
 			
 			if(_currentFileCount != _lastFileCount){
@@ -108,9 +115,9 @@ package flexed.utils.location
 				var _deltaFiles:Array = _newFiles = deltaFiles(_existingFiles, _currentFiles);
 				
 				var data:Object = new Object();
-				data.files = _currentFiles;
-				data.newFiles = _deltaFiles;
-				data.newFileCount = _deltaFiles.length;
+					data.files = _currentFiles;
+					data.newFiles = _deltaFiles;
+					data.newFileCount = _deltaFiles.length;
 				
 				if(_currentFileCount > _lastFileCount){
 					trace(_className + ": WatchDog finds New file!");
@@ -134,10 +141,10 @@ package flexed.utils.location
 		
 		protected function deltaFiles(oldfiles:Array, newfiles:Array):Array{
 			var delta:Array = new Array();
-			var filteredFiles:Array = filterFiles(newfiles);
 			
-			for(var i:int = 0; i < filteredFiles.length; i++){
-				if(indexOfFile(filteredFiles[i], oldfiles) == -1) delta.push(filteredFiles[i]);
+			// finding the new files
+			for(var i:int = 0; i < newfiles.length; i++){
+				if(indexOfFile(newfiles[i], oldfiles) == -1) delta.push(newfiles[i]);
 			}
 
 			return delta;
@@ -145,35 +152,36 @@ package flexed.utils.location
 		
 		protected function indexOfFile(find:File, inArray:Array):int{
 			var index:int = -1;
+			
 			for(var i:int = 0; i < inArray.length; i++){
 				if(inArray[i].name == find.name)
 					index = i;
 			}
+			
 			return index;
 		}
 		
-		protected function filterFiles(allfiles:Array, extensions:Array = null, sysfiles:Boolean = false):Array{
+		protected function filterExtensions(allfiles:Array, extensions:Array):Array{
 			var files:Array = new Array();
-			var onlyValidExtns:Array = new Array();
 			
 			// filtering only the files with required extensions
 			if(extensions != null && extensions.length > 0){
 				for each(var ext:String in extensions){
 					for(var i:int = 0; i < allfiles.length; i++){
-						if(allfiles[i].extension == ext) onlyValidExtns.push(allfiles[i]);
+						if(allfiles[i].extension == ext) files.push(allfiles[i]);
 					}
 				}
-			}else{
-				onlyValidExtns = allfiles;
 			}
 			
+			return files;
+		}
+		
+		protected function filterSysFiles(allfiles:Array):Array{
+			var files:Array = new Array();
+
 			// filtering system and hidden files from the final list
-			if(sysfiles == false){
-				for(var j:int = 0; j < onlyValidExtns.length; j++){
-					if(onlyValidExtns[j].isHidden == false && onlyValidExtns[j].isDirectory == false) files.push(onlyValidExtns[j]);
-				}
-			}else{
-				files = onlyValidExtns;
+			for(var j:int = 0; j < allfiles.length; j++){
+				if(allfiles[j].isHidden == false && allfiles[j].isDirectory == false) files.push(allfiles[j]);
 			}
 			
 			return files;

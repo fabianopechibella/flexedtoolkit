@@ -42,7 +42,7 @@ package flexed.utils.location
 		protected var $data:Object;
 		
 		/**
-		 * Creates a new YahooEvent object.
+		 * Creates a new LocationEvent object.
 		 * @param type
 		 * @param data
 		 * @param bubbles
